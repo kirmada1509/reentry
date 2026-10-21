@@ -1,85 +1,37 @@
-# Agent Starter
+# ReEntry
 
-A reusable starting point for product work with coding agents: shared rules and skills, registry-installed shadcn UI, strict TypeScript, quality gates, local process scripts, and optional browser log viewing.
+An accessible recovery card for unfinished work: preserve the goal, confirmed progress, materials, changed instructions, and one concrete next action.
 
-## Start the next product
+**Status:** starter initialized; the plan targets a browser extension plus this web app, assembled from existing open-source libraries. Use existing online test sites and small deterministic fixtures instead of building sandbox applications. Phase 0 has started with Learn onboarding and a scope draft. The running app still displays the starter example; integrations and ReEntry features are not implemented yet.
 
-From this template:
+## Start locally
 
-    pnpm run new my-product
+```sh
+pnpm bootstrap
+pnpm dev
+```
 
-Then:
+Use the local URL printed by the server. The starter pins Node 22.23.2 and pnpm 12.5.1. No cloud credentials are required. The planned Ollama dependency is not installed by bootstrap.
 
-    cd ../my-product
-    pnpm bootstrap
-    pnpm dev
+## Project documents
 
-The new-project command exports the committed template into a fresh Git repository, changes the package and environment names, and excludes Git history, dependencies, local credentials, and runtime files. Commit improvements to the starter before using that command.
+- [Original product concept](reentry.md)
+- [Bounded product brief](docs/PRODUCT.md)
+- [Scope, architecture, and testing sandboxes](docs/BUILD_PLAN.md)
+- [Phase-wise implementation plan and test gates](docs/IMPLEMENTATION_PLAN.md)
+- [Build checklist and current phase](docs/BUILD_CHECKLIST.md)
+- [Required testing sandboxes](docs/BUILD_PLAN.md#required-testing-sandboxes)
+- [Open-source tools and online sandbox alternatives](docs/REUSE.md)
+- [Event requirements and deadlines](docs/HACKATHONS.md)
+- [Starter and Learn provenance](docs/PROVENANCE.md)
+- [Setup and verification](docs/SETUP.md)
+- [Current handoff](docs/WORK.md)
+- [Learn workflow status](devpost/README.md)
 
-Alternatively clone this repository, remove/change its origin, and run pnpm bootstrap. If hosted on GitHub later, it can be marked as a template repository.
+Complete the installed Devpost Learn planning sequence before ReEntry feature work. Preserve its generated scope, PRD, and spec in the public repository.
 
-Complete [docs/PRODUCT.md](docs/PRODUCT.md), open the new folder in your coding agent, and ask:
+## Engineering
 
-> Read AGENTS.md and the product brief. Plan the first complete user journey, select existing shadcn components, then implement and verify it.
+Read [AGENTS.md](AGENTS.md). Use the official shadcn registry workflow. `pnpm check` runs quality gates; `pnpm build` verifies production compilation. The original starter guide is preserved in [docs/STARTER-README.md](docs/STARTER-README.md), with local links adjusted for its new location.
 
-## Included
-
-| Area              | Default                                                                              |
-| ----------------- | ------------------------------------------------------------------------------------ |
-| Application       | Next.js App Router, React, strict TypeScript, pnpm lockfile                          |
-| Agent entry point | Short AGENTS.md, shared Claude/Cursor/Copilot pointers                               |
-| Skills            | Product planning, feature delivery, registry UI, operational debugging, verification |
-| Optional roles    | Planner, implementer, reviewer briefs; no automatic agent swarm                      |
-| UI                | Official shadcn components and an unchanged upstream example                         |
-| Engineering       | Thin routes, validated input/configuration, explicit errors, bounded JSON parsing    |
-| Logs              | Structured JSON, redaction, request IDs, status/duration, safe error capture         |
-| Cloud             | Optional Axiom ingest; optional Doppler secrets injection; optional OTLP tracing     |
-| Health            | Liveness and configuration readiness routes                                          |
-| Checks            | Husky, lint-staged, Prettier, ESLint, TypeScript, Vitest, UI and secret guards       |
-| CI                | Checks, production build, and HTTP smoke on GitHub Actions                           |
-| Operations        | Bootstrap, foreground/background start, stop, status, logs, new-project export       |
-
-Node.js 22.14+ or 24 and pnpm 12 are supported by the package constraints. The local/CI runtime is pinned to Node 22.23.2; pnpm downloads it when needed and records its checksum in the lockfile. Managed background scripts support macOS/Linux.
-
-## Commands
-
-| Command                         | Purpose                                                        |
-| ------------------------------- | -------------------------------------------------------------- |
-| pnpm bootstrap                  | Locked install, local configuration, hooks, setup checks       |
-| pnpm dev                        | Foreground development                                         |
-| pnpm dev:start / pnpm dev:stop  | Start/stop this project's background server                    |
-| pnpm dev:status / pnpm dev:logs | Inspect the managed server                                     |
-| pnpm ui:add dialog              | Install official UI and record its provenance                  |
-| pnpm check                      | Formatting, lint, types, tests, UI, secret, instruction checks |
-| pnpm verify                     | All checks plus production build                               |
-| pnpm smoke                      | Check the running starter's page and health routes             |
-| pnpm observe:smoke              | Send one diagnostic event to configured Axiom                  |
-| pnpm logs:open                  | Open the configured cloud log view                             |
-| pnpm agent:context              | Report instruction size and available project skills           |
-
-Pre-commit runs staged secret checks, formatting/linting, UI policy, and type checks. Pre-push runs the complete check suite. CI adds the production build and HTTP smoke. Turn on repository branch protection when you host it to make CI a merge requirement.
-
-## UI rule
-
-Choose and wire existing components. The starter does not ask an agent to design a new component system. Registry assets have recorded hashes; handwritten visual primitives and additional CSS fail the guard. Page/data/action wiring remains normal product work.
-
-The default home is the official shadcn empty-demo example; its controls are demonstrations. Replace it with the product flow before a product demo. See [UI policy](docs/UI.md).
-
-## Logs in a browser
-
-Doppler manages secrets. Axiom is the application log viewer. Local logging works immediately; cloud viewing needs your dataset and ingestion token. See [operations setup](docs/OPERATIONS.md) for the one-time activation steps and verification marker.
-
-Runtime configuration, database/auth providers, and product integrations are selected for the actual product instead of being imposed by the starter.
-
-## Read only what is relevant
-
-- [Starter plan and researched alternatives](docs/STARTER-PLAN.md)
-- [Engineering guidelines](docs/ENGINEERING.md)
-- [UI source and enforcement](docs/UI.md)
-- [Operations and cloud setup](docs/OPERATIONS.md)
-- [Current task/handoff](docs/WORK.md)
-- [Verification record](docs/VERIFICATION.md)
-
-Skills live once under .agents/skills. Claude's skills path links to that directory; other agents can follow the canonical policy pointers. Tool-specific support varies, so check the agent's skill selector when adopting a new tool.
-
-[MIT license](LICENSE). Vendored UI attribution is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Built from [kirmada1509/agent-starter](https://github.com/kirmada1509/agent-starter), with history and MIT license preserved. The source remote is named `upstream`; a separate ReEntry GitHub repository has not been created or published. UI attribution remains in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

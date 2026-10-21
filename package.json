@@ -1,5 +1,5 @@
 {
-  "name": "agent-starter",
+  "name": "reentry",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -69,7 +69,7 @@
     "vitest": "5.0.5"
   },
   "packageManager": "pnpm@12.5.1",
-  "description": "Reusable agent-ready product starter with registry UI, quality gates, and observability.",
+  "description": "An accessible recovery card for returning to interrupted work.",
   "license": "MIT",
   "engines": {
     "node": ">=22.14 <25",

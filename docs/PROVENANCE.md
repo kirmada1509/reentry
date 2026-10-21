@@ -1,0 +1,38 @@
+# Source and project provenance
+
+Recorded October 21, 2026 (IST). Do not backdate project work or treat inherited commits as ReEntry development.
+
+## Starter
+
+- Source: [kirmada1509/agent-starter](https://github.com/kirmada1509/agent-starter).
+- Imported commit: `4ee50075d585d2ad12c440d1ce618311d4148d65`.
+- Latest inherited commit timestamp: October 21, 2026, 21:40:49 +05:30.
+- Method: HTTPS clone, moved into this workspace after checking for conflicts. The pre-existing `reentry.md` was preserved.
+- Git history retained; `origin` renamed to `upstream`. No fork, new remote repository, or push performed.
+- Reused work: framework scaffold, registry components, logging/health infrastructure, scripts, tests, CI, and agent instructions. These are starter work, not ReEntry-specific contributions.
+- MIT license retained in `LICENSE`; UI notices retained in `THIRD_PARTY_NOTICES.md`. Original README retained in `docs/STARTER-README.md`.
+
+## Devpost Learn
+
+- Source: [challengepost/learn-ai-basics](https://github.com/challengepost/learn-ai-basics).
+- Imported commit: `a0f065781873e8a7ed9a9a705a8dafa6a0810439`.
+- Installation: copies of the six skill directories, including templates/references, under `.agents/skills/`. No external installer was executed. One trailing blank line in `5-build/templates/checklist-template.md` was normalized during the first staged whitespace check; curriculum content is unchanged.
+- MIT license retained in `docs/licenses/devpost-learn-MIT.txt`.
+- Vendored curriculum excluded from automatic local formatting; the single recorded trailing-newline normalization is the only change to upstream files.
+- Installation does not mean the workflow was run. See `devpost/README.md` for actual progress.
+
+## ReEntry work in this session
+
+- The supplied concept says it was prepared October 21, 2026; that is a concept date, not proof of earlier implementation.
+- This session adopted the starter, renamed package/environment identity, installed curriculum, and wrote planning/setup documents.
+- No ReEntry application features or model integrations were implemented. Record actual product implementation start when it happens.
+- AI assistance: Codex inspected sources, initialized the starter, researched requirements, and drafted planning documents. Keep this disclosure current as development proceeds.
+- Preserve real future commits and planning history as evidence; a new repository timestamp alone does not prove project eligibility.
+
+## Reuse research, not yet incorporated
+
+The later planning revision evaluated existing capture/storage/diff/testing packages and online test sites; decisions and primary sources are in [REUSE.md](REUSE.md). These shortlisted tools have not been installed or copied by this documentation update. Record exact versions, copied file commit ids, and license notices when adopting them rather than presenting research as implementation.
+
+## Phase 0 kickoff
+
+Created a project build checklist and ran the actual Learn onboarding/scope workflow on October 21, 2026. The learner profile is local and ignored; `devpost/scope.md` is a draft pending review. PRD/spec and the formal Learn build checklist have not been generated. No learner experience or approval was invented, and no ReEntry feature implementation start is claimed from these planning artifacts.

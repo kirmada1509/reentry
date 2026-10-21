@@ -45,3 +45,6 @@ next-env.d.ts
 .doppler/
 doppler.yaml
 *.log
+
+# Personal Devpost Learn context
+/devpost/learner-profile.md
