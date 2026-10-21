@@ -1,6 +1,6 @@
 # Open-source reuse choices
 
-Researched October 21, 2026. This is a source/API/license review, not proof that integrations pass in ReEntry. No package in this shortlist was installed and no upstream code was copied into the project during this planning update. Pin tested versions and record copied files/commit ids when implementation starts.
+Researched October 21, 2026. This is a source/API/license review, not proof that integrations pass in ReEntry. Phase 1 subsequently adopted WXT, its React/storage integrations, webext-core messaging, Dexie, Playwright, http-server and fake-indexeddb on October 22. Other shortlisted integrations remain planned; see [provenance](PROVENANCE.md). Pin tested versions and record copied files/commit ids when implementation starts.
 
 ## Recommended components
 
@@ -30,6 +30,10 @@ Researched October 21, 2026. This is a source/API/license review, not proof that
 | [Mammoth](https://github.com/mwilliamson/mammoth.js) (`mammoth`)                                       | BSD-2-Clause; DOCX content extraction                                                           | Use for an explicit DOCX import feature later. Layout fidelity, file permissions, and safe presentation still need handling. Do not build a DOCX parser.                                                                                                                                                                                               |
 
 Defuddle's browser API accepts the current document and returns cleaned content/title. Its core bundle avoids the extra Markdown/math dependencies of the full bundle. For our local workflow, disable optional asynchronous/remote extractors, preview what was extracted, and preserve raw selected text as evidence. If selection is already sufficient, skip article extraction entirely. Article cleanup can omit short requirements, so test it rather than assuming it captures every instruction.
+
+## Model client reuse
+
+October 22 decision: use a [small provider-independent harness](HARNESS.md), not LangChain/LangGraph. Local Ollama is the first adapter. For later hosted adapters, reuse [AI SDK Core's unified provider interface](https://ai-sdk.dev/docs/foundations/providers-and-models) with direct [OpenAI](https://ai-sdk.dev/providers/ai-sdk-providers/openai) or [DeepSeek](https://ai-sdk.dev/providers/ai-sdk-providers/deepseek) packages behind ReEntry's own small interface. No gateway service is required. Keep provider-specific options outside recovery logic and validate every proposal in ReEntry. Install and pin only the clients needed by the working slice; no AI SDK/provider package was installed during this planning revision. Future adapters need their own envelope/capability tests and live evaluation before claiming support.
 
 ## Existing online sandboxes
 

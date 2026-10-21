@@ -1,5 +1,11 @@
 import "server-only";
 import { z } from "zod";
+import {
+  appOriginSchema,
+  DEFAULT_APP_ORIGIN,
+  DEFAULT_EXTENSION_ID,
+  extensionIdSchema,
+} from "@/features/capture/config";
 
 const optionalString = z.preprocess(
   (value) => (value === "" ? undefined : value),
@@ -19,6 +25,8 @@ const schema = z
       .enum(["development", "preview", "production", "test"])
       .optional(),
     LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+    REENTRY_APP_ORIGIN: appOriginSchema.default(DEFAULT_APP_ORIGIN),
+    REENTRY_EXTENSION_ID: extensionIdSchema.default(DEFAULT_EXTENSION_ID),
     AXIOM_TOKEN: optionalString,
     AXIOM_DATASET: optionalString,
     AXIOM_EDGE: z

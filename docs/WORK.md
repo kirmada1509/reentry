@@ -2,30 +2,30 @@
 
 ## Goal
 
-Create the build checklist, save the ReEntry Git baseline, and start Phase 0 through the actual Learn workflow.
+Phase 1: capture selected external-page instructions through the real Chrome extension and save a durable, user-confirmed task. Implemented October 22, 2026.
 
 ## Decisions
 
-- One product: WXT browser extension plus the existing Next.js web app, explicit selected-text capture/recapture, user-confirmed progress, evidenced local-model interpretation, correction/restore, and reopening the work link.
-- Reuse WXT/webext-core, Dexie, jsdiff, existing test sites, Playwright/MSW/Serve/axe, and tiny instruction fixtures. Optional Defuddle mode, PDFs/DOCX, Electron, background monitoring, and exact field restoration remain outside the first release.
-- Project execution tracker: [BUILD_CHECKLIST.md](BUILD_CHECKLIST.md). Phase/test details: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md). Scope/sandboxes: [BUILD_PLAN.md](BUILD_PLAN.md). Reuse/licenses: [REUSE.md](REUSE.md).
-- Preserve inherited Git history and MIT notices. This workspace already has a Git repository on `main`; the starter remote is `upstream`. No reset, fresh history, remote repository, or push is needed to initialize local tracking.
-- Personal Learn context and credentials are ignored and untracked. Do not invent learner background, reviews, evidence, or completed phase gates.
+- One product: WXT extension plus Next.js web app. User invokes the toolbar or keyboard shortcut; capture happens before a separate review tab opens so focus changes do not lose the selection.
+- Reuse browser selection, WXT storage, webext-core internal messaging and Dexie. No parser, custom scholarship app or sandbox engine. Supporting links use complete reviewed HTTP(S) URLs.
+- Native external messaging: manifest hostname restriction plus exact app-origin/port and sender checks, strict bounded payloads, confirmed captures only, durable database commit before acknowledgement, capture-id deduplication.
+- Default app origin: `http://127.0.0.1:3000`; stable unpacked id: `nabinfdlobegbkgehppcipkhbddjbdka`. Extension public key is for development identity. Public connection settings are validated server-side; no model/provider credentials needed.
+- Keep the later harness simple and model-independent; see [HARNESS.md](HARNESS.md). No model or agent framework was installed.
+- User explicitly requested Phase 1 despite missing formal Learn reviews. This overrides the roadmap order, not the truth of review status. Scope remains draft, PRD/spec/formal Learn checklist absent. Do not fabricate curriculum completion or learner experience.
+- Preserve starter Git history and MIT notices; remote `upstream` remains reference-only. No remote repository or push was requested.
 
 ## Actual state
 
-- Build checklist created; Phase 0 is in progress. Phases 1–6 are not started. ReEntry baseline saved as local commit `8be78ad`; inherited history is preserved.
-- Learn `1-start` completed with an honest ignored learner profile. Supplied product/platform/reuse decisions were carried forward.
-- Learn `2-scope` generated [../devpost/scope.md](../devpost/scope.md) with `status: draft`. Learner approval is pending; Markdown is used for the first review while the optional HTML preference remains unconfirmed. PRD/spec and formal Learn build checklist do not exist yet.
-- The running application is still the starter example. No extension/model/sandbox implementation or new shortlisted dependency was added.
-- The project build checklist is not the formal Learn `devpost/checklist.md`. Generate that later through `5-build` against actual approved planning artifacts.
+- Phase 1 product gate passed. [PHASE1.md](PHASE1.md) explains setup, sandbox and the working journey. [BUILD_CHECKLIST.md](BUILD_CHECKLIST.md) records completion; [TEST_RESULTS.md](TEST_RESULTS.md) records evidence.
+- Six real-extension browser cases passed with a bundled Chrome for Testing persistent profile and actual toolbar-action permission grant. Native keyboard journey also passed against production web/extension builds on macOS. No VoiceOver result is claimed.
+- Capture drafts/confirmed transfers wait in extension storage (maximum ten, 24-hour TTL). Saved tasks persist in IndexedDB and reject duplicate capture ids with different evidence. Failed writes do not acknowledge; failed acknowledgement preserves a saved task and retries after refresh.
+- Comparison, AI inference, revision editing/restoration/deletion and broad resilience/accessibility acceptance remain unimplemented. Phase 2 is next product work.
+- Credentials and learner profile remain ignored/untracked. Synthetic test/browser artifacts are ignored.
 
 ## Next concrete action
 
-Complete the pending scope review; Markdown is currently displayed, and HTML remains optional. Then follow `3-prd` and `4-spec`, carrying prior decisions forward. Do not rerun broad ideation or invent approvals. Phase 1 begins only when its real planning prerequisites are satisfied.
+Phase 2: explicit task-associated recapture at the same source, old/new evidence through jsdiff, and honest changed/unchanged/unavailable/incomparable states. Preserve Phase 1's real bridge and source metadata. Formal Learn planning/review gaps remain separate outstanding submission work; do not relabel existing roadmap documents as approved Learn artifacts.
 
 ## Verification
 
-- `pnpm check`: passed formatting, lint, types, all 20 tests across six files, UI policy, secret-pattern guard, and agent-context validation during Phase 0 kickoff.
-- Git root/branch/remote, staged-file state, and ignored personal/credential paths inspected before baseline preparation.
-- Baseline commit `8be78ad` passed staged secret checks, formatting hooks, UI policy, and type generation/checks. Staged private-path and document-link review passed. See [SETUP.md](SETUP.md). No product acceptance test or live-model result is claimed.
+See [TEST_RESULTS.md](TEST_RESULTS.md) for actual commands and limitations. Baseline before implementation: `f86a3f4`; initial ReEntry baseline: `8be78ad`. Publication has not occurred.

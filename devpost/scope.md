@@ -50,6 +50,7 @@ Use an existing generic test form or licensed derivative for the work destinatio
 - Persistent goal, work/material links, confirmed facts, source snapshots, and checkpoints.
 - A readable evidence-based recovery card with one next action, correction, and restore.
 - Substantive open-weight interpretation, with manual recovery when inference is unavailable.
+- A replaceable AI connection: begin with a local open-weight model for the demo, while allowing a later switch to OpenAI, DeepSeek, or another evaluated model without changing the recovery journey. Sending context to a hosted service later requires explicit agreement.
 - Existing open-source infrastructure and test websites, plus only the missing before/after instruction fixtures and task-specific tests.
 - Actual Learn planning artifacts, public licensed source, and a working short demo for the intended submissions.
 

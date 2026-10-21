@@ -1,6 +1,6 @@
 # ReEntry build checklist
 
-Project execution tracker, started October 21, 2026. Details and test gates: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md). The running app remains the starter example.
+Project execution tracker, started October 21, 2026. Phase 1 implemented October 22. Details and test gates: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md); actual evidence: [TEST_RESULTS.md](TEST_RESULTS.md).
 
 This checklist tracks actual project work. It is not the formal Learn `devpost/checklist.md`, which `5-build` generates from the genuinely reviewed scope, PRD, and spec. Do not mark a phase complete until its gate passes.
 
@@ -22,18 +22,18 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 - [ ] Generate the formal Learn build checklist through `5-build` against the approved documents.
 - [ ] Verify required planning documents are substantive and public-ready, with real review status and upstream attribution.
 
-**Gate:** genuine Learn scope/PRD/spec prerequisites are satisfied before Phase 1 feature implementation. Phase 0 is in progress.
+**Learn gate remains incomplete.** On October 22 the author explicitly requested Phase 1 implementation; that instruction took precedence over the roadmap’s sequencing. Scope/PRD/spec reviews and the formal Learn checklist remain pending. Do not claim the prescribed learning process was followed in order.
 
 ## Phase 1 — Capture and save
 
-- [ ] Create the WXT extension and standard capture-preview UI; pin only needed dependencies.
-- [ ] Capture selected text/title/source URL from a separate origin after explicit user invocation.
-- [ ] Implement the bounded native app/extension connection and Dexie save with durable acknowledgement.
-- [ ] Save a goal, reviewed work link, confirmed progress, and user-entered next action.
-- [ ] Verify persistence after refresh and duplicate-delivery handling; reject invalid sender/input and declined previews.
-- [ ] Pass `@capture` checks, actual Chrome keyboard/permission check, workspace checks, and web/extension builds.
+- [x] Create the WXT extension and standard capture-preview UI; pin only needed dependencies.
+- [x] Capture selected text/title/source URL from a separate origin after explicit user invocation.
+- [x] Implement the bounded native app/extension connection and Dexie save with durable acknowledgement.
+- [x] Save a goal, reviewed work link, confirmed progress, and user-entered next action.
+- [x] Verify persistence after refresh and duplicate-delivery handling; reject invalid sender/input and declined previews.
+- [x] Pass `@capture` checks, actual Chrome keyboard/permission check, workspace checks, and web/extension builds.
 
-**Gate:** real external capture becomes one durable saved task; no clipboard or mocked-permission substitute.
+**Gate passed:** real external capture becomes one durable saved task; no clipboard or mocked-permission substitute. Native keyboard acceptance used Chrome for Testing 156 on macOS. Screen-reader acceptance remains Phase 5. See [results](TEST_RESULTS.md).
 
 ## Phase 2 — Return and compare
 
@@ -47,10 +47,12 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 
 ## Phase 3 — Real-model recovery
 
-- [ ] Connect local Ollama through a bounded, validated server-only adapter.
+- [ ] Define the provider-independent recovery interface and simple harness from [HARNESS.md](HARNESS.md); keep SDK types out of UI/storage.
+- [ ] Connect local Ollama through a bounded, validated server-only adapter with configurable provider/model; disable implicit retries and automatic cloud fallback.
 - [ ] Validate source ids/quotes, action targets, output bounds, and consistency with confirmed facts.
 - [ ] Show a correctable recovery card and one next action; Continue uses the saved work link.
 - [ ] Reuse MSW/Serve handlers for deterministic good/error model responses; pass `@recovery` checks.
+- [ ] Verify the common harness contract with mocked Ollama and a fake alternative, including invalid configuration, cancellation, stale results and no remote fallback. Hosted adapters require their own tests and explicit processing agreement when added later.
 - [ ] Record real-model increase, unchanged, and contradiction runs with actual inputs/outputs and model/prompt identifiers.
 - [ ] Demonstrate real capture → pause → change → recapture → actual inference → Continue with mocks disabled.
 

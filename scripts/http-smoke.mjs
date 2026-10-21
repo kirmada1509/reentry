@@ -22,11 +22,11 @@ for (const endpoint of ["live", "ready"]) {
 }
 const page = await fetch(base, { signal: AbortSignal.timeout(20000) });
 assert.equal(page.status, 200);
-assert.match(await page.text(), /No Projects Yet/);
+assert.match(await page.text(), /Save your place/);
 const missing = await fetch(base + "/missing-starter-smoke", {
   signal: AbortSignal.timeout(10000),
 });
 assert.equal(missing.status, 404);
 console.log(
-  "HTTP smoke passed: registry example, liveness, readiness, correlation IDs, and missing route.",
+  "HTTP smoke passed: ReEntry page, liveness, readiness, correlation IDs, and missing route.",
 );

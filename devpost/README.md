@@ -12,3 +12,7 @@ The official Learn pack is installed in `.agents/skills/1-start` through `6-ship
 The [project build checklist](../docs/BUILD_CHECKLIST.md) tracks actual work across phases. The [implementation roadmap](../docs/IMPLEMENTATION_PLAN.md) supplies test gates; neither substitutes for the real Learn planning documents or formal build checklist.
 
 Keep required scope, PRD, and spec in the eventual public repository. The personal learner profile and local credentials remain excluded by default; the conversation still goes through the AI provider.
+
+## Implementation sequencing
+
+On October 22 the author explicitly requested Phase 1 implementation. Capture and checkpoint saving proceeded using the existing product brief and phase plan, outside the still-incomplete formal Learn sequence. Scope remains a draft; no PRD/spec/checklist approval or retrospective curriculum completion is claimed. See [actual implementation and tests](../docs/TEST_RESULTS.md).

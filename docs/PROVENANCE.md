@@ -36,3 +36,11 @@ The later planning revision evaluated existing capture/storage/diff/testing pack
 ## Phase 0 kickoff
 
 Created a project build checklist and ran the actual Learn onboarding/scope workflow on October 21, 2026. The learner profile is local and ignored; `devpost/scope.md` is a draft pending review. PRD/spec and the formal Learn build checklist have not been generated. No learner experience or approval was invented, and no ReEntry feature implementation start is claimed from these planning artifacts.
+
+## Phase 1 implementation — October 22, 2026 (IST)
+
+The author explicitly requested implementing Phase 1. Codex wrote the capture protocol, WXT action/background/review tab, native app bridge, Dexie task persistence, checkpoint/library UI and tests. This is the first ReEntry-specific product implementation; it is separate from inherited starter work. Formal Learn reviews remain incomplete and were not marked approved retrospectively.
+
+Installed and pinned: WXT 0.21.4 and its React module 1.2.2 (MIT), webext-core messaging 4.0.0 (MIT), Dexie 4.4.6 (Apache-2.0), Playwright 1.64.1 (Apache-2.0), http-server 14.1.1 (MIT), fake-indexeddb 6.2.6 (Apache-2.0), Tailwind Vite integration 4.3.3 (MIT), and Chrome types 0.3.5 (MIT). WXT supplies its storage integration. Package licenses remain in their installed distributions; upstream source links are in [REUSE.md](REUSE.md). The additional official shadcn checkbox was installed through the existing registry tool; acquisition/hash and MIT attribution are retained.
+
+The instruction HTML is original fictional test content under the project license. No Selenium/The Internet source or assets were copied in this phase. No custom scholarship application or parser was built. No model integration or live inference is claimed. The manifest development key is a generated public key used for stable extension identity, not a retained private signing key.

@@ -10,6 +10,11 @@ export default defineConfig([
     "out/**",
     "build/**",
     ".runtime/**",
+    "extension/.wxt/**",
+    "extension/.output/**",
+    "output/**",
+    "test-results/**",
+    "playwright-report/**",
     "coverage/**",
     "next-env.d.ts",
     "src/components/**",
@@ -17,7 +22,7 @@ export default defineConfig([
     "src/lib/utils.ts",
   ]),
   {
-    files: ["src/**/*.{ts,tsx}"],
+    files: ["src/**/*.{ts,tsx}", "extension/**/*.{ts,tsx}"],
     rules: {
       "no-console": "error",
       "@typescript-eslint/no-explicit-any": "error",

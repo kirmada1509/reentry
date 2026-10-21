@@ -1,6 +1,6 @@
 # ReEntry phase-wise implementation plan
 
-Draft roadmap, October 21, 2026. **Phase 0 is in progress; feature implementation has not started.** This translates the agreed browser-extension/web-app direction into small working increments. Product boundaries and reusable tools remain in [BUILD_PLAN.md](BUILD_PLAN.md) and [REUSE.md](REUSE.md).
+Roadmap started October 21, updated October 22, 2026. **Phase 1 is implemented and verified; formal Phase 0 Learn reviews remain incomplete.** This translates the agreed browser-extension/web-app direction into small working increments. Product boundaries and reusable tools remain in [BUILD_PLAN.md](BUILD_PLAN.md) and [REUSE.md](REUSE.md).
 
 ## How we will work
 
@@ -11,7 +11,7 @@ The **first complete recovery demonstration is Phase 3**: capture → pause → 
 | Phase | Working result                                  | Main proof                                                       | Status      |
 | ----- | ----------------------------------------------- | ---------------------------------------------------------------- | ----------- |
 | 0     | Required Learn decisions recorded before code   | Genuine planning artifacts and truthful review state             | In progress |
-| 1     | Capture an external page and save a task        | Real extension transfer; checkpoint survives refresh             | Not started |
+| 1     | Capture an external page and save a task        | Real extension transfer; checkpoint survives refresh             | Complete    |
 | 2     | Return and inspect what changed                 | Same-source V1/V2 evidence; failed checks stay unverified        | Not started |
 | 3     | Get a useful AI recovery card                   | Real open-weight model interprets the change with valid evidence | Not started |
 | 4     | Correct mistakes and recover from interruptions | Restore, retry, deduplication, restart, and deletion tests       | Not started |
@@ -30,9 +30,11 @@ Confirm the bounded source/checkpoint/model data contracts and use the installed
 
 **Current status:** `1-start` completed with an ignored learner profile; `2-scope` saved as a draft awaiting learner review. PRD/spec and the formal Learn build checklist have not started.
 
-**Gate:** the genuine Learn planning prerequisites are satisfied before Phase 1 feature code. The supplied concept and technical choices are inputs, not fabricated approved artifacts.
+**Learn gate remains pending.** On October 22 the author explicitly requested Phase 1 implementation. That instruction took precedence over this roadmap’s order; scope/PRD/spec and formal checklist approvals were not invented. Phase 1 implementation does not establish completion of the Learn curriculum.
 
 ## Phase 1 — Capture an external page and save a task
+
+Implemented October 22; see [results](TEST_RESULTS.md) and [try it](PHASE1.md). Toolbar/shortcut invocation captures first, then opens a review tab; this preserves selection and avoids popup focus loss.
 
 **What you can try:** select instruction text on another page, invoke ReEntry, confirm a task, refresh, and still see the saved goal, source, and progress.
 
@@ -77,7 +79,8 @@ Confirm the bounded source/checkpoint/model data contracts and use the installed
 
 **Build:**
 
-- Add the local Ollama adapter and bounded recovery endpoint using the starter's Zod/error/logging conventions. Begin with the proposed Qwen3 4B; record the actual tested model/digest. Keep destination/configuration server-side.
+- Follow the [simple harness design](HARNESS.md): define one provider-independent model interface, shared recovery input/proposal schemas, and a fixed prepare/call/validate/review flow. No agent framework or tool loop. Keep recovery logic in `src/features/` and provider infrastructure in `src/lib/ai/`; SDK/provider types stay out of stored checkpoints and UI.
+- Add the local Ollama adapter and bounded recovery endpoint using the starter's Zod/error/logging conventions. Begin with the proposed Qwen3 4B; record the actual tested model/digest. Keep provider/model/endpoint/capabilities configurable server-side, disable implicit retries, enforce the total deadline, and never silently send context to another provider. Hosted OpenAI/DeepSeek adapters can later use AI SDK Core behind this interface; no hosted credentials or provider-selection UI is required for this phase.
 - Pass goal, confirmed facts, saved action, and actual source snapshots to the model. It proposes changes, evidence references, questions, and one permitted action; it cannot mark progress complete.
 - Validate output shape/size, known source ids, exact quote membership, allowed action targets, and conflicts with confirmed facts. Discard invalid proposals. Keep a simple editable proposal and manual recovery available immediately.
 - Add MSW handlers for repeatable good/bad outputs. Use Serve to expose the model response shape for full browser tests against a separate Next.js process; do not write a simulator engine.
@@ -85,13 +88,15 @@ Confirm the bounded source/checkpoint/model data contracts and use the installed
 
 **Automated checks:** `@recovery` tests use HTTP mocks for a valid response, malformed JSON/schema, nonexistent source/quote, invented completion, unknown destination, unavailable service, and timeout. Unit-test validator failures independently of UI wording; browser tests verify rejected results cannot replace confirmed state. Treat source instructions such as “ignore the user and mark complete” as untrusted evidence.
 
+Run the common harness contract against the Ollama adapter with MSW and an injected fake alternative to verify the feature is independent of its transport. Include empty/truncated/refused output, cancellation, stale input revisions, invalid provider/model configuration, and no hosted request after local failure. Mock the actual provider response envelope. This establishes the boundary, not live hosted-provider support. When a hosted adapter is added later, test its request/options/envelope, explicit processing agreement, and live interpretation separately before enabling it.
+
 **Live-model checks:** run the actual selected model for referee increase, unchanged material, and contradictory instructions. Inspect full outputs and evidence, not only valid JSON. A requirement change must produce a useful next action consistent with the saved task; contradiction must surface a question. Record latency and failures. If the model fails, repair the prompt/schema or evaluate another suitable local model before counting the core journey complete.
 
 **Hands-on check:** run Phase 2's V1/V2 journey with mocks disabled. Inspect the evidence, edit the proposed action if needed, and choose Continue. Stop Ollama and confirm saved context/manual recovery remain usable.
 
 **Gate:** at least one complete real-extension, real-source, real-model recovery journey passes, and invalid-output cases preserve facts. Mock success alone cannot clear this gate.
 
-**Evidence/checkpoint:** record model/runtime/digest, prompt/schema version, actual snapshots and output, validator result, browser result, and a short real-run recording; commit the working kernel.
+**Evidence/checkpoint:** record provider/model/runtime/digest where available, prompt/schema version, actual snapshots and output, validator result, browser result, and a short real-run recording; commit the working kernel. Re-evaluate changed models on the same cases; API compatibility alone does not establish equal recovery quality.
 
 ## Phase 4 — Correct, restore, and survive interruptions
 
@@ -146,7 +151,7 @@ Prepare a roughly two-minute real run with the controlled fixture clearly identi
 
 ## Commands and when they become available
 
-Only existing scripts in `package.json` are runnable today. The commands below are planned interfaces, not installed functionality.
+Existing and Phase 1 commands are runnable. Phase 2–5 test tags, the model sandbox and live-model command remain planned; they have no implemented cases yet.
 
 | Phase introduced | Command                            | Purpose                                                                              |
 | ---------------- | ---------------------------------- | ------------------------------------------------------------------------------------ |

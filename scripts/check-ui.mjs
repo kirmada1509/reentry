@@ -38,7 +38,7 @@ const layoutTags = new Set([
 const layoutClass =
   /^(?:container|flex|grid|block|hidden|flex-col|flex-wrap|grow|shrink-0|w-full|h-full|min-h-screen|mx-auto|items-(?:start|center|end)|justify-(?:start|center|between|end)|gap-\d+|grid-cols-\d+|max-w-(?:sm|md|lg|xl|[2-7]xl)|[pm][xytrbl]?-\d+)$/;
 const frameworkEntry =
-  /(?:^|\/)(?:page|layout|loading|error|global-error|not-found|template|default)\.[jt]sx?$/;
+  /(?:^|\/)(?:page|layout|loading|error|global-error|not-found|template|default)\.[jt]sx?$|^extension\/entrypoints\/[^/]+\/main\.tsx$/;
 
 export function checkUi(directory = root) {
   const manifest = JSON.parse(
@@ -55,7 +55,10 @@ export function checkUi(directory = root) {
       issues.push(name + ": registered file is missing");
     }
   }
-  for (const file of filesUnder(path.join(directory, "src"))) {
+  const sources = ["src", "extension/entrypoints", "extension/lib"].flatMap(
+    (entry) => filesUnder(path.join(directory, entry)),
+  );
+  for (const file of sources) {
     const name = path.relative(directory, file).split(path.sep).join("/");
     if (manifest.files[name]) continue;
     if (

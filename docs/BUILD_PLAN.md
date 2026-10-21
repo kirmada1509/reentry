@@ -1,6 +1,6 @@
 # ReEntry build plan
 
-Updated October 21, 2026: **reuse open-source components and online sandboxes first**. Build a browser extension plus the existing web app as one product. ReEntry features and the integrations below are not implemented yet.
+Updated October 22, 2026: **reuse open-source components and online sandboxes first**. The browser extension plus web app now implements Phase 1 capture and persistent task saving. The remaining recovery workflow and replaceable model adapters are planned. See [working setup](PHASE1.md) and [actual verification](TEST_RESULTS.md).
 
 ## What we are building ourselves
 
@@ -40,7 +40,7 @@ Use the existing Selenium form or a licensed local derivative as the work destin
 
 ## Required planning before implementation
 
-Complete Learn `1-start` → `2-scope` → `3-prd` → `4-spec`, preserving actual generated scope/PRD/spec and review status. Carry forward the chosen extension/web-app scope and reuse decisions. This plan is an input, not a claim that those steps occurred.
+Complete Learn `1-start` → `2-scope` → `3-prd` → `4-spec`, preserving actual generated scope/PRD/spec and review status. Carry forward the chosen extension/web-app scope and reuse decisions. This plan is an input, not a claim that those steps occurred. The author subsequently requested Phase 1 implementation on October 22; implementation proceeded with the formal Learn reviews still pending. Do not backfill approval claims.
 
 After planning, first prove WXT capture → web app storage with the real extension. Resolve this before UI polish or adding optional extraction modes. Do not claim clipboard/manual import is an integrated extension if the connection is not working.
 
@@ -115,9 +115,11 @@ Keep selection evidence unchanged. Extraction/normalization and jsdiff may assis
 
 Keep Next.js server routes thin using `withRoute`, Zod boundaries, fixed safe logging, and server-only model configuration. Continue opens a user-reviewed HTTP(S) target; no invented model destinations, form autofill/submission, account credentials, or private form reads.
 
-Use local Ollama with the proposed Qwen3 4B after feasibility testing, bounded structured output, an initial 30-second deadline, explicit retry, and no automatic cloud fallback. Validate source ids, exact quotes, action targets, and consistency with confirmed facts. Evidence checks do not prove semantic truth; keep correction/manual recovery available.
+Keep the harness a fixed workflow: prepare context → call the configured model → validate → show a correctable proposal. No LangChain/LangGraph or autonomous agent loop is required. A server-only model interface isolates provider details from capture, storage, validation, and the UI; see [the harness design](HARNESS.md).
 
-Disable Defuddle's optional remote/async extractors for this workflow and keep previews plain text; do not turn returned HTML into executable UI. Local privacy assumes browser, app server, extraction, and model stay on the user's machine. Keep telemetry off and task text out of logs. Cloud hosting, Electron, and store publication remain deferred.
+Implement local Ollama first, with Qwen3 4B as a candidate subject to feasibility testing. Configure provider/model rather than hardcoding them into recovery logic. Later OpenAI and DeepSeek adapters can reuse AI SDK Core and direct provider packages behind the same interface. They are optional follow-ups, not initial demo prerequisites or implemented support. Use the actual provider's output capabilities, the same application validators, an initial 30-second total deadline, no implicit retries, explicit retry, and no automatic cloud fallback. Validate source ids, exact quotes, action targets, and consistency with confirmed facts. Evidence checks do not prove semantic truth; keep correction/manual recovery available.
+
+Disable Defuddle's optional remote/async extractors for this workflow and keep previews plain text; do not turn returned HTML into executable UI. Local privacy assumes browser, app server, extraction, and model stay on the user's machine. Future hosted inference requires a named-provider disclosure and explicit agreement before sending task context, with credentials kept server-side. Keep telemetry off and task text out of logs. Cloud hosting, Electron, and store publication remain deferred.
 
 ## Build order and planned commands
 
@@ -125,7 +127,7 @@ Follow [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for the phase-by-phase e
 
 Future layout: `extension/` for WXT; `tests/fixtures/sites/` for minimal licensed HTML/instruction pairs; `tests/mocks/` for MSW handlers; `tests/e2e/` for browser fixtures/assertions. No custom sandbox platforms. Add `docs/TEST_RESULTS.md` only when actual runs exist.
 
-New extension/sandbox/browser/model commands in the [command table](IMPLEMENTATION_PLAN.md#commands-and-when-they-become-available) are planned, **not runnable yet**. No implementation or dependency installation occurred during this planning revision. Pin new dependencies only with their working implementation slice and retain upstream notices.
+Phase 1 extension builds/type checks, static sandbox serving and `@capture` browser checks are now runnable. Model and later-phase commands remain planned; see the [command table](IMPLEMENTATION_PLAN.md#commands-and-when-they-become-available). Pin new dependencies only with their working implementation slice and retain upstream notices.
 
 ## Delivery targets and completion
 

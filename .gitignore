@@ -48,3 +48,11 @@ doppler.yaml
 
 # Personal Devpost Learn context
 /devpost/learner-profile.md
+
+# Generated extension and browser test artifacts
+/extension/.wxt/
+/extension/.output/
+/extension/node_modules/
+/output/
+/test-results/
+/playwright-report/

@@ -14,3 +14,9 @@ docs/ui-provenance.json
 # Vendored Devpost Learn curriculum; preserve upstream source
 .agents/skills/[1-6]-*/
 docs/licenses/devpost-learn-MIT.txt
+
+extension/.wxt
+extension/.output
+output
+test-results
+playwright-report

@@ -77,6 +77,16 @@ describe("quality guards", () => {
       "export default function Page() { return <button style={{color:'red'}}>Go</button>; }",
     );
     expect(checkUi(directory).join(" ")).toContain("use a registry component");
+    mkdirSync(path.join(directory, "extension/entrypoints/capture"), {
+      recursive: true,
+    });
+    writeFileSync(
+      path.join(directory, "extension/entrypoints/capture/page.tsx"),
+      "export default function Page() { return <button>Capture</button>; }",
+    );
+    expect(checkUi(directory).join(" ")).toContain(
+      "extension/entrypoints/capture/page.tsx: use a registry component",
+    );
     writeFileSync(
       path.join(directory, "src/components/ui/button.tsx"),
       vendor + "\n// changed",

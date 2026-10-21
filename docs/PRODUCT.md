@@ -1,6 +1,6 @@
 # ReEntry product brief
 
-Updated October 21, 2026: reuse existing open-source tools for the browser extension plus web app; no ReEntry features implemented yet. Original intent: [reentry.md](../reentry.md). This brief is planning input, not a substitute for the required Learn documents.
+Updated October 22, 2026: Phase 1 capture and persistent task saving is implemented using existing open-source tools. Source comparison, AI recovery and the remaining phases are planned. Original intent: [reentry.md](../reentry.md). This brief is planning input, not a substitute for the required Learn documents.
 
 ## Outcome
 
@@ -17,7 +17,7 @@ Updated October 21, 2026: reuse existing open-source tools for the browser exten
 - Deferred: Electron, continuous/background monitoring, automated full-page scraping, exact form-field restoration, form autofill/submission, desktop/PDF/iframe capture, real file uploads/OCR, email/calendar integrations, accounts, cloud sync, vector search, chat, and autonomous actions. Readable-page extraction is an optional explicit capture mode, not a replacement for an empty selection.
 - Success: after refresh, confirmed progress remains; actual extension recapture sees one referee change to two, with old/new excerpts and the first referee as the next action. Continue reopens the saved application link. The external application owns its form state; exact field focus is not promised.
 - Failure: if recapture fails or the selected section cannot be compared, say requirements could not be verified. An unchanged selection means only that captured section is unchanged. If inference fails, preserve the checkpoint and offer manual review. Never promote AI claims to completed work.
-- Proposed platform: WXT Chrome Manifest V3 extension plus the starter's Next.js/React/TypeScript/Zod web app. Reuse WXT storage/messaging wrappers, Dexie for IndexedDB, jsdiff for text differences, and Defuddle only when readable extraction is needed. Local Ollama with Qwen3 4B remains subject to quality/latency testing. Verify native website-to-extension messaging early; replace the old custom HTTP handoff queue design. No sponsor integration is required.
+- Proposed platform: WXT Chrome Manifest V3 extension plus the starter's Next.js/React/TypeScript/Zod web app. Reuse WXT storage/messaging wrappers, Dexie for IndexedDB, jsdiff for text differences, and Defuddle only when readable extraction is needed. Use a [simple, provider-independent harness](HARNESS.md), starting with local Ollama and an evaluated open-weight model; Qwen3 4B is a candidate, not a product dependency. OpenAI/DeepSeek connections can be added later behind the same boundary, without changing the recovery journey. Verify native website-to-extension messaging early; replace the old custom HTTP handoff queue design. No sponsor integration is required.
 - Data: task goal, user-reviewed work/material links, selected-text snapshots with source/section/time, confirmed facts, ten checkpoint revisions per task, and bounded pending capture transfers. Do not capture external form field values. Delete-task/delete-all covers associated pending transfers too. Browser storage is not an encrypted vault or backup; failed writes remain visibly unsaved.
 - Demo instruction pairs are explicitly fictional and served separately from ReEntry using an existing static server. Reuse a generic Selenium form or licensed derivative as the work destination. “Transcript attached” is a user-supplied confirmation, not a verified upload. Public test sites are supplementary smoke tests, not controllable scholarship systems.
 
@@ -37,7 +37,7 @@ Select standard components and default variants. UI planning is welcome; writing
 - Initial environment: Chrome with unpacked extension, Next.js server, and Ollama on the same computer. Public demo video and reproducible local setup are the submission route. Cloud hosting and store publication are deferred.
 - Readiness: capture permission, app/extension-id configuration with sender/origin validation, Dexie persistence, and comparable source captures. Report model availability separately so manual recovery still works.
 - Events: fixed event names for checkpoint save, check outcome, and inference outcome. No task text, source bodies, personal materials, or model prompts in telemetry.
-- Cloud logs: disabled initially. No remote inference fallback.
+- Cloud logs: disabled initially. No automatic remote inference fallback. Optional hosted inference later requires explicit agreement to sending task context to the named provider, with credentials kept server-side; the initial demo remains local.
 - Authentication: no user accounts for the single-user local prototype; allowlist native website messaging, validate the exact app origin/port and capture/task identifiers, and acknowledge only durable storage. A hosted multi-user version requires a new storage/authorization design.
 - Side effects: checkpoint changes are user-confirmed; no application submission, referee contact, email, or publishing from the product.
 
@@ -46,4 +46,4 @@ Select standard components and default variants. UI planning is welcome; writing
 - Done: real external-page capture/recapture, reliable transfer, persistent checkpoints, real local-model recovery, evidenced changes, correction/restore, passing required sandbox cases, verified accessible journey, public licensed repository, and working demo video.
 - First deadline: Task Forge, October 25 at 02:30 IST; target completion/submission October 24 evening.
 - Owner: project author; eligibility and event registration remain their responsibility.
-- Execution: follow the [testable phase plan](IMPLEMENTATION_PLAN.md). Complete genuine Learn planning before features; the first complete live-model recovery demo is Phase 3, followed by resilience, accessibility, and release gates. See [build plan](BUILD_PLAN.md) and [event checks](HACKATHONS.md).
+- Execution: follow the [testable phase plan](IMPLEMENTATION_PLAN.md). The author requested Phase 1 before formal Learn reviews were complete; those reviews remain pending, not retrospectively approved; the first complete live-model recovery demo is Phase 3, followed by resilience, accessibility, and release gates. See [build plan](BUILD_PLAN.md) and [event checks](HACKATHONS.md).
