@@ -27,7 +27,9 @@ const schema = z
     LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
     REENTRY_APP_ORIGIN: appOriginSchema.default(DEFAULT_APP_ORIGIN),
     REENTRY_EXTENSION_ID: extensionIdSchema.default(DEFAULT_EXTENSION_ID),
-    REENTRY_AI_PROVIDER: z.enum(["disabled", "ollama"]).default("disabled"),
+    REENTRY_AI_PROVIDER: z
+      .enum(["disabled", "ollama", "nvidia"])
+      .default("disabled"),
     REENTRY_AI_MODEL: z.preprocess(
       (v) => (v === "" ? undefined : v),
       z
@@ -61,6 +63,19 @@ const schema = z
       .min(250)
       .max(30000)
       .default(30000),
+    NVIDIA_API_KEY: z.preprocess(
+      (value) => (value === "" ? undefined : value),
+      z
+        .string()
+        .min(1)
+        .max(512)
+        .regex(/^[^\s]+$/, "Use a key without whitespace.")
+        .optional(),
+    ),
+    NVIDIA_OUTPUT_MODE: z
+      .enum(["text", "json_object", "json_schema"])
+      .default("text"),
+    NVIDIA_THINKING: z.enum(["omit", "on", "off"]).default("omit"),
     AXIOM_TOKEN: optionalString,
     AXIOM_DATASET: optionalString,
     AXIOM_EDGE: z
@@ -78,6 +93,16 @@ const schema = z
         code: "custom",
         path: ["REENTRY_AI_MODEL"],
         message: "Choose an installed local model when enabling Ollama.",
+      });
+    if (
+      value.REENTRY_AI_PROVIDER === "nvidia" &&
+      (!value.REENTRY_AI_MODEL || !value.NVIDIA_API_KEY)
+    )
+      context.addIssue({
+        code: "custom",
+        path: ["NVIDIA_API_KEY"],
+        message:
+          "Set NVIDIA_API_KEY and REENTRY_AI_MODEL when enabling NVIDIA.",
       });
     if (value.REENTRY_AI_PROVIDER === "disabled" && value.REENTRY_AI_MODEL)
       context.addIssue({

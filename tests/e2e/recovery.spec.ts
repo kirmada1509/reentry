@@ -1,5 +1,8 @@
 import { expect } from "@playwright/test";
 import type { BrowserContext, Page } from "@playwright/test";
+import { inputDigest } from "../../src/features/recovery/validate";
+import { recoveryInputSchema } from "../../src/features/recovery/schema";
+import { PROMPT_VERSION } from "../../src/features/recovery/schema";
 import { test } from "./extension";
 import {
   scenario,
@@ -27,6 +30,28 @@ async function recovery(context: BrowserContext, goal = "Finish application") {
   await comparison
     .getByRole("link", { name: "Review AI recovery", exact: true })
     .click();
+  await expect(
+    comparison.getByRole("heading", {
+      name: "ReEntry · Recover your next step",
+      exact: true,
+    }),
+  ).toBeVisible();
+  const consent = comparison.getByRole("checkbox", {
+    name: /I agree to send this task context to NVIDIA/,
+  });
+  await expect(comparison.getByRole("status")).not.toContainText(
+    "Opening recovery",
+    { timeout: 30000 },
+  );
+  if (await consent.isVisible()) {
+    await expect(
+      comparison.getByRole("button", {
+        name: "Generate recovery suggestion",
+        exact: true,
+      }),
+    ).toBeDisabled();
+    await consent.check();
+  }
   await expect(
     comparison.getByRole("button", {
       name: "Generate recovery suggestion",
@@ -56,6 +81,124 @@ async function preserved(page: Page) {
 
 test.describe("@recovery deterministic model sandbox", () => {
   test.skip(live, "Synthetic sandbox suite; live path is separate.");
+  test("@nvidia hosted processing requires fresh agreement and rejects an older model agreement", async ({
+    extension,
+  }) => {
+    const { context } = extension;
+    let model = "nvidia/synthetic-model-a";
+    let consentId = "a".repeat(64);
+    let requests = 0;
+    await context.route("**/api/recovery", async (route) => {
+      if (route.request().method() === "GET")
+        return route.fulfill({
+          json: {
+            enabled: true,
+            provider: "nvidia",
+            model,
+            processing: "hosted",
+            consentId,
+          },
+        });
+      requests++;
+      if (route.request().headers()["x-reentry-consent"] !== consentId)
+        return route.fulfill({
+          status: 403,
+          json: {
+            error: {
+              code: "PROCESSING_CONSENT_REQUIRED",
+              message: "Review the changed NVIDIA model and agree again.",
+            },
+          },
+        });
+      const input = recoveryInputSchema.parse(route.request().postDataJSON());
+      return route.fulfill({
+        json: {
+          id: crypto.randomUUID(),
+          inputDigest: await inputDigest(input),
+          createdAt: new Date().toISOString(),
+          proposal: {
+            assessment: "changed",
+            summary: "Two referees are now required.",
+            confirmedProgress: input.task.progress,
+            changes: [
+              {
+                description: "Referee count",
+                before: {
+                  sourceId: input.check.before.id,
+                  quote: "Supply one referee.",
+                },
+                after: {
+                  sourceId: input.check.after!.id,
+                  quote: "Supply two referees.",
+                },
+              },
+            ],
+            questions: [],
+            nextAction: { instruction: "Find first referee", target: "work" },
+          },
+          execution: {
+            provider: "nvidia",
+            model,
+            modelDigest: null,
+            promptVersion: PROMPT_VERSION,
+            schemaVersion: 1,
+            durationMs: 1,
+            settings: { synthetic: true },
+          },
+        },
+      });
+    });
+    const { page } = await recovery(context); // Test helper explicitly agrees, like the live path.
+    const consent = page.getByRole("checkbox", {
+      name: /I agree to send this task context to NVIDIA/,
+    });
+    await consent.uncheck();
+    await expect(
+      page.getByRole("button", {
+        name: "Generate recovery suggestion",
+        exact: true,
+      }),
+    ).toBeDisabled();
+    expect(requests).toBe(0);
+    await consent.check();
+    model = "nvidia/synthetic-model-b";
+    consentId = "b".repeat(64);
+    await generate(page);
+    await expect(
+      page.getByRole("alert", {
+        name: "Recovery needs attention",
+        exact: true,
+      }),
+    ).toContainText("agree again");
+    await expect(consent).not.toBeChecked();
+    await expect(
+      page.getByRole("button", {
+        name: "Generate recovery suggestion",
+        exact: true,
+      }),
+    ).toBeDisabled();
+    await expect(
+      page.getByRole("region", { name: "Model connection", exact: true }),
+    ).toContainText(model);
+    await consent.check();
+    await generate(page);
+    await expect(
+      page.getByRole("heading", {
+        name: "Recovery suggestion · review required",
+        exact: true,
+      }),
+    ).toBeVisible();
+    await page.reload();
+    await expect(consent).not.toBeChecked();
+    await expect(
+      page.getByRole("button", {
+        name: "Generate recovery suggestion",
+        exact: true,
+      }),
+    ).toBeDisabled();
+    await preserved(page);
+    expect(requests).toBe(2);
+  });
   test("validated recovery can be corrected, saved, refreshed and continued at the saved work URL", async ({
     extension,
   }) => {
@@ -179,7 +322,7 @@ test.describe("@recovery deterministic model sandbox", () => {
   });
 });
 
-test("@live real extension, changed source, local model, correction and Continue", async ({
+test("@live real extension, changed source, configured model, correction and Continue", async ({
   extension,
 }, info) => {
   test.skip(!live, "Run explicitly with REENTRY_TEST_LIVE=1 and local Ollama.");

@@ -3,7 +3,7 @@ import { digestSchema, idSchema } from "../capture/protocol";
 import { taskSchema } from "../tasks/schema";
 import { sourceCheckSchema } from "../sources/schema";
 
-export const PROMPT_VERSION = "recovery-2";
+export const PROMPT_VERSION = "recovery-3";
 export const SCHEMA_VERSION = 1;
 export const recoveryInputSchema = z
   .strictObject({
@@ -89,5 +89,6 @@ export const modelStatusSchema = z.strictObject({
   enabled: z.boolean(),
   provider: z.string(),
   model: z.string().nullable(),
-  processing: z.literal("local"),
+  processing: z.enum(["local", "hosted"]),
+  consentId: digestSchema.optional(),
 });

@@ -79,7 +79,7 @@ describe("provider-independent recovery contract", () => {
       const result = await runRecovery(input, model, AbortSignal.timeout(5000));
       expect(result.proposal.confirmedProgress).toBe(input.task.progress);
       expect(result.proposal.nextAction.target).toBe("work");
-      expect(result.execution.promptVersion).toBe("recovery-2");
+      expect(result.execution.promptVersion).toBe("recovery-3");
       expect(result.inputDigest).toMatch(/^[a-f0-9]{64}$/);
       expect(input.task.nextAction).toBe("Find first referee");
     });

@@ -18,7 +18,7 @@ REENTRY_AI_TIMEOUT_MS=30000
 
 If the model is absent, `ollama pull qwen3:4b` downloads it (approximately 2.5 GB). Restart the app after changing server settings. `REENTRY_AI_PROVIDER=disabled` with an empty model id preserves manual recovery and capture/comparison. The configured model id is required when Ollama is enabled; unsupported providers and non-loopback endpoints fail configuration validation. The default endpoint must be an HTTP loopback origin with no path, credentials, query or fragment.
 
-There is no OpenAI/DeepSeek adapter or credential screen yet. The server-only `RecoveryModel` interface accepts any future adapter; the shared proposal schema, validator, UI and database do not depend on Ollama response types. Hosted adapters will require their own request/envelope tests, evaluation and explicit processing agreement before use.
+The later [NVIDIA adapter](NVIDIA.md) adds an explicitly approved hosted option. There is no direct OpenAI/DeepSeek adapter or credential screen yet. The server-only `RecoveryModel` interface accepts any future adapter; the shared proposal schema, validator, UI and database do not depend on Ollama response types. Hosted adapters will require their own request/envelope tests, evaluation and explicit processing agreement before use.
 
 ## Try the complete journey
 

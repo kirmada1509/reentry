@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { idSchema } from "@/features/capture/protocol";
@@ -37,6 +38,7 @@ export default function RecoverPage() {
   const [config, setConfig] = useState<ReturnType<
     typeof modelStatusSchema.parse
   > | null>(null);
+  const [consentFor, setConsentFor] = useState<string | null>(null);
   const [eligible, setEligible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -104,24 +106,42 @@ export default function RecoverPage() {
   }, []);
 
   async function generate() {
-    if (!task || controller.current) return;
+    if (
+      !task ||
+      controller.current ||
+      (config?.processing === "hosted" && consentFor !== config.consentId)
+    )
+      return;
     const abort = new AbortController();
     controller.current = abort;
     setBusy(true);
     setError("");
     setRecord(null);
     setMessage(
-      "Asking the local model once. You can cancel; your saved checkpoint stays available.",
+      "Asking the configured model once. You can cancel; your saved checkpoint stays available.",
     );
     try {
       const input = await currentRecoveryInput(taskDatabase(), task.id);
       const reply = await fetch("/api/recovery", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+          ...(config?.processing === "hosted" && consentFor
+            ? { "x-reentry-consent": consentFor }
+            : {}),
+        },
         body: JSON.stringify(input),
         signal: abort.signal,
       });
       const body = await reply.json();
+      if (!reply.ok && body?.error?.code === "PROCESSING_CONSENT_REQUIRED") {
+        setConsentFor(null);
+        const status = await fetch("/api/recovery", {
+          signal: abort.signal,
+          cache: "no-store",
+        });
+        setConfig(modelStatusSchema.parse(await status.json()));
+      }
       if (!reply.ok)
         throw new Error(
           body?.error?.message ??
@@ -234,15 +254,41 @@ export default function RecoverPage() {
           <section className="grid gap-3" aria-label="Model connection">
             <p>
               {config?.enabled
-                ? `Local inference · ${config.provider} · ${config.model}. Your goal, confirmed progress and captured instructions are sent to Ollama on this computer.`
-                : "AI is not configured. Enable a local model in server settings, or continue manually."}
+                ? config.processing === "hosted"
+                  ? `Hosted inference · NVIDIA · ${config.model}. Your goal, confirmed progress, saved next action and captured instruction text will leave this computer and be sent to NVIDIA when you generate a suggestion.`
+                  : `Local inference · ${config.provider} · ${config.model}. Your goal, confirmed progress, saved next action and captured instructions are sent to Ollama on this computer.`
+                : "AI is not configured. Choose a model in server settings, or continue manually."}
             </p>
             <p>
               Suggestions can be wrong. Evidence validation checks references
               and quotes; you still review the interpretation.
             </p>
+            {config?.processing === "hosted" && (
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="hosted-consent"
+                  checked={consentFor === config.consentId}
+                  onCheckedChange={(value) =>
+                    setConsentFor(
+                      value === true ? (config.consentId ?? null) : null,
+                    )
+                  }
+                />
+                <Label htmlFor="hosted-consent">
+                  I agree to send this task context to NVIDIA using{" "}
+                  {config.model} for this recovery.
+                </Label>
+              </div>
+            )}
             <Button
-              disabled={loading || busy || !eligible || !config?.enabled}
+              disabled={
+                loading ||
+                busy ||
+                !eligible ||
+                !config?.enabled ||
+                (config.processing === "hosted" &&
+                  consentFor !== config.consentId)
+              }
               onClick={() => void generate()}
             >
               Generate recovery suggestion

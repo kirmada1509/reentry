@@ -34,10 +34,10 @@ Select standard components and default variants. UI planning is welcome; writing
 
 ## Operations
 
-- Initial environment: Chrome with unpacked extension, Next.js server, and Ollama on the same computer. Public demo video and reproducible local setup are the submission route. Cloud hosting and store publication are deferred.
+- Initial environment: Chrome with unpacked extension and Next.js server on this computer; inference can use local Ollama or the implemented [NVIDIA-hosted option](NVIDIA.md) after explicit processing agreement. Public demo video and reproducible local setup are the submission route. Cloud hosting and store publication are deferred.
 - Readiness: capture permission, app/extension-id configuration with sender/origin validation, Dexie persistence, and comparable source captures. Report model availability separately so manual recovery still works.
 - Events: fixed event names for checkpoint save, check outcome, and inference outcome. No task text, source bodies, personal materials, or model prompts in telemetry.
-- Cloud logs: disabled initially. No automatic remote inference fallback. Optional hosted inference later requires explicit agreement to sending task context to the named provider, with credentials kept server-side; the initial demo remains local.
+- Cloud logs: disabled initially. No automatic remote inference fallback. NVIDIA-hosted inference requires explicit agreement to sending task context to the named model/provider, with credentials kept server-side. The local Ollama route remains available; future hosted providers require their own evaluation and agreement.
 - Authentication: no user accounts for the single-user local prototype; allowlist native website messaging, validate the exact app origin/port and capture/task identifiers, and acknowledge only durable storage. A hosted multi-user version requires a new storage/authorization design.
 - Side effects: checkpoint changes are user-confirmed; no application submission, referee contact, email, or publishing from the product.
 

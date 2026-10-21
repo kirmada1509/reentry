@@ -1,6 +1,6 @@
 # ReEntry harness and model choice
 
-Decision, October 22, 2026: keep a small, fixed recovery workflow and a replaceable model connection. No LangChain, LangGraph, autonomous tool loop, or multi-agent framework is needed for the first release. Phase 3 implements this boundary with local Ollama and a provider-independent contract. Setup, bounds and current limits: [PHASE3.md](PHASE3.md).
+Decision, October 22, 2026: keep a small, fixed recovery workflow and a replaceable model connection. No LangChain, LangGraph, autonomous tool loop, or multi-agent framework is needed for the first release. Phase 3 implements this boundary with local Ollama and a provider-independent contract; a subsequent [NVIDIA adapter](NVIDIA.md) adds hosted inference with explicit processing agreement. Setup, bounds and current limits: [PHASE3.md](PHASE3.md).
 
 ## What the harness does
 
@@ -34,12 +34,13 @@ Use [Vercel AI SDK Core's provider abstraction](https://ai-sdk.dev/docs/foundati
 
 For the initial Ollama adapter, use its documented native structured-output API through a thin adapter. If a tested SDK-compatible adapter preserves the needed schema/cancellation behavior, it can replace that transport without changing the recovery feature. Do not build a general inference client or install multiple speculative provider packages during Phase 0. Pin and verify the selected clients in the implementation slice.
 
-| Connection                                    | Planned role                                     | Verification required                                                                        |
-| --------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| Local Ollama + an evaluated open-weight model | First implemented adapter and hackathon demo     | Real interpretation, evidence, latency, timeout and unavailable-service cases                |
-| OpenAI API                                    | Later optional adapter behind the same interface | Contract tests and real recovery evaluation with the selected model before claiming support  |
-| DeepSeek API                                  | Later optional direct-provider adapter           | Its own contract tests and live evaluation; do not assume OpenAI options are identical       |
-| Other compatible endpoint                     | Possible later adapter                           | Verify the actual API and capabilities; changing a base URL alone does not establish support |
+| Connection                                    | Role                                                                   | Verification required                                                                        |
+| --------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Local Ollama + an evaluated open-weight model | First implemented adapter and hackathon demo                           | Real interpretation, evidence, latency, timeout and unavailable-service cases                |
+| NVIDIA-hosted chat models                     | Implemented adapter; [setup](NVIDIA.md), explicit processing agreement | Native HTTP contract, six-case Ultra evaluation, real hosted journey recorded                |
+| OpenAI API                                    | Later optional adapter behind the same interface                       | Contract tests and real recovery evaluation with the selected model before claiming support  |
+| DeepSeek API                                  | Later optional direct-provider adapter                                 | Its own contract tests and live evaluation; do not assume OpenAI options are identical       |
+| Other compatible endpoint                     | Possible later adapter                                                 | Verify the actual API and capabilities; changing a base URL alone does not establish support |
 
 Qwen3 4B is the planned local candidate; model ids remain server configuration rather than being embedded in recovery logic. Actual tested runs and model selection are recorded in [TEST_RESULTS.md](TEST_RESULTS.md). A self-hosted DeepSeek model can also be served through a local runtime; that is different from sending data to DeepSeek's hosted API.
 

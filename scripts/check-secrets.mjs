@@ -10,6 +10,7 @@ const patterns = [
     "GitHub token",
     /(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{50,})/,
   ],
+  ["NVIDIA API key", /nvapi-[A-Za-z0-9_-]{20,}/],
   ["AWS access key", /(?:AKIA|ASIA)[A-Z0-9]{16}/],
   ["Slack token", /xox[baprs]-[A-Za-z0-9-]{20,}/],
   ["Stripe live secret", /sk_live_[A-Za-z0-9]{20,}/],

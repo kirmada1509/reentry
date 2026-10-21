@@ -74,7 +74,7 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 - [ ] Add axe checks for ReEntry UI and pass `@a11y` plus core browser regressions.
 - [ ] Complete keyboard-only and VoiceOver journeys, including permission invocation and error recovery.
 - [ ] Check focus, labels, announcements, 200% text, 400% web reflow, narrow layouts, and reduced motion.
-- [ ] Finish six-case real-model evaluation; retain actual evidence and limitations.
+- [x] Finish six-case evaluation for the current NVIDIA Ultra default (five real inferences plus missing evidence blocked before inference); retain actual evidence/limits in [TEST_RESULTS.md](TEST_RESULTS.md). Local Ollama retains its separate three-case regression.
 - [ ] Fix core usability/accessibility defects before release.
 
 **Gate:** the whole recovery journey and its failure paths are accessible and supported by actual test evidence.

@@ -65,7 +65,9 @@ export default defineConfig({
       timeout: 120_000,
       env: {
         REENTRY_APP_ORIGIN: appOrigin,
-        REENTRY_AI_PROVIDER: "ollama",
+        REENTRY_AI_PROVIDER: live
+          ? (process.env.REENTRY_AI_PROVIDER ?? "ollama")
+          : "ollama",
         REENTRY_AI_MODEL: live
           ? (process.env.REENTRY_AI_MODEL ?? "qwen3:4b")
           : "reentry-test",
@@ -76,6 +78,8 @@ export default defineConfig({
           ? (process.env.REENTRY_AI_THINK ?? "false")
           : "false",
         REENTRY_AI_TIMEOUT_MS: live ? "30000" : "2000",
+        NVIDIA_OUTPUT_MODE: process.env.NVIDIA_OUTPUT_MODE ?? "text",
+        NVIDIA_THINKING: process.env.NVIDIA_THINKING ?? "off",
         REENTRY_EXTENSION_ID: "nabinfdlobegbkgehppcipkhbddjbdka",
         AXIOM_TOKEN: "",
         AXIOM_DATASET: "",

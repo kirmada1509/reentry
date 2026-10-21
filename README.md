@@ -2,7 +2,7 @@
 
 An accessible recovery card for unfinished work: preserve the goal, confirmed progress, materials, changed instructions, and one concrete next action.
 
-**Status:** Phases 1–3 are implemented: capture instructions, save a persistent checkpoint, return to its source, and compare a fresh selection with the original evidence. Task-bound recapture preserves confirmed progress and the saved action. Phase 3 adds a model-independent recovery harness, local Ollama inference and an editable recovery suggestion. See the [AI setup and walkthrough](docs/PHASE3.md). Formal Learn planning reviews remain incomplete; the author explicitly requested implementation.
+**Status:** Phases 1–3 are implemented: capture instructions, save a persistent checkpoint, return to its source, and compare a fresh selection with the original evidence. Task-bound recapture preserves confirmed progress and the saved action. Phase 3 adds a model-independent recovery harness, local Ollama or explicitly approved NVIDIA-hosted inference, and an editable recovery suggestion. See the [AI setup and walkthrough](docs/PHASE3.md). Formal Learn planning reviews remain incomplete; the author explicitly requested implementation.
 
 ## Start locally
 
@@ -26,6 +26,7 @@ The starter pins Node 22.23.2 and pnpm 12.5.1. No cloud credentials or model run
 - [Working Phase 1: setup and walkthrough](docs/PHASE1.md)
 - [Working Phase 2: return and compare](docs/PHASE2.md)
 - [Phase 3: local AI recovery](docs/PHASE3.md)
+- [NVIDIA model setup and hosted processing](docs/NVIDIA.md)
 - [Verification evidence](docs/TEST_RESULTS.md)
 - [Simple harness and replaceable models](docs/HARNESS.md)
 - [Required testing sandboxes](docs/BUILD_PLAN.md#required-testing-sandboxes)

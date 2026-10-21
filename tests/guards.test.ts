@@ -30,6 +30,9 @@ describe("quality guards", () => {
       "private environment file",
     );
     expect(findSecrets(".env.example", "AXIOM_TOKEN=")).toEqual([]);
+    expect(findSecrets("file.ts", "nvapi-" + "a".repeat(64))).toEqual([
+      "NVIDIA API key",
+    ]);
     expect(findSecrets("file.ts", "ghp_" + "a".repeat(36))).toContain(
       "GitHub token",
     );

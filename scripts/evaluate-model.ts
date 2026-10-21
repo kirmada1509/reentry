@@ -10,6 +10,13 @@ nextEnv.loadEnvConfig(process.cwd());
 const env = getEnvironment();
 const model = configuredModel();
 const cases = [
+  ...(env.REENTRY_AI_PROVIDER === "nvidia"
+    ? ([
+        ["decrease", "Attach your transcript. No referees are required."],
+        ["cosmetic", "Attach your transcript.  Supply one referee!"],
+        ["missing-evidence", "Instructions unavailable"],
+      ] as const)
+    : []),
   ["increase", "Attach your transcript. Supply two referees."],
   ["unchanged", "Attach your transcript. Supply one referee."],
   [
@@ -21,9 +28,17 @@ const records = [];
 let failures = 0;
 for (const [name, text] of cases) {
   const input = await recoveryFixture(text);
+  if (name === "missing-evidence") {
+    delete input.check.after;
+    delete input.check.captureId;
+    input.check.status = "failed";
+    input.check.reason = "source-unavailable";
+  }
+  let called = false;
   let candidate: unknown;
   const observed = {
     async generate(...args: Parameters<typeof model.generate>) {
+      called = true;
       const output = await model.generate(...args);
       candidate = output;
       return output;
@@ -44,15 +59,18 @@ for (const [name, text] of cases) {
             result.proposal.summary,
           ) &&
           !/upload.*transcript/i.test(result.proposal.nextAction.instruction)
-        : name === "unchanged"
+        : name === "unchanged" || name === "cosmetic"
           ? result.proposal.assessment === "unchanged"
-          : result.proposal.assessment === "uncertain" &&
-            result.proposal.questions.length > 0;
+          : name === "decrease"
+            ? result.proposal.assessment === "changed" &&
+              !/find.*referee/i.test(result.proposal.nextAction.instruction)
+            : result.proposal.assessment === "uncertain" &&
+              result.proposal.questions.length > 0;
     if (!appropriate) failures++;
     records.push({
       name,
       input,
-      messages: recoveryMessages(input),
+      messages: input.check.after ? recoveryMessages(input) : null,
       result,
       appropriate,
     });
@@ -65,16 +83,19 @@ for (const [name, text] of cases) {
       }),
     );
   } catch (error) {
-    failures++;
+    const blockedMissingEvidence = name === "missing-evidence" && !called;
+    if (!blockedMissingEvidence) failures++;
     records.push({
       name,
       input,
       candidate,
-      messages: recoveryMessages(input),
+      messages: input.check.after ? recoveryMessages(input) : null,
       error: error instanceof Error ? error.message : "Failed",
-      appropriate: false,
+      appropriate: blockedMissingEvidence,
     });
-    console.log(`${name}: failed; inspect saved evidence.`);
+    console.log(
+      `${name}: ${blockedMissingEvidence ? "blocked before provider call, as required" : "failed; inspect saved evidence"}.`,
+    );
   }
 }
 const directory = path.resolve(".runtime/model-evaluation");
@@ -87,5 +108,5 @@ await writeFile(
   output,
   JSON.stringify({ createdAt: new Date().toISOString(), records }, null, 2),
 );
-console.log(`Actual local-model evidence: ${output}`);
+console.log(`Actual model evidence: ${output}`);
 process.exitCode = failures ? 1 : 0;

@@ -1,4 +1,5 @@
 import { getEnvironment } from "@/lib/env";
+import { processingStatus } from "@/lib/ai/processing";
 import { configuredModel } from "@/lib/ai/factory";
 import { AppError } from "@/lib/http/errors";
 import { readJson } from "@/lib/http/read-json";
@@ -9,12 +10,7 @@ import { runRecovery } from "@/features/recovery/harness";
 export const runtime = "nodejs";
 export const GET = withRoute("recovery.configuration", () => {
   const env = getEnvironment();
-  return Response.json({
-    enabled: env.REENTRY_AI_PROVIDER !== "disabled",
-    provider: env.REENTRY_AI_PROVIDER,
-    model: env.REENTRY_AI_MODEL ?? null,
-    processing: "local",
-  });
+  return Response.json(processingStatus(env));
 });
 export const POST = withRoute("recovery.generate", async (request, { log }) => {
   const env = getEnvironment();
@@ -22,6 +18,16 @@ export const POST = withRoute("recovery.generate", async (request, { log }) => {
     throw new AppError(
       "INVALID_ORIGIN",
       "Open ReEntry at its configured address to request recovery.",
+      403,
+    );
+  const processing = processingStatus(env);
+  if (
+    processing.processing === "hosted" &&
+    request.headers.get("x-reentry-consent") !== processing.consentId
+  )
+    throw new AppError(
+      "PROCESSING_CONSENT_REQUIRED",
+      "Review and agree to the current NVIDIA model's hosted processing before requesting recovery. Reload if the provider or model changed.",
       403,
     );
   const model = configuredModel();

@@ -126,3 +126,45 @@ The managed production app is left running at http://127.0.0.1:3000. Local confi
 Only local Ollama is implemented. A fake alternative verifies the interface; OpenAI/DeepSeek adapters and hosted processing consent are future work. The app preserves facts, validates evidence references and forces review, but cannot prove every interpretation or catch every semantic contradiction. The observed prompt improvements are examples, not an accuracy claim.
 
 No new native keyboard/VoiceOver acceptance, zoom/reflow audit, full six-case model evaluation, checkpoint revision/restore/delete, complete restart resilience, public-site smoke or submission-ready video is claimed. The checkpoint remains intact while reviewed recovery actions are stored separately. Formal Learn reviews remain incomplete. See [PHASE3.md](PHASE3.md) and the remaining [checklist](BUILD_CHECKLIST.md).
+
+## NVIDIA-hosted adapter — October 22, 2026 (IST)
+
+Implementation checkpoint: commit titled `feat: add NVIDIA-hosted recovery with processing consent`; baseline `221a5e9`. No new dependency. The author supplied `NVIDIA_API_KEY` in ignored local configuration; the value is not included in evidence, client assets, source or logs. Other provider credentials were left unused.
+
+The selected provider/model is **NVIDIA / `nvidia/nemotron-3-ultra-550b-a55b`** at its official HTTPS chat-completions endpoint. Live settings: text output containing the strict application JSON proposal, thinking off, temperature 0, 2,000 generated-token cap, prompt `recovery-3`, schema 1, 30-second deadline. Text mode relies on application parsing/validation; it does not claim provider-enforced JSON schema adherence. Remote digest is null because no weight digest was supplied.
+
+### Automated boundaries
+
+- Native NVIDIA HTTP tests exercise bearer headers without credentials in prompts/results, text/JSON-object/JSON-schema request envelopes, thinking omit/on/off and reasoning budget, refusal/tool-call/empty/truncated/malformed/unknown-model/quote/progress/destination rejection, cancellation, redirect refusal, and safe handling of pending/auth/access/options/rate/server errors with one request and no fallback.
+- Server route tests reject missing/stale hosted-processing agreement before provider side effects. The public configuration response contains no key or endpoint credential. Browser tests verify the unchecked agreement, named hosted notice, changed-model rejection/notice refresh, and reset after reload. Those UI tests deliberately stub the app boundary; they are not model evidence.
+- `pnpm test:e2e` passed **26 cases**, with the separate live case intentionally skipped. All earlier capture/source/recovery regressions passed.
+- The focused secret guard now recognizes NVIDIA token patterns. An exact-value check also confirmed the real configured key is absent from built web and extension browser assets, without printing it.
+
+### Actual hosted evaluation
+
+Six scenarios passed against Ultra: five actual inferences and one missing-evidence guard that makes no provider call. Final exact messages/inputs/results/settings are in ignored `.runtime/model-evaluation/2026-10-21T22-44-02-313Z.json`; five observed inference durations were 1,561–4,843 ms. Inspected outputs:
+
+| Scenario                     | Observed behavior                                                                                |
+| ---------------------------- | ------------------------------------------------------------------------------------------------ |
+| One → two referees           | Identifies increased requirement with exact old/new quotes; retains **Find first referee**.      |
+| One → no referees            | Explains removal and replaces the obsolete referee action with reviewing remaining requirements. |
+| Unchanged                    | No material change; preserves the pending action and confirmed progress.                         |
+| Cosmetic punctuation/spacing | Unchanged meaning, with no invented requirement change.                                          |
+| Conflicting two versus none  | Uncertain; asks which new instruction applies before proceeding.                                 |
+| Missing evidence             | Rejected locally before adapter inference.                                                       |
+
+Earlier attempts are not counted as success: Lightning misclassified cosmetic edits, retained an obsolete action, or produced invalid/uncertain outputs on clear examples. Thinking-mode trials did not consistently fix those cases. `nvidia/nemotron-3-super-120b-a12b` returned HTTP 404 for this account despite being in the catalog. Ultra was explicitly chosen after evaluation; the app never automatically changes model/provider. These small samples are not an accuracy benchmark or a guarantee about a changing remote alias.
+
+Ollama regression: `.runtime/model-evaluation/2026-10-21T22-39-25-545Z.json` records all three original local cases passing with prompt 3, same Qwen3 4B digest as Phase 3. This preserves the local adapter; its semantic questions remain subject to review.
+
+### Real hosted browser journey
+
+`REENTRY_TEST_LIVE=1 REENTRY_AI_PROVIDER=nvidia REENTRY_AI_MODEL=nvidia/nemotron-3-ultra-550b-a55b NVIDIA_OUTPUT_MODE=text NVIDIA_THINKING=off pnpm test:e2e --grep @live --output=.runtime/nvidia-live` passed **one actual NVIDIA browser case**. It uses the real extension/activeTab, actual V1/V2 HTML, explicit hosted-processing checkbox, server acknowledgement, NVIDIA inference, preserved progress, correction/save and Continue at the exact stored work URL.
+
+The inspected hosted result states that the referee requirement increased from one to two, cites the exact sentences, and keeps **Find first referee**. Inference took **2,873 ms**. The browser trace contains the processing acknowledgement header and no NVIDIA credential; provider authentication is server-side. Screenshot, trace, page recordings and input/result extracted from the trace are under ignored `.runtime/nvidia-live/recovery--live-real-extens-aade9-del-correction-and-Continue/`. These are test clips, not the submission video.
+
+### Limits
+
+Ultra/text/thinking-off is the live-tested NVIDIA configuration. Other models or output modes need their own real evaluation; HTTP compatibility alone is not support/quality proof. Authentication/usage/account/model availability can vary, and invalid/incomplete responses remain visible failures. No direct Gemini, DeepSeek, OpenRouter, Mistral or OpenAI adapter was implemented. Existing accessibility, revision/history/delete, production-browser release acceptance and formal Learn gaps remain open.
+
+Final workspace verification: `pnpm check` passed all **80 tests across twelve files**, formatting/lint, web/extension types, registry UI, secret-pattern and context guards. `pnpm build` and `pnpm extension:build` passed. Production HTTP smoke passed; `/api/recovery` reports NVIDIA/Ultra hosted processing without a credential, and a same-origin POST without agreement returns `PROCESSING_CONSENT_REQUIRED` before inference. The configured key is absent from final browser assets. The app is left running at http://127.0.0.1:3000 with NVIDIA enabled in ignored local settings. Browser journey evidence is from the test-managed Next development server; full production-browser release acceptance remains separate.
