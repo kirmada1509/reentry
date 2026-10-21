@@ -53,3 +53,5 @@ Git was already initialized by the starter clone, on `main` with the source remo
 `pnpm check` passed again at kickoff, including 20 tests, formatting/lint/types, UI policy, secret-pattern guard, and agent-context validation. No application behavior changed, so the production build was not repeated. Local secrets and personal profile are ignored and untracked.
 
 The first staged whitespace check identified an extra final blank line in the upstream Learn checklist template. Normalized only that trailing newline and recorded the exception in provenance; curriculum content and behavior are unchanged. The earlier 14-file exact-match check predates this normalization.
+
+Baseline commit `8be78ad` saved the ReEntry setup/planning/checklist and draft scope while preserving inherited history. Commit hooks passed staged secret checks, formatting, UI policy, and types. Local profile/credentials stayed ignored and untracked; nothing was pushed.

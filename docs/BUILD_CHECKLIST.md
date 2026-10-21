@@ -9,7 +9,7 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 - [x] Verify Git is initialized in this project; preserve the starter's history.
 - [x] Keep the source remote named `upstream`; do not publish ReEntry changes there.
 - [x] Verify local credentials and the learner profile are ignored and untracked.
-- [ ] Save the reviewed ReEntry planning/setup baseline as a local commit.
+- [x] Save the reviewed ReEntry planning/setup baseline as a local commit: `8be78ad`.
 
 ## Phase 0 — Learn planning
 
