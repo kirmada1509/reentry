@@ -99,7 +99,11 @@ export default function Home() {
           captureId,
         });
         if (!active) return;
-        if (reply.status !== "capture" || reply.capture.id !== captureId)
+        if (
+          reply.status !== "capture" ||
+          reply.capture.id !== captureId ||
+          reply.check
+        )
           throw new Error(
             "This capture is unavailable, unconfirmed, discarded, or expired. Review a pending capture in the extension, or select the source again.",
           );
@@ -160,6 +164,7 @@ export default function Home() {
       );
       if (
         reply.status !== "capture" ||
+        reply.check ||
         JSON.stringify(reply.capture) !== JSON.stringify(capture)
       )
         throw new Error("capture unavailable");
@@ -387,6 +392,11 @@ export default function Home() {
                     Open instruction source
                   </Link>
                 </Button>
+                <Button asChild variant="secondary">
+                  <Link href={`/check?task=${selected.id}`}>
+                    Check instructions again
+                  </Link>
+                </Button>
               </div>
               <Label htmlFor="saved-url">Saved source URL</Label>
               <Textarea
@@ -464,8 +474,8 @@ export default function Home() {
       <footer>
         <p>
           Saved tasks stay in this browser profile. Clearing site data removes
-          them. These are saved instructions; they have not been checked for
-          changes.
+          them. Open a saved checkpoint and choose Check instructions again to
+          compare a fresh capture with its saved instructions.
         </p>
       </footer>
     </main>

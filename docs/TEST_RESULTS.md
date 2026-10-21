@@ -40,6 +40,43 @@ Against the production server at http://127.0.0.1:3000 and the fixture at port 4
 - Focus moved to the saved-checkpoint heading. Command+R preserved one saved task. Tab/Return reopened its card with the same progress and instructions, then opened the saved work URL in a new tab.
 - Native accessibility tree and screenshot were inspected for the saved view. This is a keyboard/UI smoke check, not a screen-reader conformance claim.
 
-## Remaining limits
+## Limits recorded at the Phase 1 checkpoint
 
 No VoiceOver, full zoom/reflow audit, public Selenium smoke result, cross-browser acceptance, model inference, recapture comparison, restore/history or deletion result is claimed. Those belong to later gates. Storage-failure/acknowledgement cases deliberately inject faults; the successful capture/save path uses real extension and IndexedDB behavior. Formal Learn scope/PRD/spec reviews remain incomplete, with no retrospective approvals recorded.
+
+## Phase 2 — October 22, 2026 (IST)
+
+Implementation checkpoint: commit titled `feat: add task-bound source recapture and comparison`; this record is included with that implementation. Phase 1 was already committed as `31c8d24` and the working tree was clean when Phase 2 began. Same pinned environment as Phase 1; new dependency `diff` 9.0.0 (BSD-3-Clause). Synthetic task/source data only.
+
+| Check                                                                               | Observed result                                                                                                                                                                                                                                 |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm check`                                                                        | Formatting, lint, web/extension type checks, 33 tests across nine files, registry UI guard, secret-pattern guard and agent-context checks passed.                                                                                               |
+| `pnpm test:e2e`                                                                     | Fifteen real-extension cases passed: all six Phase 1 capture regressions plus nine Phase 2 source cases.                                                                                                                                        |
+| `pnpm build`                                                                        | Production web build passed, including the new `/check` route.                                                                                                                                                                                  |
+| `pnpm extension:build`                                                              | Production MV3 build passed with task-bound check/capture handling; no additional permissions.                                                                                                                                                  |
+| `pnpm start:managed` + `pnpm smoke`                                                 | Production app at http://127.0.0.1:3000 passed the existing home/health/correlation/missing-route smoke; an additional HTTP check confirmed `/check` responds with its page. This is route availability, not a full production-browser journey. |
+| `pnpm sandbox:sites start 4187`, `pnpm sandbox:switch v2`, `pnpm sandbox:switch v1` | HTTP reads at one stable URL verified one referee → two referees → reset. The owned sandbox server was stopped afterward.                                                                                                                       |
+
+The nine source browser cases cover:
+
+1. Close/reopen the saved task; switch actual served HTML from V1 to V2 at the same URL; real recapture; both snapshots, exact URLs, confirmed progress and saved action survive refresh.
+2. Unchanged text versus punctuation-only edit: exact equality gives unchanged captured material; cosmetic edits still give text changed.
+3. Different URL, different known section and missing same-section confirmation: incomparable, never unchanged.
+4. Discarded preview, explicit cancellation, missing selection and source closed before capture: visible unverified states, no new verified action.
+5. Two simultaneous tasks at the same source URL: task/check/capture mix-ups and wrong-task acknowledgement are rejected.
+6. Network failure and user-reported unreadable/missing instructions: failed/unverified, never unchanged.
+7. Injected comparison-storage failure: awaiting check and pending capture remain; retry saves successfully.
+8. Injected lost acknowledgement: one saved comparison survives refresh, retries acknowledgement and clears the pending transfer without duplication.
+9. Repeated extension invocation reopens the same task-bound capture; closing its source after capture preserves it for confirmation/save.
+
+Unit/integration coverage adds mode/version mismatch handling, raw whitespace edits, immutable snapshots/facts, concurrent starts, duplicate/conflicting delivery, cancelled checks that cannot revive, and a real Dexie v1 → v2 upgrade that preserves legacy records/digests without inventing section metadata. Unsupported extraction metadata is rejected at the wire boundary; only selection/version 1 is implemented.
+
+The successful paths use real selection, Chrome toolbar action/activeTab, external messaging and IndexedDB. Stable-URL tests copy fictional HTML files into isolated temporary directories served by http-server with caching disabled. No fake capture, comparison answer or AI response is injected. The browser helper temporarily tags fixture tab titles to address the correct Chrome tab when URLs match, restores the real title before capture, and preserves the actual source URL. Fault cases deliberately inject storage/message/network failures.
+
+Local ignored evidence: traces under `test-results/`, plus `sources--sources-V1-to-V2--5dc3e-er-returning-and-refreshing/source-comparison.png`. The comparison screenshot was inspected: both captures, timestamps, preserved progress/action and labelled added/removed fragments are visible. Artifacts are regenerated by the suite; they are not public submission assets.
+
+## Current limits after Phase 2
+
+AI interpretation and real-model evaluation begin in Phase 3. A text edit is not a semantic requirement decision; the saved next action remains not reassessed. Selection cannot identify every login/error page, so unreadable sources also have an explicit user report action. Comparisons use the original checkpoint as baseline, not the previous recapture.
+
+No new native keyboard/VoiceOver run, full zoom/reflow audit, public-site smoke, cross-browser acceptance, restore/history/deletion or full browser-restart resilience is claimed for Phase 2. The earlier Phase 1 native keyboard result is scoped to that journey. Formal Learn scope/PRD/spec reviews remain incomplete. See [PHASE2.md](PHASE2.md) for limits and [BUILD_CHECKLIST.md](BUILD_CHECKLIST.md) for remaining gates.

@@ -16,6 +16,10 @@ export const taskInputSchema = z.strictObject({
   }),
 });
 export type TaskInput = z.infer<typeof taskInputSchema>;
+export const sourceSnapshotSchema = captureSchema.extend({
+  digest: z.string().regex(/^[a-f0-9]{64}$/),
+});
+export type SourceSnapshot = z.infer<typeof sourceSnapshotSchema>;
 export const taskSchema = z.strictObject({
   id: idSchema,
   captureId: idSchema,
@@ -26,6 +30,6 @@ export const taskSchema = z.strictObject({
   materialUrls: z.array(httpUrlSchema),
   savedAt: z.iso.datetime(),
   revision: z.literal(1),
-  source: captureSchema.extend({ digest: z.string().regex(/^[a-f0-9]{64}$/) }),
+  source: sourceSnapshotSchema,
 });
 export type SavedTask = z.infer<typeof taskSchema>;

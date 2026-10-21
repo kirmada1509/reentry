@@ -1,5 +1,8 @@
 import { defineConfig } from "@playwright/test";
 import { createServer } from "node:net";
+import { cp, mkdtemp, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 
 async function availableOrigin(): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -22,6 +25,14 @@ const sourceOrigin =
 // Workers inherit these rather than independently allocating different ports.
 process.env.REENTRY_TEST_APP_ORIGIN = appOrigin;
 process.env.REENTRY_TEST_SOURCE_ORIGIN = sourceOrigin;
+if (!process.env.REENTRY_TEST_FIXTURE_DIR) {
+  const directory = await mkdtemp(path.join(tmpdir(), "reentry-sites-"));
+  await cp(path.resolve("tests/fixtures/sites"), directory, {
+    recursive: true,
+  });
+  await writeFile(path.join(directory, ".reentry-owned"), process.cwd());
+  process.env.REENTRY_TEST_FIXTURE_DIR = directory;
+}
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -31,6 +42,7 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   reporter: [["list"], ["html", { open: "never" }]],
   outputDir: "test-results",
+  globalTeardown: "./tests/e2e/global-teardown.ts",
   webServer: [
     {
       command: `pnpm exec wxt build extension --mode e2e && pnpm exec next dev --hostname 127.0.0.1 --port ${new URL(appOrigin).port}`,
@@ -46,7 +58,7 @@ export default defineConfig({
       },
     },
     {
-      command: `pnpm exec http-server tests/fixtures/sites -a 127.0.0.1 -p ${new URL(sourceOrigin).port} -c-1`,
+      command: `pnpm exec http-server "$REENTRY_TEST_FIXTURE_DIR" -a 127.0.0.1 -p ${new URL(sourceOrigin).port} -c-1`,
       url: `${sourceOrigin}/instructions.html`,
       reuseExistingServer: false,
       timeout: 20_000,

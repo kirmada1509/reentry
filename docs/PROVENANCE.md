@@ -21,11 +21,11 @@ Recorded October 21, 2026 (IST). Do not backdate project work or treat inherited
 - Vendored curriculum excluded from automatic local formatting; the single recorded trailing-newline normalization is the only change to upstream files.
 - Installation does not mean the workflow was run. See `devpost/README.md` for actual progress.
 
-## ReEntry work in this session
+## Initial planning session
 
 - The supplied concept says it was prepared October 21, 2026; that is a concept date, not proof of earlier implementation.
 - This session adopted the starter, renamed package/environment identity, installed curriculum, and wrote planning/setup documents.
-- No ReEntry application features or model integrations were implemented. Record actual product implementation start when it happens.
+- No ReEntry application features or model integrations were implemented during that initial planning session. Actual implementation starts are recorded below.
 - AI assistance: Codex inspected sources, initialized the starter, researched requirements, and drafted planning documents. Keep this disclosure current as development proceeds.
 - Preserve real future commits and planning history as evidence; a new repository timestamp alone does not prove project eligibility.
 
@@ -44,3 +44,9 @@ The author explicitly requested implementing Phase 1. Codex wrote the capture pr
 Installed and pinned: WXT 0.21.4 and its React module 1.2.2 (MIT), webext-core messaging 4.0.0 (MIT), Dexie 4.4.6 (Apache-2.0), Playwright 1.64.1 (Apache-2.0), http-server 14.1.1 (MIT), fake-indexeddb 6.2.6 (Apache-2.0), Tailwind Vite integration 4.3.3 (MIT), and Chrome types 0.3.5 (MIT). WXT supplies its storage integration. Package licenses remain in their installed distributions; upstream source links are in [REUSE.md](REUSE.md). The additional official shadcn checkbox was installed through the existing registry tool; acquisition/hash and MIT attribution are retained.
 
 The instruction HTML is original fictional test content under the project license. No Selenium/The Internet source or assets were copied in this phase. No custom scholarship application or parser was built. No model integration or live inference is claimed. The manifest development key is a generated public key used for stable extension identity, not a retained private signing key.
+
+## Phase 2 implementation — October 22, 2026 (IST)
+
+The author requested committing the existing work and implementing Phase 2. Phase 1 was already committed as `31c8d24`. Codex implemented task-bound source-check sessions, explicit recapture confirmation, immutable source snapshots, Dexie v2 migration, comparison/status UI, controlled static instruction versions and additional real-extension/failure tests. No model or hosted provider integration was added.
+
+New pinned dependency: [jsdiff](https://github.com/kpdecker/jsdiff), npm `diff` 9.0.0, BSD-3-Clause. Its installed distribution retains the license. ReEntry uses `diffWordsWithSpace` with time/edit limits for presentation; raw text and exact equality drive evidence/status. The V1/V2/cosmetic HTML files are original fictional content under the project license. http-server remains the existing static host; the switch helper only copies a file and does not implement a sandbox platform. Formal Learn review gaps remain unchanged and are not retrospective approvals.

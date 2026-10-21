@@ -18,7 +18,7 @@ The manifest contains a public development key to keep the unpacked extension id
 
 ## The working journey
 
-1. Open a page containing instructions. For a local example, run `pnpm sandbox:sites` in another terminal and open http://127.0.0.1:4173/instructions.html. If that port is busy, run `pnpm exec http-server tests/fixtures/sites -a 127.0.0.1 -p 4176 -c-1` and use port 4176 instead. This is fictional test content, not a scholarship application.
+1. Open a page containing instructions. For a local example, run `pnpm sandbox:sites` in another terminal and open http://127.0.0.1:4173/instructions.html. If that port is busy, run `pnpm sandbox:sites start 4176` and use port 4176 instead. This is fictional test content, not a scholarship application.
 2. Select the text. Invoke **Capture selection with ReEntry** through the toolbar, or **Command+Shift+Y** on Mac / **Ctrl+Shift+Y** elsewhere. Check `chrome://extensions/shortcuts` if another extension uses that shortcut. ReEntry captures before opening its review tab, preserving the selection when focus moves.
 3. Review the exact text, source URL and capture time. Choose **Discard capture** to decline, or **Confirm capture and open ReEntry**. Opening a preview alone does not create a task.
 4. Enter a goal, complete work URL, completed progress (or “Nothing yet”), and one next action. Confirm that the progress is your own record. Add up to five supporting links if useful. ReEntry has not inspected private form values.
@@ -62,3 +62,5 @@ pnpm test:e2e --grep @capture
 Stop the regular Next.js dev server before browser tests, since Next.js uses one development build directory. Tests choose available app/source ports, compile a separate `chrome-mv3-e2e` extension, use temporary profiles and clean up their own browser/server processes. They do not change the normal unpacked build. Traces and screenshots are ignored under `test-results/`; use synthetic data only.
 
 The automated journey triggers Chrome's actual extension action through its browser-level DevTools protocol, including the `activeTab` grant. It does not fake capture output or add broad website permissions. Keyboard invocation and screen-reader behavior require separate hands-on checks; see [recorded results](TEST_RESULTS.md).
+
+For task-bound recapture and switching the fixture at a stable URL, follow the [Phase 2 walkthrough](PHASE2.md).

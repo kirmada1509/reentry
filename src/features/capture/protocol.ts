@@ -38,11 +38,42 @@ export const captureSchema = z.strictObject({
   capturedAt: z.iso.datetime(),
   mode: z.literal("selection"),
   extractorVersion: z.literal(1),
+  section: z
+    .strictObject({
+      key: z.string().min(1).max(300),
+      label: z.string().min(1).max(300),
+    })
+    .optional(),
 });
 export type Capture = z.infer<typeof captureSchema>;
+export const digestSchema = z.string().regex(/^[a-f0-9]{64}$/);
+export const checkContextSchema = z.strictObject({
+  id: idSchema,
+  taskId: idSchema,
+  baselineId: idSchema,
+  baselineDigest: digestSchema,
+  sourceUrl: httpUrlSchema,
+  goal: z.string().min(1).max(300),
+  startedAt: z.iso.datetime(),
+});
+export type CheckContext = z.infer<typeof checkContextSchema>;
+export const checkFailureSchema = z.enum([
+  "cancelled",
+  "no-selection",
+  "unsupported",
+  "too-large",
+  "storage-failed",
+  "capture-failed",
+  "source-closed",
+  "extension-unavailable",
+  "source-unavailable",
+  "context-lost",
+]);
+export type CheckFailure = z.infer<typeof checkFailureSchema>;
 export const pendingSchema = z.strictObject({
   capture: captureSchema,
   status: z.enum(["draft", "confirmed"]),
+  check: checkContextSchema.optional(),
 });
 export type PendingCapture = z.infer<typeof pendingSchema>;
 
@@ -57,14 +88,44 @@ export const bridgeRequestSchema = z.discriminatedUnion("type", [
     type: z.literal("capture.ack"),
     captureId: idSchema,
     taskId: idSchema,
+    checkId: idSchema.optional(),
+  }),
+  z.strictObject({
+    version: z.literal(1),
+    type: z.literal("check.start"),
+    check: checkContextSchema,
+  }),
+  z.strictObject({
+    version: z.literal(1),
+    type: z.literal("check.status"),
+    checkId: idSchema,
+    taskId: idSchema,
+  }),
+  z.strictObject({
+    version: z.literal(1),
+    type: z.literal("check.cancel"),
+    checkId: idSchema,
+    taskId: idSchema,
   }),
 ]);
 export type BridgeRequest = z.infer<typeof bridgeRequestSchema>;
 export const bridgeResponseSchema = z.discriminatedUnion("status", [
-  z.strictObject({ status: z.literal("capture"), capture: captureSchema }),
+  z.strictObject({
+    status: z.literal("capture"),
+    capture: captureSchema,
+    check: checkContextSchema.optional(),
+  }),
   z.strictObject({ status: z.literal("acknowledged") }),
   z.strictObject({ status: z.literal("unavailable") }),
   z.strictObject({ status: z.literal("rejected") }),
+  z.strictObject({ status: z.literal("check-started"), checkId: idSchema }),
+  z.strictObject({
+    status: z.literal("check-status"),
+    checkId: idSchema,
+    state: z.enum(["awaiting", "captured", "failed", "cancelled"]),
+    reason: checkFailureSchema.optional(),
+  }),
+  z.strictObject({ status: z.literal("check-cancelled") }),
 ]);
 export type BridgeResponse = z.infer<typeof bridgeResponseSchema>;
 

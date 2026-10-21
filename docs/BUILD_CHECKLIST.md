@@ -1,6 +1,6 @@
 # ReEntry build checklist
 
-Project execution tracker, started October 21, 2026. Phase 1 implemented October 22. Details and test gates: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md); actual evidence: [TEST_RESULTS.md](TEST_RESULTS.md).
+Project execution tracker, started October 21, 2026. Phases 1–2 implemented October 22. Details and test gates: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md); actual evidence: [TEST_RESULTS.md](TEST_RESULTS.md).
 
 This checklist tracks actual project work. It is not the formal Learn `devpost/checklist.md`, which `5-build` generates from the genuinely reviewed scope, PRD, and spec. Do not mark a phase complete until its gate passes.
 
@@ -37,13 +37,13 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 
 ## Phase 2 — Return and compare
 
-- [ ] Add Return/Open source/Check again with explicit task/source association.
-- [ ] Reuse existing form pages; add only small V1/V2 instruction fixtures served by http-server.
-- [ ] Recapture at a stable source URL and show raw old/new evidence using jsdiff.
-- [ ] Distinguish changed text, unchanged captured section, failed check, and incomparable captures.
-- [ ] Pass `@sources` checks, including wrong-task/section and failed recapture cases.
+- [x] Add Return/Open source/Check again with explicit task/source association.
+- [x] Reuse existing form pages; add only small V1/V2 instruction fixtures served by http-server.
+- [x] Recapture at a stable source URL and show raw old/new evidence using jsdiff.
+- [x] Distinguish changed text, unchanged captured section, failed check, and incomparable captures.
+- [x] Pass `@sources` checks, including wrong-task/section and failed recapture cases.
 
-**Gate:** current source evidence is inspectable; failed checks never become “unchanged.”
+**Gate passed:** current source evidence is inspectable; failed checks never become “unchanged.” See [walkthrough](PHASE2.md) and [results](TEST_RESULTS.md).
 
 ## Phase 3 — Real-model recovery
 
@@ -92,4 +92,4 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 
 ## Recording progress
 
-When tests exist, save real outcomes in `docs/TEST_RESULTS.md`: phase, commit, commands, automated/manual results, evidence links, and limitations. Keep the next action in [WORK.md](WORK.md). Planned extension/sandbox/end-to-end commands are not available yet. Never tick a box because a file merely exists or a mock produced the desired answer.
+When tests exist, save real outcomes in `docs/TEST_RESULTS.md`: phase, commit, commands, automated/manual results, evidence links, and limitations. Keep the next action in [WORK.md](WORK.md). Capture/source browser cases and the static sandbox are runnable; model, resilience and accessibility tags remain planned. Never tick a box because a file merely exists or a mock produced the desired answer.

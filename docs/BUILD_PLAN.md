@@ -1,6 +1,6 @@
 # ReEntry build plan
 
-Updated October 22, 2026: **reuse open-source components and online sandboxes first**. The browser extension plus web app now implements Phase 1 capture and persistent task saving. The remaining recovery workflow and replaceable model adapters are planned. See [working setup](PHASE1.md) and [actual verification](TEST_RESULTS.md).
+Updated October 22, 2026: **reuse open-source components and online sandboxes first**. The browser extension plus web app now implements Phase 1 capture/saving and Phase 2 task-bound recapture, immutable snapshots and text comparison through jsdiff. AI interpretation and later recovery features remain planned. See [working setup](PHASE1.md), [return-and-compare walkthrough](PHASE2.md) and [actual verification](TEST_RESULTS.md).
 
 ## What we are building ourselves
 

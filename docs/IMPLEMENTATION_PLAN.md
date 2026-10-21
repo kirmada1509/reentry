@@ -1,6 +1,6 @@
 # ReEntry phase-wise implementation plan
 
-Roadmap started October 21, updated October 22, 2026. **Phase 1 is implemented and verified; formal Phase 0 Learn reviews remain incomplete.** This translates the agreed browser-extension/web-app direction into small working increments. Product boundaries and reusable tools remain in [BUILD_PLAN.md](BUILD_PLAN.md) and [REUSE.md](REUSE.md).
+Roadmap started October 21, updated October 22, 2026. **Phases 1–2 are implemented and verified; formal Phase 0 Learn reviews remain incomplete.** This translates the agreed browser-extension/web-app direction into small working increments. Product boundaries and reusable tools remain in [BUILD_PLAN.md](BUILD_PLAN.md) and [REUSE.md](REUSE.md).
 
 ## How we will work
 
@@ -12,7 +12,7 @@ The **first complete recovery demonstration is Phase 3**: capture → pause → 
 | ----- | ----------------------------------------------- | ---------------------------------------------------------------- | ----------- |
 | 0     | Required Learn decisions recorded before code   | Genuine planning artifacts and truthful review state             | In progress |
 | 1     | Capture an external page and save a task        | Real extension transfer; checkpoint survives refresh             | Complete    |
-| 2     | Return and inspect what changed                 | Same-source V1/V2 evidence; failed checks stay unverified        | Not started |
+| 2     | Return and inspect what changed                 | Same-source V1/V2 evidence; failed checks stay unverified        | Complete    |
 | 3     | Get a useful AI recovery card                   | Real open-weight model interprets the change with valid evidence | Not started |
 | 4     | Correct mistakes and recover from interruptions | Restore, retry, deduplication, restart, and deletion tests       | Not started |
 | 5     | Complete the accessible journey                 | Keyboard/VoiceOver walkthrough plus full acceptance coverage     | Not started |
@@ -55,6 +55,8 @@ Implemented October 22; see [results](TEST_RESULTS.md) and [try it](PHASE1.md). 
 **Evidence/checkpoint:** capture browser trace, manual Chrome result, tested package versions, and source/license records; save a focused implementation commit after verification.
 
 ## Phase 2 — Return and see source changes
+
+Implemented October 22; see [walkthrough](PHASE2.md) and [results](TEST_RESULTS.md). Phase 1 was already committed as `31c8d24` before this implementation.
 
 **What you can try:** reopen a saved task, capture updated instructions, and inspect old versus new text without losing confirmed progress.
 
@@ -151,7 +153,7 @@ Prepare a roughly two-minute real run with the controlled fixture clearly identi
 
 ## Commands and when they become available
 
-Existing and Phase 1 commands are runnable. Phase 2–5 test tags, the model sandbox and live-model command remain planned; they have no implemented cases yet.
+Existing and Phase 1–2 commands are runnable. Phase 3–5 test tags, the model sandbox and live-model command remain planned; they have no implemented cases yet.
 
 | Phase introduced | Command                            | Purpose                                                                              |
 | ---------------- | ---------------------------------- | ------------------------------------------------------------------------------------ |
@@ -159,6 +161,7 @@ Existing and Phase 1 commands are runnable. Phase 2–5 test tags, the model san
 | 1                | `pnpm extension:build`             | Build the WXT extension; include its type/lint checks in workspace verification      |
 | 1                | `pnpm sandbox:sites`               | Serve local fixture data with http-server; runner supports per-run ports/directories |
 | 1                | `pnpm test:e2e --grep @capture`    | Run real-extension capture/storage cases                                             |
+| 2                | `pnpm sandbox:switch v2`           | Replace fictional source HTML at the same URL; reload before recapturing             |
 | 2                | `pnpm test:e2e --grep @sources`    | Run recapture and evidence cases                                                     |
 | 3                | `pnpm sandbox:model`               | Expose MSW handlers through Serve for browser/integration tests                      |
 | 3                | `pnpm test:e2e --grep @recovery`   | Run deterministic model/card cases                                                   |

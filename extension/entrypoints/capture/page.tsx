@@ -124,6 +124,36 @@ export default function CapturePage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
+            {selected.check && (
+              <Alert>
+                <AlertTitle>
+                  Check instructions for: {selected.check.goal}
+                </AlertTitle>
+                <AlertDescription>
+                  This recapture is bound to the task that opened the source
+                  tab. It will compare with that task’s saved source, not create
+                  a new task.
+                </AlertDescription>
+              </Alert>
+            )}
+            <p>
+              Section:{" "}
+              {selected.capture.section?.label ??
+                "Unidentified selection — confirm the section in ReEntry"}
+            </p>
+            {selected.check && (
+              <>
+                <Label htmlFor="expected-source">
+                  Saved source for this task
+                </Label>
+                <Textarea
+                  id="expected-source"
+                  readOnly
+                  value={selected.check.sourceUrl}
+                  rows={2}
+                />
+              </>
+            )}
             <Label htmlFor="capture-source">Source URL</Label>
             <Textarea
               id="capture-source"
@@ -147,7 +177,9 @@ export default function CapturePage() {
               >
                 {selected.status === "confirmed"
                   ? "Open ReEntry again"
-                  : "Confirm capture and open ReEntry"}
+                  : selected.check
+                    ? "Confirm recapture for this task"
+                    : "Confirm capture and open ReEntry"}
               </Button>
               <Button
                 variant="outline"
@@ -167,6 +199,7 @@ export default function CapturePage() {
             <CardHeader>
               <CardTitle>{item.capture.title}</CardTitle>
               <CardDescription>
+                {item.check ? `Task: ${item.check.goal}. ` : ""}
                 {item.status === "confirmed"
                   ? "Waiting for task save"
                   : "Waiting for your review"}
