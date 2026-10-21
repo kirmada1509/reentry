@@ -2,7 +2,7 @@ import type { z } from "zod";
 import { AppError } from "./errors";
 
 export async function readJson<T>(
-  request: Request,
+  request: Pick<Request, "headers" | "body">,
   schema: z.ZodType<T>,
   limit = 64 * 1024,
 ): Promise<T> {

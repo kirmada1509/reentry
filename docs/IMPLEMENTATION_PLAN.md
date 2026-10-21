@@ -1,6 +1,6 @@
 # ReEntry phase-wise implementation plan
 
-Roadmap started October 21, updated October 22, 2026. **Phases 1–2 are implemented and verified; formal Phase 0 Learn reviews remain incomplete.** This translates the agreed browser-extension/web-app direction into small working increments. Product boundaries and reusable tools remain in [BUILD_PLAN.md](BUILD_PLAN.md) and [REUSE.md](REUSE.md).
+Roadmap started October 21, updated October 22, 2026. **Phases 1–3 are implemented and verified; formal Phase 0 Learn reviews remain incomplete.** This translates the agreed browser-extension/web-app direction into small working increments. Product boundaries and reusable tools remain in [BUILD_PLAN.md](BUILD_PLAN.md) and [REUSE.md](REUSE.md).
 
 ## How we will work
 
@@ -13,7 +13,7 @@ The **first complete recovery demonstration is Phase 3**: capture → pause → 
 | 0     | Required Learn decisions recorded before code   | Genuine planning artifacts and truthful review state             | In progress |
 | 1     | Capture an external page and save a task        | Real extension transfer; checkpoint survives refresh             | Complete    |
 | 2     | Return and inspect what changed                 | Same-source V1/V2 evidence; failed checks stay unverified        | Complete    |
-| 3     | Get a useful AI recovery card                   | Real open-weight model interprets the change with valid evidence | Not started |
+| 3     | Get a useful AI recovery card                   | Real open-weight model interprets the change with valid evidence | Complete    |
 | 4     | Correct mistakes and recover from interruptions | Restore, retry, deduplication, restart, and deletion tests       | Not started |
 | 5     | Complete the accessible journey                 | Keyboard/VoiceOver walkthrough plus full acceptance coverage     | Not started |
 | 6     | Reproduce and present the finished product      | Fresh-profile setup, passing release checks, working demo        | Not started |
@@ -76,6 +76,8 @@ Implemented October 22; see [walkthrough](PHASE2.md) and [results](TEST_RESULTS.
 **Evidence/checkpoint:** record V1/V2 snapshots and browser assertions, then commit the working return/compare slice.
 
 ## Phase 3 — Interpret the change with a real open-weight model
+
+Implemented October 22 with local Qwen3 4B after explicit model/prompt evaluation. Three live cases and the full real-extension/model journey passed. See [setup](PHASE3.md) and [actual evidence and limits](TEST_RESULTS.md).
 
 **What you can try:** receive a recovery card explaining “two referees are now required” and proposing the first concrete next action, with inspectable evidence.
 
@@ -153,7 +155,7 @@ Prepare a roughly two-minute real run with the controlled fixture clearly identi
 
 ## Commands and when they become available
 
-Existing and Phase 1–2 commands are runnable. Phase 3–5 test tags, the model sandbox and live-model command remain planned; they have no implemented cases yet.
+Existing and Phase 1–3 commands are runnable, including the MSW model sandbox and explicit live evaluation. Phase 4–5 test tags remain planned and have no implemented cases yet.
 
 | Phase introduced | Command                            | Purpose                                                                              |
 | ---------------- | ---------------------------------- | ------------------------------------------------------------------------------------ |

@@ -261,7 +261,7 @@ export default function CheckPage() {
             <p>{task.nextAction}</p>
             <p>
               Review your saved action when text changes or the source cannot be
-              verified. AI interpretation has not run.
+              verified. Open AI recovery to request and review a suggestion.
             </p>
             <Button asChild variant="outline">
               <Link
@@ -450,6 +450,14 @@ export default function CheckPage() {
           )}
         </section>
       )}
+      {task &&
+        check &&
+        ["changed", "unchanged"].includes(check.status) &&
+        !capture && (
+          <Button asChild>
+            <Link href={`/recover?task=${task.id}`}>Review AI recovery</Link>
+          </Button>
+        )}
       <footer>
         <p>
           Your original checkpoint remains intact. ReEntry compares only the

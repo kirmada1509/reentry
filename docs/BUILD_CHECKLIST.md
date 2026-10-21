@@ -1,6 +1,6 @@
 # ReEntry build checklist
 
-Project execution tracker, started October 21, 2026. Phases 1–2 implemented October 22. Details and test gates: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md); actual evidence: [TEST_RESULTS.md](TEST_RESULTS.md).
+Project execution tracker, started October 21, 2026. Phases 1–3 implemented October 22. Details and test gates: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md); actual evidence: [TEST_RESULTS.md](TEST_RESULTS.md).
 
 This checklist tracks actual project work. It is not the formal Learn `devpost/checklist.md`, which `5-build` generates from the genuinely reviewed scope, PRD, and spec. Do not mark a phase complete until its gate passes.
 
@@ -47,16 +47,16 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 
 ## Phase 3 — Real-model recovery
 
-- [ ] Define the provider-independent recovery interface and simple harness from [HARNESS.md](HARNESS.md); keep SDK types out of UI/storage.
-- [ ] Connect local Ollama through a bounded, validated server-only adapter with configurable provider/model; disable implicit retries and automatic cloud fallback.
-- [ ] Validate source ids/quotes, action targets, output bounds, and consistency with confirmed facts.
-- [ ] Show a correctable recovery card and one next action; Continue uses the saved work link.
-- [ ] Reuse MSW/Serve handlers for deterministic good/error model responses; pass `@recovery` checks.
-- [ ] Verify the common harness contract with mocked Ollama and a fake alternative, including invalid configuration, cancellation, stale results and no remote fallback. Hosted adapters require their own tests and explicit processing agreement when added later.
-- [ ] Record real-model increase, unchanged, and contradiction runs with actual inputs/outputs and model/prompt identifiers.
-- [ ] Demonstrate real capture → pause → change → recapture → actual inference → Continue with mocks disabled.
+- [x] Define the provider-independent recovery interface and simple harness from [HARNESS.md](HARNESS.md); keep SDK types out of UI/storage.
+- [x] Connect local Ollama through a bounded, validated server-only adapter with configurable provider/model; disable implicit retries and automatic cloud fallback.
+- [x] Validate source ids/quotes, action targets, output bounds, and consistency with confirmed facts.
+- [x] Show a correctable recovery card and one next action; Continue uses the saved work link.
+- [x] Reuse MSW/Serve handlers for deterministic good/error model responses; pass `@recovery` checks.
+- [x] Verify the common harness contract with mocked Ollama and a fake alternative, including invalid configuration, cancellation, stale results and no remote fallback. Hosted adapters require their own tests and explicit processing agreement when added later.
+- [x] Record real-model increase, unchanged, and contradiction runs with actual inputs/outputs and model/prompt identifiers.
+- [x] Demonstrate real capture → pause → change → recapture → actual inference → Continue with mocks disabled.
 
-**Gate:** the core journey works with a real open-weight model; mocked success cannot clear it.
+**Gate passed:** the core journey works with actual local Qwen3 4B, including review/correction and Continue. Three live cases and a separate real-extension/model journey passed; see [results](TEST_RESULTS.md) and [setup](PHASE3.md).
 
 ## Phase 4 — Correction and resilience
 
@@ -92,4 +92,4 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 
 ## Recording progress
 
-When tests exist, save real outcomes in `docs/TEST_RESULTS.md`: phase, commit, commands, automated/manual results, evidence links, and limitations. Keep the next action in [WORK.md](WORK.md). Capture/source browser cases and the static sandbox are runnable; model, resilience and accessibility tags remain planned. Never tick a box because a file merely exists or a mock produced the desired answer.
+When tests exist, save real outcomes in `docs/TEST_RESULTS.md`: phase, commit, commands, automated/manual results, evidence links, and limitations. Keep the next action in [WORK.md](WORK.md). Capture/source/recovery browser cases, static/MSW sandboxes and explicit live-model evaluation are runnable; resilience and accessibility tags remain planned. Never tick a box because a file merely exists or a mock produced the desired answer.

@@ -27,6 +27,40 @@ const schema = z
     LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
     REENTRY_APP_ORIGIN: appOriginSchema.default(DEFAULT_APP_ORIGIN),
     REENTRY_EXTENSION_ID: extensionIdSchema.default(DEFAULT_EXTENSION_ID),
+    REENTRY_AI_PROVIDER: z.enum(["disabled", "ollama"]).default("disabled"),
+    REENTRY_AI_MODEL: z.preprocess(
+      (v) => (v === "" ? undefined : v),
+      z
+        .string()
+        .regex(/^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,199}$/)
+        .optional(),
+    ),
+    REENTRY_AI_ENDPOINT: z
+      .string()
+      .url()
+      .refine((value) => {
+        const url = new URL(value);
+        return (
+          url.protocol === "http:" &&
+          ["127.0.0.1", "localhost", "[::1]"].includes(url.hostname) &&
+          !url.username &&
+          !url.password &&
+          url.pathname === "/" &&
+          !url.search &&
+          !url.hash
+        );
+      }, "Use a loopback HTTP origin for local inference.")
+      .default("http://127.0.0.1:11434"),
+    REENTRY_AI_THINK: z
+      .enum(["true", "false"])
+      .default("false")
+      .transform((v) => v === "true"),
+    REENTRY_AI_TIMEOUT_MS: z.coerce
+      .number()
+      .int()
+      .min(250)
+      .max(30000)
+      .default(30000),
     AXIOM_TOKEN: optionalString,
     AXIOM_DATASET: optionalString,
     AXIOM_EDGE: z
@@ -39,6 +73,18 @@ const schema = z
     ),
   })
   .superRefine((value, context) => {
+    if (value.REENTRY_AI_PROVIDER === "ollama" && !value.REENTRY_AI_MODEL)
+      context.addIssue({
+        code: "custom",
+        path: ["REENTRY_AI_MODEL"],
+        message: "Choose an installed local model when enabling Ollama.",
+      });
+    if (value.REENTRY_AI_PROVIDER === "disabled" && value.REENTRY_AI_MODEL)
+      context.addIssue({
+        code: "custom",
+        path: ["REENTRY_AI_PROVIDER"],
+        message: "Enable a supported provider when setting a model.",
+      });
     if (Boolean(value.AXIOM_TOKEN) !== Boolean(value.AXIOM_DATASET)) {
       context.addIssue({
         code: "custom",

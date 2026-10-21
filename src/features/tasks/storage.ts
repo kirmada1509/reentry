@@ -4,11 +4,13 @@ import { captureSchema } from "../capture/protocol";
 import type { Capture } from "../capture/protocol";
 import { taskInputSchema, taskSchema } from "./schema";
 import type { SavedTask } from "./schema";
+import type { RecoveryRecord } from "../recovery/schema";
 import type { SourceCheck } from "../sources/schema";
 
 export class TaskDatabase extends Dexie {
   tasks!: Table<SavedTask, string>;
   checks!: Table<SourceCheck, string>;
+  recoveries!: Table<RecoveryRecord, string>;
 
   constructor(name = "reentry") {
     super(name);
@@ -16,6 +18,11 @@ export class TaskDatabase extends Dexie {
     this.version(2).stores({
       tasks: "id, &captureId, savedAt",
       checks: "id, taskId, &captureId, startedAt",
+    });
+    this.version(3).stores({
+      tasks: "id, &captureId, savedAt",
+      checks: "id, taskId, &captureId, startedAt",
+      recoveries: "id, taskId, checkId, createdAt",
     });
   }
 }

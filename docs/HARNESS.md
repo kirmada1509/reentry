@@ -1,6 +1,6 @@
 # ReEntry harness and model choice
 
-Decision, October 22, 2026: keep a small, fixed recovery workflow and a replaceable model connection. No LangChain, LangGraph, autonomous tool loop, or multi-agent framework is needed for the first release. This is a design decision, not an implemented integration.
+Decision, October 22, 2026: keep a small, fixed recovery workflow and a replaceable model connection. No LangChain, LangGraph, autonomous tool loop, or multi-agent framework is needed for the first release. Phase 3 implements this boundary with local Ollama and a provider-independent contract. Setup, bounds and current limits: [PHASE3.md](PHASE3.md).
 
 ## What the harness does
 
@@ -41,7 +41,7 @@ For the initial Ollama adapter, use its documented native structured-output API 
 | DeepSeek API                                  | Later optional direct-provider adapter           | Its own contract tests and live evaluation; do not assume OpenAI options are identical       |
 | Other compatible endpoint                     | Possible later adapter                           | Verify the actual API and capabilities; changing a base URL alone does not establish support |
 
-Qwen3 4B is an initial local candidate, not a model id embedded in the recovery logic. A self-hosted DeepSeek model can also be served through a local runtime; that is different from sending data to DeepSeek's hosted API.
+Qwen3 4B is the planned local candidate; model ids remain server configuration rather than being embedded in recovery logic. Actual tested runs and model selection are recorded in [TEST_RESULTS.md](TEST_RESULTS.md). A self-hosted DeepSeek model can also be served through a local runtime; that is different from sending data to DeepSeek's hosted API.
 
 ## Capabilities, configuration and privacy
 

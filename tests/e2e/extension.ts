@@ -15,6 +15,14 @@ export const test = base.extend<{
     const profile = await mkdtemp(path.join(tmpdir(), "reentry-capture-"));
     const context = await chromium.launchPersistentContext(profile, {
       channel: "chromium",
+      ...(process.env.REENTRY_TEST_LIVE === "1"
+        ? {
+            recordVideo: {
+              dir: info.outputPath("video"),
+              size: { width: 1280, height: 900 },
+            },
+          }
+        : {}),
       headless: process.env.HEADED !== "1",
       args: [
         `--disable-extensions-except=${extensionPath}`,

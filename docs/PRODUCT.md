@@ -1,6 +1,6 @@
 # ReEntry product brief
 
-Updated October 22, 2026: Phase 1 capture and persistent task saving is implemented using existing open-source tools. Source comparison, AI recovery and the remaining phases are planned. Original intent: [reentry.md](../reentry.md). This brief is planning input, not a substitute for the required Learn documents.
+Updated October 22, 2026: capture, persistent checkpoints, source comparison and the Phase 3 AI recovery flow are implemented using existing open-source tools. Verification status and limits are in [TEST_RESULTS.md](TEST_RESULTS.md). Later resilience, accessibility and release gates remain pending. Original intent: [reentry.md](../reentry.md). This brief is planning input, not a substitute for the required Learn documents.
 
 ## Outcome
 
@@ -46,4 +46,4 @@ Select standard components and default variants. UI planning is welcome; writing
 - Done: real external-page capture/recapture, reliable transfer, persistent checkpoints, real local-model recovery, evidenced changes, correction/restore, passing required sandbox cases, verified accessible journey, public licensed repository, and working demo video.
 - First deadline: Task Forge, October 25 at 02:30 IST; target completion/submission October 24 evening.
 - Owner: project author; eligibility and event registration remain their responsibility.
-- Execution: follow the [testable phase plan](IMPLEMENTATION_PLAN.md). Phases 1–2 implement capture, persistence and source comparison; AI recovery starts in Phase 3. The author requested implementation before formal Learn reviews were complete; those reviews remain pending, not retrospectively approved; the first complete live-model recovery demo is Phase 3, followed by resilience, accessibility, and release gates. See [build plan](BUILD_PLAN.md) and [event checks](HACKATHONS.md).
+- Execution: follow the [testable phase plan](IMPLEMENTATION_PLAN.md). Phases 1–3 implement capture, persistence, source comparison and real local AI recovery. The author requested implementation before formal Learn reviews were complete; those reviews remain pending, not retrospectively approved; the first complete live-model recovery demo is Phase 3, followed by resilience, accessibility, and release gates. See [build plan](BUILD_PLAN.md) and [event checks](HACKATHONS.md).

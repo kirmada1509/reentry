@@ -20,10 +20,14 @@ async function availableOrigin(): Promise<string> {
 
 const appOrigin =
   process.env.REENTRY_TEST_APP_ORIGIN ?? (await availableOrigin());
+const live = process.env.REENTRY_TEST_LIVE === "1";
+const modelOrigin =
+  process.env.REENTRY_TEST_MODEL_ORIGIN ?? (await availableOrigin());
 const sourceOrigin =
   process.env.REENTRY_TEST_SOURCE_ORIGIN ?? (await availableOrigin());
 // Workers inherit these rather than independently allocating different ports.
 process.env.REENTRY_TEST_APP_ORIGIN = appOrigin;
+process.env.REENTRY_TEST_MODEL_PORT = new URL(modelOrigin).port;
 process.env.REENTRY_TEST_SOURCE_ORIGIN = sourceOrigin;
 if (!process.env.REENTRY_TEST_FIXTURE_DIR) {
   const directory = await mkdtemp(path.join(tmpdir(), "reentry-sites-"));
@@ -44,6 +48,16 @@ export default defineConfig({
   outputDir: "test-results",
   globalTeardown: "./tests/e2e/global-teardown.ts",
   webServer: [
+    ...(!live
+      ? [
+          {
+            command: "pnpm sandbox:model",
+            url: `${modelOrigin}/api/tags`,
+            reuseExistingServer: false,
+            timeout: 20000,
+          },
+        ]
+      : []),
     {
       command: `pnpm exec wxt build extension --mode e2e && pnpm exec next dev --hostname 127.0.0.1 --port ${new URL(appOrigin).port}`,
       url: appOrigin,
@@ -51,6 +65,17 @@ export default defineConfig({
       timeout: 120_000,
       env: {
         REENTRY_APP_ORIGIN: appOrigin,
+        REENTRY_AI_PROVIDER: "ollama",
+        REENTRY_AI_MODEL: live
+          ? (process.env.REENTRY_AI_MODEL ?? "qwen3:4b")
+          : "reentry-test",
+        REENTRY_AI_ENDPOINT: live
+          ? (process.env.REENTRY_AI_ENDPOINT ?? "http://127.0.0.1:11434")
+          : modelOrigin,
+        REENTRY_AI_THINK: live
+          ? (process.env.REENTRY_AI_THINK ?? "false")
+          : "false",
+        REENTRY_AI_TIMEOUT_MS: live ? "30000" : "2000",
         REENTRY_EXTENSION_ID: "nabinfdlobegbkgehppcipkhbddjbdka",
         AXIOM_TOKEN: "",
         AXIOM_DATASET: "",

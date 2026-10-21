@@ -80,3 +80,49 @@ Local ignored evidence: traces under `test-results/`, plus `sources--sources-V1-
 AI interpretation and real-model evaluation begin in Phase 3. A text edit is not a semantic requirement decision; the saved next action remains not reassessed. Selection cannot identify every login/error page, so unreadable sources also have an explicit user report action. Comparisons use the original checkpoint as baseline, not the previous recapture.
 
 No new native keyboard/VoiceOver run, full zoom/reflow audit, public-site smoke, cross-browser acceptance, restore/history/deletion or full browser-restart resilience is claimed for Phase 2. The earlier Phase 1 native keyboard result is scoped to that journey. Formal Learn scope/PRD/spec reviews remain incomplete. See [PHASE2.md](PHASE2.md) for limits and [BUILD_CHECKLIST.md](BUILD_CHECKLIST.md) for remaining gates.
+
+## Phase 3 — October 22, 2026 (IST)
+
+Implementation checkpoint: commit titled `feat: implement provider-independent AI recovery`; this record is included with that implementation. Prior product commit: `0052e56`. Same macOS/Node/pnpm/Next/WXT/Playwright environment as Phase 2. New test tools: MSW 3.0.3, Serve 0.11.0 and tsx 4.23.15. Fictional task/instruction data only; no hosted inference used.
+
+### Deterministic checks
+
+- Unit/integration suite: 55 tests across eleven files passed, including existing regressions, common harness contract against native Ollama through MSW and a fake alternative, exact quote/id and progress validation, invented completion/destination rejection, empty/truncated/refused output, input budgets, deadline/cancellation, no fallback, persistence/review/stale input and HTTP origin/payload/correlation boundaries.
+- `pnpm test:e2e`: 25 passed, one live-only case deliberately skipped. All fifteen capture/source regressions passed; ten recovery cases covered validated suggestion → correction → save → refresh → correct work URL; malformed/invalid quote/progress/completion/destination outputs; unavailable service; deadline; cancellation without later saving; and a real newer source check invalidating a held response.
+- MSW/Serve mocked the actual native Ollama listing/chat envelope for server-to-model calls. Successful capture/source/bridge/database paths used the real extension and IndexedDB. These tests establish integration behavior, not model quality or hosted-provider support.
+
+### Actual local-model evidence
+
+Runtime: Ollama **0.34.4**. Selected model: **qwen3:4b**, Q4_K_M, Apache-2.0, digest `359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7`. Native structured JSON output; thinking disabled, temperature 0, 16,384 context tokens, 2,000 maximum generated tokens. Prompt `recovery-2`, output schema 1. The model id is server configuration, not recovery logic.
+
+Final `pnpm test:model:live` passed all three case assertions. Full actual messages, input snapshots, proposals, execution settings and digests are saved in ignored `.runtime/model-evaluation/2026-10-21T21-17-10-891Z.json`. Outputs were inspected beyond the assertions:
+
+| Case                            | Observed interpretation and action                                                                                                   | Duration |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------- |
+| One → two referees              | Changed; “Two referees are now required.” Exact one/two source quotes; action **Find first referee**; transcript progress preserved. | 6,791 ms |
+| Same instructions               | Unchanged; no changes/questions; retains **Find first referee** and confirmed progress.                                              | 1,711 ms |
+| Two referees versus no referees | Uncertain; asks which instruction applies and proposes clarification before disputed work.                                           | 2,433 ms |
+
+These are observed runs with a model already used during development, not cold-start timings or a broad accuracy benchmark. The required six-case release evaluation remains Phase 5.
+
+Earlier real trials are retained under `.runtime/model-evaluation/`. The installed Qwen3.5 9B exceeded deadlines under load and once proposed the second referee before the first was complete. Early Qwen3 4B output also expanded the action and mishandled contradictions; enabling thinking exceeded the deadline. A later heuristic-passing result still misstated a remaining quantity, which human inspection caught. The final prompt uses generic sample-collection examples, prioritizes contradiction, preserves a useful pending action verbatim and prohibits inferred remaining counts. The final outputs above passed after that change. The app does not implement trial-driven model switching or automatic retry; these were explicit development evaluations. Quote/schema validity alone did not establish correctness.
+
+### Real extension + model journey
+
+`REENTRY_TEST_LIVE=1 REENTRY_AI_MODEL=qwen3:4b REENTRY_AI_THINK=false pnpm test:e2e --grep @live --output=.runtime/phase3-live` passed **one real-model browser case** with the MSW model server disabled. It captured V1 through the actual extension, saved a checkpoint, closed/reopened its task view, changed the actual HTML at the same URL, recaptured and compared V2, called local Ollama, preserved confirmed progress, edited/saved the reviewed action, and opened the exact saved work URL via Continue.
+
+The browser's actual response said **“Two referees are now required”**, cited the exact old/new sentences, and retained **“Find first referee.”** Inference took **4,636 ms** with the same digest, prompt/schema and settings as above. The reviewed action was changed to “Ask Alex to be my first referee; then find the second.” The external destination opened with the original `#work` URL; no model-generated URL or form submission occurred.
+
+Ignored evidence directory: `.runtime/phase3-live/recovery--live-real-extens-aade9-del-correction-and-Continue/`. It contains the trace, inspected `live-recovery.png`, actual input/result extracted from the trace into `actual-browser-recovery.json`, and nine real page recordings under `video/`. These are test evidence clips, not the finished hackathon submission video. Deterministic traces remain under `test-results/`.
+
+### Final workspace and production checks
+
+`pnpm check` passed: formatting, lint, web/extension type checks, all 55 tests across eleven files, registry UI, secret-pattern and agent-context guards. Final `pnpm build` and `pnpm extension:build` passed with `/api/recovery` and `/recover` included. `pnpm start:managed` plus `pnpm smoke` passed; additional HTTP checks confirmed `/recover` and `/check` respond and `/api/recovery` reports enabled local `ollama` / `qwen3:4b` with no-store caching. This production smoke checks availability/configuration; the complete browser journey above ran against the test-managed Next development server. Full production-browser acceptance remains a release check.
+
+The managed production app is left running at http://127.0.0.1:3000. Local configuration, model weights, personal learner context and browser/model evidence remain ignored/untracked. Documentation links and staged whitespace/secret checks are verified before commit.
+
+### Current limits after Phase 3
+
+Only local Ollama is implemented. A fake alternative verifies the interface; OpenAI/DeepSeek adapters and hosted processing consent are future work. The app preserves facts, validates evidence references and forces review, but cannot prove every interpretation or catch every semantic contradiction. The observed prompt improvements are examples, not an accuracy claim.
+
+No new native keyboard/VoiceOver acceptance, zoom/reflow audit, full six-case model evaluation, checkpoint revision/restore/delete, complete restart resilience, public-site smoke or submission-ready video is claimed. The checkpoint remains intact while reviewed recovery actions are stored separately. Formal Learn reviews remain incomplete. See [PHASE3.md](PHASE3.md) and the remaining [checklist](BUILD_CHECKLIST.md).
