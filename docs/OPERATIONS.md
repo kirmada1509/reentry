@@ -3,7 +3,7 @@
 ## Daily local use
 
 - pnpm bootstrap: install locked dependencies, prepare an ignored local environment file, install hooks, and run setup checks.
-- ./start.sh / pnpm local:start: build the Chrome extension and start the managed development server in the background. Reload the extension in Chrome after rebuilding.
+- ./start.sh / pnpm local:start: build the Chrome extension and web app, then start the managed production server in the background, without live reload. Reload the extension in Chrome after rebuilding. Active-server/port checks run before any build output is changed.
 - ./stop.sh / pnpm local:stop: stop this project's managed server without deleting browser data. Stop before starting again or switching development/production modes.
 - pnpm dev: foreground development server.
 - pnpm dev:start: managed background development server.
@@ -14,6 +14,8 @@
 - pnpm smoke: check the running starter over HTTP.
 
 Default port is 3000. Assign a different PORT in each project's .env.local when running products together. Managed scripts refuse occupied ports and verify the supervisor identity before stopping a process. They support macOS/Linux; foreground commands support other platforms. Restart after configuration changes.
+
+Use `./start.sh` for normal use and demonstrations. A repeated Fast Refresh loop was reproduced with the development server on this workstation; the launcher deliberately uses the production build to remove that loop from normal use. No development-bundler fix is claimed. Explicit `pnpm dev` / `pnpm dev:start` still opt into development tooling.
 
 .runtime contains ignored PID metadata and local logs, with restricted permissions. The file grows by appending; use the cloud viewer for retention and production log management. Stop the server before deleting an old local log.
 

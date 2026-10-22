@@ -19,7 +19,7 @@ pnpm bootstrap
 ./start.sh
 ```
 
-Stop with `./stop.sh`. The matching commands are `pnpm local:start` and `pnpm local:stop`. Start builds the extension and runs the app in the background in development mode. Use `pnpm dev:status` and `pnpm dev:logs` to inspect it. Stop an already running managed server before starting again; the scripts refuse occupied ports and preserve saved browser data. The shell scripts support macOS/Linux and can be invoked by their full path from another directory.
+Stop with `./stop.sh`. The matching commands are `pnpm local:start` and `pnpm local:stop`. Start builds the extension and web app, then runs the production app in the background without live reload. Use `pnpm dev:status` and `pnpm dev:logs` to inspect it. Stop an already running managed server before starting again; the scripts refuse active servers/occupied ports before rebuilding and preserve saved browser data. The shell scripts support macOS/Linux and can be invoked by their full path from another directory. Development commands (`pnpm dev` / `pnpm dev:start`) remain separate from this normal-use launcher.
 
 Open **http://127.0.0.1:3000**. In Chrome's `chrome://extensions`, enable Developer mode, choose **Load unpacked**, and select `extension/.output/chrome-mv3`. Select instructions on another page and invoke the extension's toolbar action or shortcut. Review the capture, confirm, then save a checkpoint in ReEntry. After updates, rebuild and choose Reload for ReEntry in Chrome extensions; keep the same extension ID, app origin and browser profile. Follow the [Phase 1 walkthrough](docs/PHASE1.md) for sandbox and retry instructions.
 

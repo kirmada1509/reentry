@@ -17,7 +17,7 @@ Public source: https://github.com/kirmada1509/reentry. Preview assets: https://g
 
 ## Local start/stop scripts
 
-`./start.sh` / `pnpm local:start` builds the extension and starts the existing managed development server. `./stop.sh` / `pnpm local:stop` uses the owned-process stop operation. Executable shell entrypoints resolve the project directory, so full-path invocation also works. Verified start/smoke, duplicate-start refusal, stop from another directory and repeated stop; `pnpm check`, production web build and extension build pass. The local development server is running at http://127.0.0.1:3000. Reload ReEntry in Chrome after the extension rebuild.
+`./start.sh` / `pnpm local:start` now builds both surfaces and starts the managed production server without live reload. The previous development default reproduced a continuous Fast Refresh/page reload loop. A speculative narrower CSS watch scope did not fix it and was reverted; no development-bundler fix is claimed. Build steps run only after the existing active-server/port preflight, so repeated start cannot overwrite a running build. `./stop.sh` / `pnpm local:stop` retains owned-process stopping. Verified a real production browser stayed on ReEntry for ten seconds with zero navigations/rebuilds while both runtime and server logs were repeatedly appended; repeated start was refused before changing BUILD_ID. `pnpm check`, both builds and HTTP smoke passed. The production app is running at http://127.0.0.1:3000. Explicit development commands remain available separately. Saved browser data/origin and the extension ID are unchanged.
 
 ## Presentation sandbox
 

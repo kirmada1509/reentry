@@ -10,7 +10,7 @@
     "dev:stop": "node scripts/dev.mjs stop",
     "dev:status": "node scripts/dev.mjs status",
     "dev:logs": "node scripts/dev.mjs logs",
-    "local:start": "pnpm extension:build && pnpm dev:start",
+    "local:start": "node scripts/dev.mjs start --production --build",
     "local:stop": "pnpm dev:stop",
     "build": "next build",
     "start": "node scripts/serve.mjs start",

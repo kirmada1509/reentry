@@ -13,7 +13,7 @@ import {
 import path from "node:path";
 import nextEnvironment from "@next/env";
 const { loadEnvConfig } = nextEnvironment;
-import { root } from "./project.mjs";
+import { root, run } from "./project.mjs";
 
 const action = process.argv[2] || "status";
 if (process.platform === "win32")
@@ -106,6 +106,16 @@ if (action === "stop") {
         " is occupied. Choose another PORT; no process was terminated.",
     );
   const mode = process.argv.includes("--production") ? "start" : "dev";
+  if (process.argv.includes("--build")) {
+    if (mode !== "start")
+      throw new Error(
+        "Use --build with --production for a stable local build.",
+      );
+    // Preflight above refuses an active server/occupied port before touching
+    // build output. Reuse the same owned-process lifecycle after building.
+    run("pnpm", ["extension:build"]);
+    run("pnpm", ["build"]);
+  }
   if (mode === "start" && !existsSync(path.join(root, ".next/BUILD_ID")))
     throw new Error("Run pnpm build before starting production.");
   mkdirSync(runtime, { recursive: true, mode: 0o700 });
