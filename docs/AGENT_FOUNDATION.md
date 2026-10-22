@@ -1,5 +1,7 @@
 # Browser-agent Phase 0
 
+Phase 1 is now implemented separately: [live observation setup and boundaries](AGENT_OBSERVATION.md). The foundation record below describes the original Phase 0 checkpoint.
+
 Implemented October 23, 2026 (IST). This is a verified foundation and fictional interface prototype. Automatic task discovery, continuous observation, live agent inference and reminders are subsequent phases. The working manual release and its browser data remain separate.
 
 ## Try the interface

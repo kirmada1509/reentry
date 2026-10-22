@@ -4,6 +4,11 @@ import { PageController } from "@page-agent/page-controller";
 export async function readPageFoundation() {
   if (!/^(127\.0\.0\.1|localhost)$/.test(location.hostname))
     throw new Error("The foundation reader is restricted to local test pages.");
+  return readObservedPage();
+}
+
+/** Call only after the worker has authorized the current site/session. */
+export async function readObservedPage() {
   if (document.querySelectorAll("*").length > 10_000)
     throw new Error("This test page exceeds the reader budget.");
   const controller = new PageController({
@@ -21,8 +26,14 @@ export async function readPageFoundation() {
         HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
       >("input,textarea,select"),
     )
+      .filter(
+        (field) =>
+          !field.matches(
+            '[type="checkbox"],[type="radio"],[type="submit"],[type="button"]',
+          ),
+      )
       .map((field) => field.value)
-      .filter((value) => value.length >= 3)
+      .filter((value) => value.length >= 1)
       .sort((a, b) => b.length - a.length);
     const redact = (text: string) => {
       for (const answer of answers) text = text.split(answer).join("[private]");

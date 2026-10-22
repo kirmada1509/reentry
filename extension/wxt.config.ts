@@ -13,20 +13,32 @@ const appOrigin = appOriginSchema.parse(
 export default defineConfig({
   modules: ["@wxt-dev/module-react"],
   imports: false,
-  alias: { "@reentry": fileURLToPath(new URL("../src", import.meta.url)) },
+  alias: {
+    "@reentry": fileURLToPath(new URL("../src", import.meta.url)),
+    "@": fileURLToPath(new URL("../src", import.meta.url)),
+  },
   vite: () => ({
     plugins: [tailwindcss()],
     define: { __REENTRY_APP_ORIGIN__: JSON.stringify(appOrigin) },
   }),
   manifest: {
-    name: "ReEntry — capture selected instructions",
+    name: "ReEntry — browser companion",
     version: "0.1.0",
     description:
-      "Review selected instruction text and save your place in ReEntry.",
+      "Observe chosen sites locally, or capture selected instructions to save your place.",
     key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArxPPVPjfnp8Y7qObKTVa4VfqW0pbGwA1zd7mTu+K+v+1KWBSGk6rGxvBo42PVngEJG/9jUe3XqYOwEQRwX6Xp5HCciq90aOwy15/YovRWa1Oe7NUFFnqkb0X2GlcHvwwKNG3em0NeVM4vd26KT/r/bqPjAQQYcp1jiYB5vbxkpjAD27ffAepsuN419dp5CEv5J9RxWsVVHrk1NEcUaKVKbKgP3L6J5+/3bSLKtJXNqFsXIV/kafdeEY3OE4/+jaOJholZYVXUyZAk1a+DyJA+to9+zCFLeiC0AV2hN8dnDClipefy85yd2IhR2khpHGWS3lncvAIPckUsutsYEmpXwIDAQAB",
-    permissions: ["activeTab", "scripting", "storage"],
+    permissions: ["activeTab", "scripting", "storage", "sidePanel", "alarms"],
+    host_permissions: [
+      `${new URL(appOrigin).protocol}//${new URL(appOrigin).hostname}/*`,
+    ],
+    optional_host_permissions: ["http://*/*", "https://*/*"],
+    side_panel: { default_path: "companion.html" },
     action: { default_title: "Capture selection with ReEntry" },
     commands: {
+      "open-companion": {
+        suggested_key: { default: "Ctrl+Shift+U", mac: "Command+Shift+U" },
+        description: "Open ReEntry companion",
+      },
       _execute_action: {
         suggested_key: { default: "Ctrl+Shift+Y", mac: "Command+Shift+Y" },
         description: "Capture selected instruction text",

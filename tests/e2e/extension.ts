@@ -1,4 +1,4 @@
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { test as base, expect, chromium } from "@playwright/test";
@@ -21,6 +21,18 @@ export const test = base.extend<{
 }>({
   extension: async ({}, runTest, info) => {
     const profile = await mkdtemp(path.join(tmpdir(), "reentry-capture-"));
+    // Synthetic published demo credentials must not open Chrome's native
+    // password UI over the test page. This is only the disposable test profile.
+    await mkdir(path.join(profile, "Default"));
+    await writeFile(
+      path.join(profile, "Default/Preferences"),
+      JSON.stringify({
+        credentials_enable_service: false,
+        profile: {
+          password_manager_leak_detection: false,
+        },
+      }),
+    );
     const launch = () =>
       chromium.launchPersistentContext(profile, {
         channel: "chromium",

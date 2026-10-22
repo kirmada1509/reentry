@@ -34,7 +34,7 @@ Northstar supplies the controlled application journey. Its simulated attachment 
 
 ## Architecture and reuse
 
-The expanded [open-source comparison](AGENT_REUSE.md) records the current choices and alternatives. Evaluate the separately published Page Agent controller before building a DOM reader, and use the official LangGraph SQLite checkpointer before implementing checkpoint infrastructure. Both remain integration candidates. Reuse Sauce Labs' sample shop for commerce, preserving its license and isolating its runtime.
+The expanded [open-source comparison](AGENT_REUSE.md) records the current choices and alternatives. Evaluate the separately published Page Agent controller before building a DOM reader, and use the official LangGraph SQLite checkpointer before implementing checkpoint infrastructure. The patched reader and persistent checkpointer are verified Phase 0 integrations. Reuse Sauce Labs' sample shop for commerce, preserving its license and isolating its runtime.
 
 `browser events → bounded observations → task inference → tool loop → durable task/checkpoint state → completion verification → checklist/reminders`
 
@@ -43,13 +43,13 @@ The expanded [open-source comparison](AGENT_REUSE.md) records the current choice
 | Browser sensing | Existing WXT extension; Chrome content scripts, scripting, tabs and permission APIs | Automatic navigation/DOM/input-status observations across enabled sites, task/tab grouping and snapshot references |
 | Agent runtime   | Prefer LangGraph.js, subject to a small integration spike                           | Bounded tool selection, branching, interruption/resume and persistent graph state                                  |
 | Model boundary  | Existing NVIDIA/Ollama transports and validated server configuration                | A new provider-independent agent request/result contract; no provider SDK types in task storage                    |
-| Product memory  | Existing Dexie transaction, revision, deletion and stale-result patterns            | Agent tasks, observations, evidence links, task versions and reminder records                                      |
+| Product memory  | Server SQLite authority; existing revision/deletion patterns                        | Agent tasks, observations, evidence links, task versions and reminder records                                      |
 | Scheduling      | Chrome alarms and notifications                                                     | Durable intent, deduplicated local delivery, cancellation and startup reconciliation                               |
 | Interface       | Existing official registry components                                               | Automatic task feed, task detail/timeline, correction, pause and reminder controls                                 |
 
 LangGraph provides stateful orchestration and can be used without LangChain model wrappers. It does not supply browser permissions, task inference quality or completion verification. Choose and test a persistent local checkpointer; an in-memory saver alone does not meet restart recovery. Reconcile graph state with product memory instead of maintaining two independent authoritative task records.
 
-Background memory must work with the web app tab closed. The current web-origin Dexie database is not directly available to an extension service worker or the Node server. Preserve that legacy store for manual tasks. The build plan proposes one authoritative local server-side SQLite store for agent tasks, subject to the phase-0 compatibility/restart spike. The extension queue is a delivery buffer; the dashboard reads the accepted task store. Reusing existing revision/deletion logic does not imply that all origins can share the existing database.
+Background memory must work with the web app tab closed. The current web-origin Dexie database is not directly available to an extension service worker or the Node server. Preserve that legacy store for manual tasks. Phase 1 implements an authoritative local server-side SQLite observation store; Phase 2 extends this authority to agent tasks using the verified graph checkpointer. The extension queue is a delivery buffer; the dashboard reads the accepted task store. Reusing existing revision/deletion logic does not imply that all origins can share the existing database.
 
 Browser Use is an open-source option for active browser automation. Our first need is to observe the user's existing browsing, so keep the extension as the sensor; do not add a second Python browser-control process merely to watch pages. Revisit Browser Use/CDP if delegated browser actions become an explicit later feature.
 
@@ -75,4 +75,4 @@ Success is demonstrated on two task families and unfamiliar variants. “Any tas
 
 ## Next concrete implementation task
 
-Phase 0 is implemented; reproduction and limits are in [AGENT_FOUNDATION.md](AGENT_FOUNDATION.md). Implement Phase 1 of [BUILD_PLAN.md](BUILD_PLAN.md): enabled-site observation and the real authenticated pairing/delivery path. Reuse the patched reader and tested protocol boundary, retain the single server-side authority design and bounded extension queue, and preserve manual tasks. The companion remains a labelled web prototype until its native live bindings exist. The first functional automatic-agent milestone is Phase 2; no live model loop or reminder delivery is claimed from the foundation tests.
+Phases 0–1 are implemented. [Foundation evidence](AGENT_FOUNDATION.md) records the reader and graph restart checks; [observation setup](AGENT_OBSERVATION.md) describes the real paired connection, site controls and durable local stream. The companion now has live extension bindings and native side-panel configuration, with native placement/shortcut and accessibility manual gates still open. Next is Phase 2 of [BUILD_PLAN.md](BUILD_PLAN.md): task/finish-condition inference through the provider-independent model boundary, with graph persistence, user correction and stale-effect protection. No live agent inference or reminder delivery is claimed from observation alone.

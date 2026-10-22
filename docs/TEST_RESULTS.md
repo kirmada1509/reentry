@@ -1,5 +1,20 @@
 # ReEntry verification evidence
 
+## Automatic-agent Phase 1 — October 23, 2026 (IST)
+
+Real chosen-site observation, explicit local-processing consent, pairing/delivery, live companion controls and SQLite acceptance are implemented. [Setup, data bounds and manual gates](AGENT_OBSERVATION.md). This phase has no model calls, task inference, completion judgment or reminder delivery.
+
+- Final `pnpm check`: all 99 tests across sixteen files passed, with formatting/lint, web/extension types, registry provenance, secrets and context guards. Default-origin web/extension production builds and HTTP smoke passed; the managed app is running at http://127.0.0.1:3000.
+- Complete production web/extension regression: 55 passed, two explicit live-model/demo skips. All seven affected automatic-observation cases passed again after final capture-time retention and offline queue expiry hardening.
+- The seven cases include Northstar saved-draft and changed-instruction observation, a seeded full-queue capacity boundary, actual automatic DOM/form/submit-attempt delivery with private-field exclusions, closing the app tab, offline delivery and full browser restart, pause/resume/revocation, exact-port isolation/untrusted bridge rejection, failed extension writes/recovery, axe and 320/360px reflow.
+- The separate upstream commerce suite passed both cases: the original cart/validation/checkout/reset journey and a real extension-observed React inventory/cart/receipt journey. It retains entered-detail exclusions and makes no automatic completion claim.
+- Store/HTTP checks cover transaction rollback, DB reopen/dedup, session/clock/Origin/Host rejection, expired/one-use/replaced pairing, clear/revocation, body limits and retention. Offline delivery does not extend the 24-hour capture-time retention clock.
+- The persistent disposable Chromium fixture now excludes password-save/leak prompts for the published synthetic login; the native popup itself was not captured. This resolves page interactions stopping after the login wait without modifying real-user Chrome settings or the passive reader. Speculative viewport changes were reverted.
+- Extension styling now explicitly scans the unchanged registry component sources outside WXT's root. This fixed an invisible checkbox without adding visual rules or changing vendor assets.
+- Native side-panel placement/shortcut, external-site permission-prompt approval, VoiceOver and actual browser zoom/text settings remain manual gates. The automated companion is the actual extension page at side-panel width.
+
+Final workspace/publication/smoke results and the next phase are recorded in [WORK.md](WORK.md). No fresh NVIDIA evaluation was needed because inference inputs/transports are unchanged and this new stream stays local.
+
 ## Automatic-agent Phase 0 — October 23, 2026 (IST)
 
 The calm fictional preview, standalone Page Controller adaptation, real LangGraph/SQLite persistence spike and reused commerce sandbox are implemented. These results do not establish automatic browser tracking or live agent inference. [Reproduction and limitations](AGENT_FOUNDATION.md).

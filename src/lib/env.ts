@@ -27,6 +27,11 @@ const schema = z
     LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
     REENTRY_APP_ORIGIN: appOriginSchema.default(DEFAULT_APP_ORIGIN),
     REENTRY_EXTENSION_ID: extensionIdSchema.default(DEFAULT_EXTENSION_ID),
+    REENTRY_AGENT_DB: z
+      .string()
+      .min(1)
+      .max(1000)
+      .default(".runtime/agent.sqlite"),
     REENTRY_AI_PROVIDER: z
       .enum(["disabled", "ollama", "nvidia"])
       .default("disabled"),

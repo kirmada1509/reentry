@@ -64,6 +64,14 @@ export function checkUi(directory = root) {
   for (const file of sources) {
     const name = path.relative(directory, file).split(path.sep).join("/");
     if (manifest.files[name]) continue;
+    // Extension builds also need the shared, registry-owned component sources
+    // outside their Vite root. No visual rules are authored in this entry.
+    if (
+      name === "extension/entrypoints/entry.css" &&
+      readFileSync(file, "utf8").trim() ===
+        '@import "../../src/app/globals.css";\n@source "../../src/components";'
+    )
+      continue;
     // The standalone portal needs to scan registry components outside its Vite
     // root. This entry only wires sources; all visual rules remain upstream.
     if (

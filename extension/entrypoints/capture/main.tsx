@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import "../../../src/app/globals.css";
+import "../entry.css";
 import CapturePage from "./page";
 
 // The shared registry theme expects this font token. Next supplies Geist on

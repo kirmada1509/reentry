@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Fictional application observation sandbox</title>
+  </head>
+  <body>
+    <main>
+      <h1>Fictional application</h1>
+      <p id="instructions">Attach a transcript before submitting.</p>
+      <form
+        onsubmit="
+          event.preventDefault();
+          document.getElementById('status').textContent =
+            'Submission could not be verified';
+        "
+      >
+        <p><label for="essay">Essay</label><textarea id="essay"></textarea></p>
+        <p>
+          <label for="password">Password</label
+          ><input id="password" type="password" value="seeded-password-5842" />
+        </p>
+        <p>
+          <label for="card">Card number</label
+          ><input id="card" autocomplete="cc-number" value="4242424242424242" />
+        </p>
+        <input type="hidden" value="seeded-hidden-token-9843" />
+        <p data-private>private-region-1849</p>
+        <p id="echo"></p>
+        <button type="submit">Submit fictional application</button>
+      </form>
+      <p id="status" role="status">Draft in progress</p>
+    </main>
+    <aside><p id="noise">Unrelated timer</p></aside>
+  </body>
+</html>

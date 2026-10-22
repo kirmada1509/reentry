@@ -17,9 +17,12 @@ import type {
 import { onMessage } from "../lib/messages";
 import { updatePending } from "../lib/pending";
 import { checkForTab, markCheck, updateChecks } from "../lib/checks";
+import { agentBridgeSchema } from "../../src/features/observation/protocol";
+import { startObservationRuntime } from "../lib/observation-runtime";
 
 export default defineBackground(() => {
   const appOrigin = __REENTRY_APP_ORIGIN__;
+  const observation = startObservationRuntime(appOrigin);
   const previewUrl = browser.runtime.getURL("/capture.html");
   function assertInternalSender(sender: { id?: string; url?: string }) {
     if (
@@ -206,13 +209,23 @@ export default defineBackground(() => {
   browser.runtime.onMessageExternal.addListener(
     (raw: unknown, sender, sendResponse) => {
       const parsed = bridgeRequestSchema.safeParse(raw);
-      if (!isAppSender(sender, appOrigin) || !parsed.success) {
+      const agent = agentBridgeSchema.safeParse(raw);
+      if (
+        !isAppSender(sender, appOrigin) ||
+        (!parsed.success && !agent.success)
+      ) {
         sendResponse({ status: "rejected" } satisfies BridgeResponse);
         return false;
       }
       const next = externalRequests
         .catch(() => undefined)
-        .then(() => handleBridge(parsed.data));
+        .then(() =>
+          agent.success
+            ? observation.bridge(agent.data)
+            : parsed.success
+              ? handleBridge(parsed.data)
+              : { status: "rejected" },
+        );
       externalRequests = next;
       void next.then(sendResponse, () =>
         sendResponse({ status: "unavailable" } satisfies BridgeResponse),

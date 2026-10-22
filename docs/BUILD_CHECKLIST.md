@@ -11,7 +11,21 @@ This checklist tracks the automatic-agent foundation first and preserves the man
 - [x] Pin and run the existing Sauce Labs shop separately; retain attribution, disable reporting/remote fonts and verify checkout/reset with synthetic data.
 - [x] Record dependency/fixture versions and actual acceptance evidence in [AGENT_FOUNDATION.md](AGENT_FOUNDATION.md).
 
-**Local gate passed October 23:** 88 unit/integration tests, 48 production browser cases with two intentional live/demo skips, and separate commerce acceptance. Phase 1 observation and Phase 2 inference remain unimplemented. Native accessibility/zoom acceptance is still open.
+**Local gate passed October 23:** 88 unit/integration tests, 48 production browser cases with two intentional live/demo skips, and separate commerce acceptance. Phase 1 observation is now implemented below; Phase 2 inference remains next. Native accessibility/zoom acceptance is still open.
+
+## Automatic-agent Phase 1 — Chosen-site observation
+
+- [x] Pair the extension through an expiring one-use challenge and bound device bearer, keeping provider credentials separate.
+- [x] Add local-processing/site consent, optional Chrome host access, exact-origin/port enforcement and visible pause/resume.
+- [x] Register passive observers dynamically; coalesce navigation/semantic DOM/form-status changes and exclude seeded private fields/answers.
+- [x] Persist a bounded extension queue before acknowledgement; retry outages without duplicate accepted events.
+- [x] Store accepted observations and dedup receipts transactionally in local SQLite, with session/clock/revocation guards and retention bounds.
+- [x] Wire the live dashboard and extension companion using official registry components; preserve the manual release and preview.
+- [x] Pass seven focused production Chromium journeys, including Northstar, queue capacity, offline/restart, failed writes, pause/revocation, axe and narrow reflow.
+- [x] Complete production regression (55 passed, two intentional skips), affected observation rerun (seven passed), commerce (two passed), workspace checks (99 tests/sixteen files), default-origin builds and HTTP smoke.
+- [ ] Native side-panel placement/shortcut, external-host permission prompt and VoiceOver/real-zoom acceptance (manual gates).
+
+Phase 2 is the first task-inference milestone. Observation remains local-only; no model/task/completion/reminder claim is made here. See [AGENT_OBSERVATION.md](AGENT_OBSERVATION.md).
 
 Tool assignments and deferred alternatives are in the [selected stack](BUILD_PLAN.md#selected-tools-and-exactly-how-we-use-them). The historical manual-release checklist follows.
 

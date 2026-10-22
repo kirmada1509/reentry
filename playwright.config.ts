@@ -68,6 +68,10 @@ export default defineConfig({
       timeout: production ? 240_000 : 120_000,
       env: {
         REENTRY_APP_ORIGIN: appOrigin,
+        REENTRY_AGENT_DB: path.join(
+          process.env.REENTRY_TEST_FIXTURE_DIR!,
+          "observations.sqlite",
+        ),
         REENTRY_AI_PROVIDER: live
           ? (process.env.REENTRY_AI_PROVIDER ?? "ollama")
           : "ollama",

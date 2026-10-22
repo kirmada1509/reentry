@@ -295,6 +295,9 @@ export default function Home() {
           Saved on this browser · no AI processing in this step
         </Badge>
         <div>
+          <Button asChild>
+            <Link href="/observe">Try automatic observation</Link>
+          </Button>
           <Button variant="outline" asChild>
             <Link href="/preview">
               Explore the new companion · fictional preview
