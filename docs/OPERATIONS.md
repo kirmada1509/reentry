@@ -3,6 +3,8 @@
 ## Daily local use
 
 - pnpm bootstrap: install locked dependencies, prepare an ignored local environment file, install hooks, and run setup checks.
+- ./start.sh / pnpm local:start: build the Chrome extension and start the managed development server in the background. Reload the extension in Chrome after rebuilding.
+- ./stop.sh / pnpm local:stop: stop this project's managed server without deleting browser data. Stop before starting again or switching development/production modes.
 - pnpm dev: foreground development server.
 - pnpm dev:start: managed background development server.
 - pnpm dev:status / pnpm dev:logs / pnpm dev:logs --follow: inspect the managed server.

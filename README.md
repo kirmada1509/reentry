@@ -16,9 +16,10 @@ The recording uses fictional instruction changes and actual NVIDIA inference, wi
 
 ```sh
 pnpm bootstrap
-pnpm extension:build
-pnpm dev
+./start.sh
 ```
+
+Stop with `./stop.sh`. The matching commands are `pnpm local:start` and `pnpm local:stop`. Start builds the extension and runs the app in the background in development mode. Use `pnpm dev:status` and `pnpm dev:logs` to inspect it. Stop an already running managed server before starting again; the scripts refuse occupied ports and preserve saved browser data. The shell scripts support macOS/Linux and can be invoked by their full path from another directory.
 
 Open **http://127.0.0.1:3000**. In Chrome's `chrome://extensions`, enable Developer mode, choose **Load unpacked**, and select `extension/.output/chrome-mv3`. Select instructions on another page and invoke the extension's toolbar action or shortcut. Review the capture, confirm, then save a checkpoint in ReEntry. After updates, rebuild and choose Reload for ReEntry in Chrome extensions; keep the same extension ID, app origin and browser profile. Follow the [Phase 1 walkthrough](docs/PHASE1.md) for sandbox and retry instructions.
 
@@ -54,6 +55,6 @@ The Devpost Learn process requires genuine scope/PRD/spec reviews before its for
 
 ## Engineering
 
-Read [AGENTS.md](AGENTS.md). Use the official shadcn registry workflow. `pnpm check` includes web and extension type checks; `pnpm build` and `pnpm extension:build` compile each surface. Run `pnpm exec playwright install chromium`, then `pnpm test:e2e` for the real-extension suite. Use `REENTRY_TEST_PRODUCTION=1 pnpm test:e2e` for production builds; CI is configured for that deterministic gate; hosted jobs currently cannot start because of an account-level restriction. The complete suite passes locally. `node scripts/publication-audit.mjs` checks history/tracked files and built browser assets for focused credential patterns and configured key values. Tests allocate ports and temporary profiles and build a separate test extension. The original starter guide is preserved in [docs/STARTER-README.md](docs/STARTER-README.md).
+Read [AGENTS.md](AGENTS.md). Use the official shadcn registry workflow. `pnpm check` includes web and extension type checks; `pnpm build` and `pnpm extension:build` compile each surface. Run `pnpm exec playwright install chromium`, then `pnpm test:e2e` for the real-extension suite. Use `REENTRY_TEST_PRODUCTION=1 pnpm test:e2e` for production builds; [hosted CI passed](https://github.com/kirmada1509/reentry/actions/runs/39753513724) with 86 project tests, 42 browser tests and production smoke. `node scripts/publication-audit.mjs` checks history/tracked files and built browser assets for focused credential patterns and configured key values. Tests allocate ports and temporary profiles and build a separate test extension. The original starter guide is preserved in [docs/STARTER-README.md](docs/STARTER-README.md).
 
 Built from [kirmada1509/agent-starter](https://github.com/kirmada1509/agent-starter), with history and MIT license preserved. The starter source remote remains `upstream`; the separate ReEntry repository is https://github.com/kirmada1509/reentry. Publication status is recorded in the release evidence. UI attribution remains in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
