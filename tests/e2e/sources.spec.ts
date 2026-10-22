@@ -452,3 +452,30 @@ test("@sources repeated invocation reopens the bound capture and closing its sou
     }),
   ).toBeVisible();
 });
+
+for (const version of [
+  "decrease",
+  "deadline",
+  "removed",
+  "contradiction",
+] as const)
+  test(`@sources ${version} retains exact old/current instructions without promoting text differences to verified meaning`, async ({
+    extension,
+  }) => {
+    const fixture = await scenario();
+    const page = await seed(extension.context, fixture.url);
+    await fixture.version(version);
+    const source = await start(extension.context, page, fixture.url);
+    const { preview, text } = await recapture(extension.context, source);
+    const comparison = await confirm(extension.context, preview);
+    await saveComparison(comparison);
+    await expect(
+      comparison.getByLabel("New instruction text", { exact: true }),
+    ).toHaveValue(text);
+    await expect(
+      comparison.getByText("Transcript attached", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      comparison.getByText(/These are text differences/),
+    ).toBeVisible();
+  });

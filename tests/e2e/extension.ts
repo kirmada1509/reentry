@@ -7,29 +7,39 @@ import { DEFAULT_EXTENSION_ID } from "../../src/features/capture/config";
 
 export const appUrl = process.env.REENTRY_TEST_APP_ORIGIN!;
 export const sourceUrl = `${process.env.REENTRY_TEST_SOURCE_ORIGIN}/instructions.html`;
-const extensionPath = path.resolve("extension/.output/chrome-mv3-e2e");
+const extensionPath = path.resolve(
+  process.env.REENTRY_TEST_PRODUCTION === "1"
+    ? "extension/.output/chrome-mv3"
+    : "extension/.output/chrome-mv3-e2e",
+);
 export const test = base.extend<{
-  extension: { context: BrowserContext; worker: Worker };
+  extension: {
+    context: BrowserContext;
+    worker: Worker;
+    restart: () => Promise<{ context: BrowserContext; worker: Worker }>;
+  };
 }>({
   extension: async ({}, runTest, info) => {
     const profile = await mkdtemp(path.join(tmpdir(), "reentry-capture-"));
-    const context = await chromium.launchPersistentContext(profile, {
-      channel: "chromium",
-      ...(process.env.REENTRY_TEST_LIVE === "1"
-        ? {
-            recordVideo: {
-              dir: info.outputPath("video"),
-              size: { width: 1280, height: 900 },
-            },
-          }
-        : {}),
-      headless: process.env.HEADED !== "1",
-      args: [
-        `--disable-extensions-except=${extensionPath}`,
-        `--load-extension=${extensionPath}`,
-        "--enable-unsafe-extension-debugging",
-      ],
-    });
+    const launch = () =>
+      chromium.launchPersistentContext(profile, {
+        channel: "chromium",
+        ...(process.env.REENTRY_TEST_LIVE === "1"
+          ? {
+              recordVideo: {
+                dir: info.outputPath("video"),
+                size: { width: 1280, height: 900 },
+              },
+            }
+          : {}),
+        headless: process.env.HEADED !== "1",
+        args: [
+          `--disable-extensions-except=${extensionPath}`,
+          `--load-extension=${extensionPath}`,
+          "--enable-unsafe-extension-debugging",
+        ],
+      });
+    let context = await launch();
     try {
       await context.tracing.start({ screenshots: true, snapshots: true });
       const worker =
@@ -41,7 +51,27 @@ export const test = base.extend<{
           worker.evaluate(() => chrome.action.onClicked.hasListeners()),
         )
         .toBe(true);
-      await runTest({ context, worker });
+      await runTest({
+        context,
+        worker,
+        restart: async () => {
+          await context.tracing.stop({
+            path: info.outputPath("before-restart-trace.zip"),
+          });
+          await context.close();
+          context = await launch();
+          await context.tracing.start({ screenshots: true, snapshots: true });
+          const restarted =
+            context.serviceWorkers()[0] ??
+            (await context.waitForEvent("serviceworker"));
+          await expect
+            .poll(() =>
+              restarted.evaluate(() => chrome.action.onClicked.hasListeners()),
+            )
+            .toBe(true);
+          return { context, worker: restarted };
+        },
+      });
     } finally {
       await context.tracing.stop({ path: info.outputPath("trace.zip") });
       await context.close();

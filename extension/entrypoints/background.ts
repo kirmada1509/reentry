@@ -68,6 +68,26 @@ export default defineBackground(() => {
   });
 
   async function handleBridge(request: BridgeRequest): Promise<BridgeResponse> {
+    if (request.type === "capture.purge") {
+      await updatePending((items) => ({
+        items: items.filter(
+          (item) =>
+            !request.captureIds.includes(item.capture.id) &&
+            !(item.check && request.taskIds.includes(item.check.taskId)) &&
+            !(request.before && item.capture.capturedAt <= request.before),
+        ),
+        result: undefined,
+      }));
+      await updateChecks((items) => ({
+        items: items.filter(
+          (item) =>
+            !request.taskIds.includes(item.context.taskId) &&
+            !(request.before && item.context.startedAt <= request.before),
+        ),
+        result: undefined,
+      }));
+      return { status: "purged" };
+    }
     if (request.type === "check.start") {
       const check = request.check;
       const existing = await updateChecks((items) => ({

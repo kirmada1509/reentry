@@ -17,6 +17,7 @@ export const recoveryInputSchema = z
   })
   .superRefine(({ task, check }, ctx) => {
     if (
+      (check.taskRevision ?? 1) !== task.revision ||
       task.captureId !== task.source.id ||
       check.context.sourceUrl !== task.source.url ||
       check.taskId !== task.id ||

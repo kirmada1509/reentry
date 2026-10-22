@@ -46,6 +46,13 @@
       ],
       "source": "https://ui.shadcn.com/r",
       "date": "2026-10-21"
+    },
+    {
+      "items": [
+        "collapsible"
+      ],
+      "source": "https://ui.shadcn.com/r",
+      "date": "2026-10-21"
     }
   ],
   "files": {
@@ -68,6 +75,7 @@
     "src/lib/utils.ts": "14300d758170c270c75b057f38fedb3793a5920ea872f0477e29fb131185e8a7",
     "src/app/globals.css": "15fd52bd462719c6469cb5978ece7a907e9558ac22050005abe8b865524e05e1",
     "src/components/ui/progress.tsx": "e012e1f7e6e66d11229d1233eccf91954edcd9179b418ff1d114dc651b86fd35",
-    "src/components/ui/checkbox.tsx": "ba0ac64064e2d8fa7299d53e9e84b9a4772fef8dd4cf6170c56d3030a1d69941"
+    "src/components/ui/checkbox.tsx": "ba0ac64064e2d8fa7299d53e9e84b9a4772fef8dd4cf6170c56d3030a1d69941",
+    "src/components/ui/collapsible.tsx": "c6598e5584f4258b5d9fefadbc5ad6a66888ad58729f4b634a0bb2d9c513188b"
   }
 }

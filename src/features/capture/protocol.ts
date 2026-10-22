@@ -77,7 +77,16 @@ export const pendingSchema = z.strictObject({
 });
 export type PendingCapture = z.infer<typeof pendingSchema>;
 
+export const purgeSchema = z.strictObject({
+  taskIds: z.array(idSchema).max(100),
+  captureIds: z.array(idSchema).max(100),
+  before: z.iso.datetime().optional(),
+});
 export const bridgeRequestSchema = z.discriminatedUnion("type", [
+  purgeSchema.extend({
+    version: z.literal(1),
+    type: z.literal("capture.purge"),
+  }),
   z.strictObject({
     version: z.literal(1),
     type: z.literal("capture.get"),
@@ -116,6 +125,7 @@ export const bridgeResponseSchema = z.discriminatedUnion("status", [
     check: checkContextSchema.optional(),
   }),
   z.strictObject({ status: z.literal("acknowledged") }),
+  z.strictObject({ status: z.literal("purged") }),
   z.strictObject({ status: z.literal("unavailable") }),
   z.strictObject({ status: z.literal("rejected") }),
   z.strictObject({ status: z.literal("check-started"), checkId: idSchema }),

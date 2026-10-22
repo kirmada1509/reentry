@@ -14,7 +14,16 @@ export async function scenario() {
   const directory = path.join(process.env.REENTRY_TEST_FIXTURE_DIR!, id);
   await mkdir(directory);
   const target = path.join(directory, "instructions.html");
-  async function version(name: "v1" | "v2" | "cosmetic") {
+  async function version(
+    name:
+      | "v1"
+      | "v2"
+      | "cosmetic"
+      | "decrease"
+      | "deadline"
+      | "removed"
+      | "contradiction",
+  ) {
     await copyFile(
       path.resolve("tests/fixtures/sites/versions", `${name}.html`),
       target,

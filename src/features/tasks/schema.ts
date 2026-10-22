@@ -29,7 +29,32 @@ export const taskSchema = z.strictObject({
   nextAction: z.string(),
   materialUrls: z.array(httpUrlSchema),
   savedAt: z.iso.datetime(),
-  revision: z.literal(1),
+  revision: z.number().int().positive(),
   source: sourceSnapshotSchema,
 });
 export type SavedTask = z.infer<typeof taskSchema>;
+
+export const draftSchema = z.strictObject({
+  id: idSchema,
+  baseRevision: z.number().int().nonnegative(),
+  capturedAt: z.iso.datetime().optional(),
+  goal: z.string().max(300),
+  workUrl: z.string().max(2048),
+  progress: z.string().max(3000),
+  nextAction: z.string().max(1000),
+  materials: z.string().max(10300),
+  confirmed: z.boolean(),
+});
+export type TaskDraft = z.infer<typeof draftSchema>;
+export type TaskRevision = {
+  taskId: string;
+  revision: number;
+  task: SavedTask;
+};
+export type DeletionMarker = { id: string; deletedAt: string };
+export type Cleanup = {
+  id: string;
+  taskIds: string[];
+  captureIds: string[];
+  before?: string;
+};

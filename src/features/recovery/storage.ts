@@ -78,12 +78,14 @@ export async function reviewRecovery(
   });
 }
 export async function continuationTarget(db: TaskDatabase, id: string) {
-  const record = recoveryRecordSchema.parse(await db.recoveries.get(id));
-  const input = await currentRecoveryInput(db, record.taskId);
-  if (
-    !record.reviewedAction ||
-    (await inputDigest(input)) !== record.inputDigest
-  )
-    throw new Error("Review a current recovery before continuing.");
-  return input.task.workUrl;
+  return db.transaction("r", [db.tasks, db.checks, db.recoveries], async () => {
+    const record = recoveryRecordSchema.parse(await db.recoveries.get(id));
+    const input = await Dexie.waitFor(currentRecoveryInput(db, record.taskId));
+    if (
+      !record.reviewedAction ||
+      (await Dexie.waitFor(inputDigest(input))) !== record.inputDigest
+    )
+      throw new Error("Review a current recovery before continuing.");
+    return input.task.workUrl;
+  });
 }

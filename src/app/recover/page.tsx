@@ -11,6 +11,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -211,9 +216,11 @@ export default function RecoverPage() {
     }
   }
   return (
-    <main className="container mx-auto max-w-2xl grid gap-6 p-6">
+    <main className="container mx-auto max-w-3xl grid gap-6 p-6">
       <header className="grid gap-2">
-        <h1>ReEntry · Recover your next step</h1>
+        <CardTitle>
+          <h1>ReEntry · Recover your next step</h1>
+        </CardTitle>
         <p>
           Inspect the suggestion, correct it if needed, and choose one next
           action.
@@ -242,15 +249,110 @@ export default function RecoverPage() {
           <Card role="region" aria-label="Saved checkpoint">
             <CardHeader>
               <CardTitle>{task.goal}</CardTitle>
-              <CardDescription>Your saved goal</CardDescription>
+              <CardDescription>
+                Your saved goal · revision {task.revision}
+              </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-3">
               <h2>Confirmed progress</h2>
               <p>{task.progress}</p>
+              <Button asChild variant="outline">
+                <Link href={`/task?task=${task.id}`}>
+                  Edit checkpoint and history
+                </Link>
+              </Button>
               <h2>Saved next action</h2>
               <p>{task.nextAction}</p>
             </CardContent>
           </Card>
+          {record && (
+            <section className="grid gap-4" aria-labelledby="recovery-heading">
+              <h2 id="recovery-heading" tabIndex={-1} ref={resultRef}>
+                Recovery suggestion · review required
+              </h2>
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    <h3>
+                      {record.proposal.assessment === "uncertain"
+                        ? "Clarification needed"
+                        : record.proposal.assessment === "changed"
+                          ? "Instructions affect your next step"
+                          : "No material change identified"}
+                    </h3>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="grid gap-3">
+                  <p>{record.proposal.summary}</p>
+                  {record.proposal.changes.map((change, index) => (
+                    <section
+                      key={index}
+                      className="grid gap-2"
+                      aria-label={`Evidence ${index + 1}`}
+                    >
+                      <h3>{change.description}</h3>
+                      <h3>Previously required</h3>
+                      <p>{change.before.quote}</p>
+                      <h3>Now required</h3>
+                      <p>{change.after.quote}</p>
+                    </section>
+                  ))}
+                  <Label htmlFor="reviewed-action">Reviewed next action</Label>
+                  <Textarea
+                    id="reviewed-action"
+                    value={action}
+                    onChange={(event) => setAction(event.target.value)}
+                    maxLength={1000}
+                    rows={3}
+                  />
+                  <Button
+                    disabled={!action.trim() || action.length > 1000}
+                    onClick={() => void review()}
+                  >
+                    Save reviewed recovery
+                  </Button>
+                  <Button
+                    disabled={
+                      !record.reviewedAt ||
+                      record.reviewedAction !== action.trim()
+                    }
+                    onClick={() => void proceed()}
+                  >
+                    Continue to saved work
+                  </Button>
+                </CardContent>
+              </Card>
+              <section aria-label="Questions">
+                <h2>Questions</h2>
+                {record.proposal.questions.length ? (
+                  record.proposal.questions.map((question, index) => (
+                    <p key={index}>{question}</p>
+                  ))
+                ) : (
+                  <p>
+                    No questions proposed. Check the evidence before continuing.
+                  </p>
+                )}
+              </section>
+              <Collapsible>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline">Model run details</Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="grid gap-2 p-3">
+                  <p>
+                    Run: {record.execution.provider} · {record.execution.model}{" "}
+                    · {record.execution.durationMs} ms · prompt{" "}
+                    {record.execution.promptVersion} · schema{" "}
+                    {record.execution.schemaVersion}
+                  </p>
+                  <p>
+                    Model digest:{" "}
+                    {record.execution.modelDigest ?? "Not supplied by provider"}
+                  </p>
+                </CollapsibleContent>
+              </Collapsible>
+            </section>
+          )}
           <section className="grid gap-3" aria-label="Model connection">
             <p>
               {config?.enabled
@@ -302,87 +404,6 @@ export default function RecoverPage() {
               </Button>
             )}
           </section>
-          {record && (
-            <section className="grid gap-4" aria-labelledby="recovery-heading">
-              <h2 id="recovery-heading" tabIndex={-1} ref={resultRef}>
-                Recovery suggestion · review required
-              </h2>
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    <h3>
-                      {record.proposal.assessment === "uncertain"
-                        ? "Clarification needed"
-                        : record.proposal.assessment === "changed"
-                          ? "Instructions affect your next step"
-                          : "No material change identified"}
-                    </h3>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="grid gap-3">
-                  <p>{record.proposal.summary}</p>
-                  {record.proposal.changes.map((change, index) => (
-                    <section
-                      key={index}
-                      className="grid gap-2"
-                      aria-label={`Evidence ${index + 1}`}
-                    >
-                      <h3>{change.description}</h3>
-                      <p>Saved source · {change.before.sourceId}</p>
-                      <p>{change.before.quote}</p>
-                      <p>New source · {change.after.sourceId}</p>
-                      <p>{change.after.quote}</p>
-                    </section>
-                  ))}
-                  <Label htmlFor="reviewed-action">Reviewed next action</Label>
-                  <Textarea
-                    id="reviewed-action"
-                    value={action}
-                    onChange={(event) => setAction(event.target.value)}
-                    maxLength={1000}
-                    rows={3}
-                  />
-                  <Button
-                    disabled={!action.trim() || action.length > 1000}
-                    onClick={() => void review()}
-                  >
-                    Save reviewed recovery
-                  </Button>
-                  <Button
-                    disabled={
-                      !record.reviewedAt ||
-                      record.reviewedAction !== action.trim()
-                    }
-                    onClick={() => void proceed()}
-                  >
-                    Continue to saved work
-                  </Button>
-                </CardContent>
-              </Card>
-              <section aria-label="Questions">
-                <h2>Questions</h2>
-                {record.proposal.questions.length ? (
-                  record.proposal.questions.map((question, index) => (
-                    <p key={index}>{question}</p>
-                  ))
-                ) : (
-                  <p>
-                    No questions proposed. Check the evidence before continuing.
-                  </p>
-                )}
-              </section>
-              <p>
-                Run: {record.execution.provider} · {record.execution.model} ·{" "}
-                {record.execution.durationMs} ms · prompt{" "}
-                {record.execution.promptVersion} · schema{" "}
-                {record.execution.schemaVersion}
-              </p>
-              <p>
-                Model digest:{" "}
-                {record.execution.modelDigest ?? "Not supplied by provider"}
-              </p>
-            </section>
-          )}
           <section
             className="grid gap-3"
             aria-label="Manual recovery and materials"
@@ -411,7 +432,7 @@ export default function RecoverPage() {
                   rel="noreferrer"
                   prefetch={false}
                 >
-                  {url}
+                  Supporting material {task.materialUrls.indexOf(url) + 1}
                 </Link>
               </p>
             ))}

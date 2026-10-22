@@ -37,7 +37,11 @@ export async function beginCheck(db: TaskDatabase, taskId: string) {
   return db.transaction("rw", db.tasks, db.checks, async () => {
     const task = await getTask(db, taskId);
     const previous = await latestCheck(db, task.id);
-    if (previous?.status === "awaiting") return previous;
+    if (
+      previous?.status === "awaiting" &&
+      (previous.taskRevision ?? 1) === task.revision
+    )
+      return previous;
     const startedAt = new Date(
       Math.max(Date.now(), previous ? Date.parse(previous.startedAt) + 1 : 0),
     ).toISOString();
@@ -54,6 +58,7 @@ export async function beginCheck(db: TaskDatabase, taskId: string) {
       id: context.id,
       taskId: task.id,
       context,
+      taskRevision: task.revision,
       before: task.source,
       startedAt,
       status: "awaiting",
@@ -97,6 +102,7 @@ export async function saveComparison(
     const task = await getTask(db, context.taskId);
     const check = await getCheck(db, context.id, task.id);
     if (
+      (check.taskRevision ?? 1) !== task.revision ||
       JSON.stringify(context) !== JSON.stringify(check.context) ||
       task.source.id !== context.baselineId ||
       task.source.digest !== context.baselineDigest

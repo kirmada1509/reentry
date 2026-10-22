@@ -18,6 +18,7 @@ export const sourceCheckSchema = z
   .strictObject({
     id: idSchema,
     taskId: idSchema,
+    taskRevision: z.number().int().positive().optional(),
     context: checkContextSchema,
     startedAt: z.iso.datetime(),
     before: sourceSnapshotSchema,

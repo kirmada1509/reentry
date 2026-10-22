@@ -219,9 +219,11 @@ export default function CheckPage() {
       : undefined;
 
   return (
-    <main className="container mx-auto max-w-2xl grid gap-6 p-6">
+    <main className="container mx-auto max-w-3xl grid gap-6 p-6">
       <header className="grid gap-2">
-        <h1>ReEntry · Check instructions</h1>
+        <CardTitle>
+          <h1>ReEntry · Check instructions</h1>
+        </CardTitle>
         <p>
           Compare a fresh selection with the instructions saved in your
           checkpoint. This checks captured text, not the whole website or the

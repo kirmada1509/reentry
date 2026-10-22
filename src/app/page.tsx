@@ -14,6 +14,24 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { flushCleanup } from "@/features/tasks/cleanup";
+import { loadDraft, saveDraft } from "@/features/tasks/drafts";
+import type { TaskDraft } from "@/features/tasks/schema";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -24,7 +42,12 @@ import { idSchema } from "@/features/capture/protocol";
 import type { Capture } from "@/features/capture/protocol";
 import { taskInputSchema } from "@/features/tasks/schema";
 import type { SavedTask } from "@/features/tasks/schema";
-import { listTasks, saveTask, taskDatabase } from "@/features/tasks/storage";
+import {
+  deleteTasks,
+  listTasks,
+  saveTask,
+  taskDatabase,
+} from "@/features/tasks/storage";
 
 async function acknowledge(task: SavedTask) {
   try {
@@ -44,6 +67,10 @@ async function acknowledge(task: SavedTask) {
 }
 
 export default function Home() {
+  const [restoredDraft, setRestoredDraft] = useState<TaskDraft | undefined>();
+  const draftWrites = useRef<Promise<unknown>>(Promise.resolve());
+  const [cleanupPending, setCleanupPending] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const [tasks, setTasks] = useState<SavedTask[]>([]);
   const [capture, setCapture] = useState<Capture | null>(null);
   const [selected, setSelected] = useState<SavedTask | null>(null);
@@ -69,6 +96,13 @@ export default function Home() {
       try {
         const { appOrigin, extensionId } = readConnectionConfiguration();
         const saved = await listTasks(taskDatabase());
+        void flushCleanup(taskDatabase())
+          .then((count) => {
+            if (active) setCleanupPending(count > 0);
+          })
+          .catch(() => {
+            if (active) setCleanupPending(true);
+          });
         if (!active) return;
         setTasks(saved);
         const captureId = new URL(location.href).searchParams.get("capture");
@@ -107,6 +141,9 @@ export default function Home() {
           throw new Error(
             "This capture is unavailable, unconfirmed, discarded, or expired. Review a pending capture in the extension, or select the source again.",
           );
+        const draft = await loadDraft(taskDatabase(), captureId);
+        if (!active) return;
+        setRestoredDraft(draft);
         setCapture(reply.capture);
         setStatus("Capture received for review. No task has been saved yet.");
       } catch (failure) {
@@ -154,6 +191,7 @@ export default function Home() {
     setError("");
     let saved: SavedTask | undefined;
     try {
+      await draftWrites.current;
       const reply = await requestCaptureBridge(
         readConnectionConfiguration().extensionId,
         {
@@ -192,10 +230,63 @@ export default function Home() {
     setSaving(false);
   }
 
+  function keepDraft(form: HTMLFormElement) {
+    if (!capture || busy.current) return;
+    const data = new FormData(form);
+    const draft = {
+      id: capture.id,
+      baseRevision: 0,
+      capturedAt: capture.capturedAt,
+      goal: String(data.get("goal") ?? ""),
+      workUrl: String(data.get("workUrl") ?? ""),
+      progress: String(data.get("progress") ?? ""),
+      nextAction: String(data.get("nextAction") ?? ""),
+      materials: String(data.get("materials") ?? ""),
+      confirmed: false,
+    };
+    setStatus("Unsaved changes · keeping a local draft…");
+    draftWrites.current = draftWrites.current
+      .catch(() => undefined)
+      .then(() => saveDraft(taskDatabase(), draft))
+      .then(
+        () =>
+          setStatus(
+            "Draft kept on this browser. Confirm and save to create a checkpoint.",
+          ),
+        () =>
+          setStatus(
+            "Unsaved changes · draft storage failed. Keep this page open and retry saving.",
+          ),
+      );
+  }
+  async function clearAll() {
+    if (busy.current) return;
+    busy.current = true;
+    setSaving(true);
+    setError("");
+    try {
+      await draftWrites.current;
+      await deleteTasks(taskDatabase());
+      setTasks([]);
+      setSelected(null);
+      setCapture(null);
+      setDeleteOpen(false);
+      history.replaceState(null, "", location.pathname);
+      setCleanupPending((await flushCleanup(taskDatabase())) > 0);
+      setStatus("All saved tasks and drafts deleted from this browser.");
+    } catch {
+      setError("Could not delete saved data. Check browser storage and retry.");
+    } finally {
+      busy.current = false;
+      setSaving(false);
+    }
+  }
   return (
-    <main className="container mx-auto max-w-2xl grid gap-6 p-6">
+    <main className="container mx-auto max-w-3xl grid gap-6 p-6">
       <header className="grid gap-2">
-        <h1>ReEntry</h1>
+        <CardTitle>
+          <h1>ReEntry · Find your way back</h1>
+        </CardTitle>
         <p>
           Save your place. Return with your goal, confirmed progress,
           instructions, and one next action together.
@@ -252,6 +343,7 @@ export default function Home() {
           </Card>
           <form
             onSubmit={(event) => void submit(event)}
+            onChange={(event) => keepDraft(event.currentTarget)}
             className="grid gap-4"
             aria-busy={saving}
           >
@@ -260,6 +352,7 @@ export default function Home() {
               <Input
                 id="goal"
                 name="goal"
+                defaultValue={restoredDraft?.goal}
                 required
                 maxLength={300}
                 placeholder="Finish my application"
@@ -271,6 +364,7 @@ export default function Home() {
               <Input
                 id="workUrl"
                 name="workUrl"
+                defaultValue={restoredDraft?.workUrl}
                 type="url"
                 required
                 maxLength={2048}
@@ -288,6 +382,7 @@ export default function Home() {
               <Textarea
                 id="progress"
                 name="progress"
+                defaultValue={restoredDraft?.progress}
                 required
                 maxLength={3000}
                 placeholder="Transcript attached. Write Nothing yet if you haven't started."
@@ -314,6 +409,7 @@ export default function Home() {
               <Textarea
                 id="nextAction"
                 name="nextAction"
+                defaultValue={restoredDraft?.nextAction}
                 required
                 maxLength={1000}
                 placeholder="Find the first referee's contact details"
@@ -325,6 +421,7 @@ export default function Home() {
               <Textarea
                 id="materials"
                 name="materials"
+                defaultValue={restoredDraft?.materials}
                 maxLength={10300}
                 placeholder="One complete HTTP or HTTPS link per line, up to five"
                 disabled={saving}
@@ -366,6 +463,7 @@ export default function Home() {
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
+              <Badge variant="secondary">Revision {selected.revision}</Badge>
               <h3>Confirmed progress</h3>
               <p>{selected.progress}</p>
               <Separator />
@@ -398,22 +496,34 @@ export default function Home() {
                   </Link>
                 </Button>
               </div>
-              <Label htmlFor="saved-url">Saved source URL</Label>
-              <Textarea
-                id="saved-url"
-                readOnly
-                value={selected.source.url}
-                rows={2}
-              />
-              <Label htmlFor="saved-text">
-                Saved instructions · captured text, not a live check
-              </Label>
-              <Textarea
-                id="saved-text"
-                readOnly
-                value={selected.source.text}
-                rows={7}
-              />
+              <Button asChild variant="outline">
+                <Link href={`/task?task=${selected.id}`}>
+                  Edit checkpoint and history
+                </Link>
+              </Button>
+              <Collapsible defaultOpen>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline">Saved instruction details</Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="grid gap-3 p-3">
+                  <Label htmlFor="saved-url">Saved source URL</Label>
+                  <Textarea
+                    id="saved-url"
+                    readOnly
+                    value={selected.source.url}
+                    rows={2}
+                  />
+                  <Label htmlFor="saved-text">
+                    Saved instructions · captured text, not a live check
+                  </Label>
+                  <Textarea
+                    id="saved-text"
+                    readOnly
+                    value={selected.source.text}
+                    rows={7}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
               {selected.materialUrls.length > 0 && (
                 <section className="grid gap-2" aria-label="Supporting links">
                   {selected.materialUrls.map((url, index) => (
@@ -456,7 +566,8 @@ export default function Home() {
                 <CardTitle>{task.goal}</CardTitle>
                 <CardDescription>{task.nextAction}</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="grid gap-3">
+                <Badge variant="outline">Revision {task.revision}</Badge>
                 <Button
                   variant="secondary"
                   onClick={() => {
@@ -466,10 +577,70 @@ export default function Home() {
                 >
                   Open saved checkpoint
                 </Button>
+                <Button asChild variant="outline">
+                  <Link href={`/task?task=${task.id}`}>
+                    Edit checkpoint and history
+                  </Link>
+                </Button>
               </CardContent>
             </Card>
           ))}
         </section>
+      )}
+      {cleanupPending && (
+        <Alert>
+          <AlertTitle>Extension cleanup pending</AlertTitle>
+          <AlertDescription>
+            Local deletion is complete. Reconnect the extension to clear
+            associated pending captures.
+            <Button
+              variant="outline"
+              onClick={() =>
+                void flushCleanup(taskDatabase()).then((count) =>
+                  setCleanupPending(count > 0),
+                )
+              }
+            >
+              Retry extension cleanup
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+      {!capture && tasks.length > 0 && (
+        <Dialog
+          open={deleteOpen}
+          onOpenChange={(value) => {
+            if (!saving) setDeleteOpen(value);
+          }}
+        >
+          <DialogTrigger asChild>
+            <Button variant="outline">Delete all saved data</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete all saved data?</DialogTitle>
+              <DialogDescription>
+                All tasks, revision history, source checks, suggestions, drafts
+                and existing pending captures will be removed. This cannot be
+                undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline" disabled={saving}>
+                  Keep my data
+                </Button>
+              </DialogClose>
+              <Button
+                variant="destructive"
+                disabled={saving}
+                onClick={() => void clearAll()}
+              >
+                Confirm delete all
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       )}
       <footer>
         <p>
