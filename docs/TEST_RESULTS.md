@@ -201,3 +201,9 @@ Final workspace verification: `pnpm check` passed all **80 tests across twelve f
 - Publication audit checked Git history, tracked files and built browser assets for focused patterns and configured credential values. Credentials/private learner context are ignored and untracked. The audit remains a focused guard, not a complete secret-detection guarantee.
 - Source: https://github.com/kirmada1509/reentry. Preview assets: https://github.com/kirmada1509/reentry/releases/tag/v0.1.0. CI runs production browser acceptance without live model keys; its current status is visible on GitHub.
 - Still open: native Chrome/VoiceOver, actual browser text/zoom acceptance, public YouTube/Vimeo upload, genuine learner reviews/reflections, eligibility attestations and actual contest submissions. The locked Mac blocked native controls; none of these human activities is inferred from automated success.
+
+### Published preview and final acceptance
+
+- Final complete production-mode run on release code: **42 passed, two deliberate live/recording skips**. All capture, source, recovery, resilience and accessibility cases ran together, including the zero-checkpoint delete-all case.
+- Public repository and MIT license were verified without authentication. The non-draft v0.1.0 prerelease contains the MP4, SRT/VTT and two screenshots; anonymous ranged GET requests verified the video/caption downloads. Release target: `f4b3fc544c91c453ca98e2e99dfa2b8737b11de7`.
+- Hosted GitHub verification did not start because of an account-level restriction, before any test step. This is an external runner availability issue; no hosted pass is claimed. Full local production acceptance and the existing workspace gates passed. No account settings were changed.

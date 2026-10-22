@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-10-22T00:39:24.666348+00:00",
+  "releaseCodeCommit": "f4b3fc544c91c453ca98e2e99dfa2b8737b11de7",
+  "repository": "https://github.com/kirmada1509/reentry",
+  "release": "https://github.com/kirmada1509/reentry/releases/tag/v0.1.0",
+  "localVerification": {
+    "unitIntegrationTests": 86,
+    "productionBrowserCasesPassed": 42,
+    "deliberateLiveRecordingSkips": 2,
+    "freshCheckoutBootstrap": "passed at 3cbf03f",
+    "productionHttpSmoke": "passed",
+    "configuredRuntime": "nvidia hosted; explicit processing agreement required"
+  },
+  "video": {
+    "durationSeconds": 108.2,
+    "provider": "nvidia",
+    "model": "nvidia/nemotron-3-ultra-550b-a55b",
+    "content": "fictional instructions; actual model inference",
+    "captions": ["SRT", "VTT"],
+    "publicAnonymousDownloads": "verified with ranged GET"
+  },
+  "hostedCI": {
+    "state": "job did not start due external account-level restriction",
+    "run": "https://github.com/kirmada1509/reentry/actions/runs/39700381357",
+    "codeFailureObserved": false
+  },
+  "unverifiedHumanGates": [
+    "native Chrome/VoiceOver",
+    "actual native text-size and browser zoom settings",
+    "public YouTube/Vimeo upload",
+    "genuine Learn reviews/reflections",
+    "participant eligibility and final contest submission"
+  ]
+}

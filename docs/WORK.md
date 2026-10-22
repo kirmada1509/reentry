@@ -9,11 +9,11 @@ Public source: https://github.com/kirmada1509/reentry. Preview assets: https://g
 ## Verification
 
 - `pnpm check`: 86 unit/integration tests across thirteen files plus formatting/lint/web+extension types/UI provenance/focused secrets/context guards.
-- Production web/extension suite: 41 deterministic cases passed, with two explicit live/recording skips. The additional empty-library delete-all case passed separately.
+- Final complete production web/extension suite: 42 deterministic cases passed together, with two explicit live/recording skips.
 - Final actual-NVIDIA demo/live-context accessibility: three passed, one synthetic-only skip. Final deterministic accessibility subset: three passed. Tests include browser restart, worker suspension, failed writes, stale results, edit conflicts, history/restore/deletion, axe, focus, long text, 320px reflow and simulated 200% text.
 - Fresh clone bootstrap of `3cbf03f` passed without copied private context or credentials. Focused publication audit covers history, tracked files and built browser assets.
 - Fresh six-scenario NVIDIA evaluation retained an initial decrease timeout; an isolated explicit repeat passed. No application retry/fallback was added. Evidence/limitations: docs/TEST_RESULTS.md and docs/evidence/.
-- Production CI is configured; its live status is on GitHub. Final runtime smoke/publication results are reported at delivery.
+- Production CI is configured, but hosted jobs could not start because of an external account-level restriction. No hosted pass is claimed. Repository/license and public video/caption downloads were verified anonymously; final production smoke passed after restoring the default-origin extension build and managed app. The app is running at http://127.0.0.1:3000 with NVIDIA enabled and hosted processing agreement required.
 
 ## Decisions
 
