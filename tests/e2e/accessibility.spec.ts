@@ -54,9 +54,13 @@ test("@a11y empty library, extension preview, capture form, editor, history and 
   await expect(app.locator("body")).toHaveCSS("font-family", /Geist/);
   await accessible(app);
   const { preview } = await captureSelection(extension.context);
-  // Opening the extension tab can precede its stylesheet and entrypoint. Retry
-  // the computed style rather than inspecting the browser's initial default font.
-  await expect(preview.locator("body")).toHaveCSS("font-family", /system-ui/);
+  // Verify the configured theme after it loads. Chromium's extension stylesheet
+  // can give body an OS-specific sans stack (for example DejaVu Sans on Linux).
+  await expect(preview.locator("html")).toHaveCSS("font-family", /system-ui/);
+  await expect(preview.locator("body")).toHaveCSS(
+    "font-family",
+    /\b(?:system-ui|sans-serif)\b/,
+  );
   await accessible(preview);
   const form = await confirmPreview(extension.context, preview);
   await accessible(form);
