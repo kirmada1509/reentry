@@ -67,6 +67,31 @@
       ],
       "source": "https://ui.shadcn.com/r",
       "date": "2026-10-22"
+    },
+    {
+      "items": [
+        "item"
+      ],
+      "source": "https://ui.shadcn.com/r",
+      "date": "2026-10-22"
+    },
+    {
+      "items": [
+        "typography-h1",
+        "typography-lead"
+      ],
+      "source": "https://ui.shadcn.com/r",
+      "date": "2026-10-22"
+    },
+    {
+      "items": [
+        "scoped-stone-emerald-theme"
+      ],
+      "source": "https://ui.shadcn.com/r/colors/stone.json",
+      "tokenSourceSha256": "4b7857b983c22966af756820ca3be372a4bc11ca57643ad37937e2d9b0170f65",
+      "accentSource": "tailwindcss/theme.css (MIT), emerald-800",
+      "accentSourceSha256": "443d7af364200f8ec8352dc78e39485a118a1840d498c97967bf0ae402b39167",
+      "date": "2026-10-22"
     }
   ],
   "files": {
@@ -90,6 +115,11 @@
     "src/app/globals.css": "15fd52bd462719c6469cb5978ece7a907e9558ac22050005abe8b865524e05e1",
     "src/components/ui/progress.tsx": "e012e1f7e6e66d11229d1233eccf91954edcd9179b418ff1d114dc651b86fd35",
     "src/components/ui/checkbox.tsx": "ba0ac64064e2d8fa7299d53e9e84b9a4772fef8dd4cf6170c56d3030a1d69941",
-    "src/components/ui/collapsible.tsx": "c6598e5584f4258b5d9fefadbc5ad6a66888ad58729f4b634a0bb2d9c513188b"
+    "src/components/ui/collapsible.tsx": "c6598e5584f4258b5d9fefadbc5ad6a66888ad58729f4b634a0bb2d9c513188b",
+    "src/components/ui/item.tsx": "024705098d4802c818b233e8efc3ec60861aaf269cbc98051b5dd8b1ce08ebe9",
+    "src/components/typography-h1.tsx": "56c752829e3dd44ebbb2b01a66aee09751d8b3f0d4415b8d6c07b7c4adc28be3",
+    "src/components/typography-lead.tsx": "1f26283c4d3995918549f577daa45e2ef645f4ebd1a771c2eab6e1dbc18c1c03",
+    "src/app/preview/registry-theme.css": "a23e34d7e7175736f82a8d362d9bf6fe76fc239a7fa713ffde4e89c3e9ee40c6",
+    "docs/ui-sources/stone.json": "4b7857b983c22966af756820ca3be372a4bc11ca57643ad37937e2d9b0170f65"
   }
 }

@@ -1,5 +1,7 @@
 # ReEntry harness and model choice
 
+New direction requested October 22: [stateful browser task agent](AGENTIC_PLAN.md). Model-selected observation tools, automatic task/checkpoint updates, interruption and reminders now justify evaluating a durable agent runtime such as LangGraph.js. The fixed workflow below describes the current release; it is not a constraint on the newly requested iteration. No agent framework or automatic monitoring has been installed/implemented by this planning update.
+
 Decision, October 22, 2026: keep a small, fixed recovery workflow and a replaceable model connection. No LangChain, LangGraph, autonomous tool loop, or multi-agent framework is needed for the first release. Phase 3 implements this boundary with local Ollama and a provider-independent contract; a subsequent [NVIDIA adapter](NVIDIA.md) adds hosted inference with explicit processing agreement. Setup, bounds and current limits: [PHASE3.md](PHASE3.md).
 
 ## What the harness does

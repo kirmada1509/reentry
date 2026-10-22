@@ -1,142 +1,154 @@
-# ReEntry build plan
+# ReEntry browser agent — build plan
 
-Updated October 22, 2026: **reuse open-source components and online sandboxes first**. The browser extension plus web app now implements Phase 1 capture/saving and Phase 2 task-bound recapture, immutable snapshots and text comparison through jsdiff. Phase 3 implements the model-independent harness and local Ollama recovery; later resilience, accessibility and release gates remain pending. The subsequent [NVIDIA adapter](NVIDIA.md) adds explicitly approved hosted inference behind the same interface. See [AI setup](PHASE3.md) and actual model results before treating its gate as passed. See [working setup](PHASE1.md), [return-and-compare walkthrough](PHASE2.md) and [actual verification](TEST_RESULTS.md).
+Updated October 23, 2026. This is the current roadmap for the automatic browser agent and its calm interface, using the selected open-source tools below. Phase 0 is implemented and locally verified; [foundation setup, evidence and limits](AGENT_FOUNDATION.md). Automatic observation, live agent inference and reminders remain subsequent work. The existing manual release remains working; its earlier plan is preserved in [BUILD_PLAN_MANUAL.md](BUILD_PLAN_MANUAL.md), with actual results in [TEST_RESULTS.md](TEST_RESULTS.md).
 
-## What we are building ourselves
+## The product we are building
 
-Our work is the recovery experience: save a goal and confirmed progress, connect supporting material, show evidenced instruction changes, offer one next action, and let the user correct or restore a checkpoint.
+ReEntry quietly keeps your place while you use the browser. After enabling assistance, you continue with your task. The agent understands the likely goal, creates a finish condition, tracks meaningful progress, and helps you resume after an interruption. It completes a task when supporting evidence is actually observed.
 
-We will use existing libraries for extension scaffolding, readable-page extraction, storage, text differences, API mocking, and accessibility checks. We will use existing test websites before creating fixtures. The [reuse research](REUSE.md) lists alternatives, licenses, integration limits, and online links.
+The default experience requires neither selecting text nor filling a checkpoint form. Small corrections remain available when the inferred intent is wrong. Start with two complete task families: shopping and applications. Other websites can be evaluated later; universal browser understanding is not an initial promise.
 
-## Reuse instead of rebuilding
+The first release of this iteration observes your actions and manages ReEntry tasks/reminders. It does not place purchases or submit external forms on your behalf.
 
-| Needed capability                      | Selected existing component                                                                                                   | Small ReEntry-specific work left                                       |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Extension build/dev setup              | [WXT](https://wxt.dev/)                                                                                                       | Capture action, permission configuration, preview UI                   |
-| Capture instruction text               | Browser selection API; [Defuddle](https://github.com/kepano/defuddle) when readable-page extraction is needed                 | Source URL/section metadata, preview, capture limits; no custom parser |
-| Extension messages and pending storage | [webext-core messaging](https://github.com/aklinker1/webext-core) and [WXT storage](https://wxt.dev/guide/essentials/storage) | Typed capture messages, delivery state, acknowledgement                |
-| Web app storage                        | [Dexie](https://github.com/dexie/Dexie.js)                                                                                    | Task schema, immutable checkpoint revisions, correction/restore rules  |
-| Visible old/new text                   | [jsdiff](https://github.com/kpdecker/jsdiff)                                                                                  | Present evidence; AI interprets material impact                        |
-| Browser test runner                    | [Playwright](https://playwright.dev/docs/chrome-extensions)                                                                   | Real-extension fixtures and task-specific assertions                   |
-| Repeatable API/model failures          | [MSW](https://github.com/mswjs/msw) and [Serve](https://mswjs.io/ecosystem/serve)                                             | Response definitions; no custom simulator engine                       |
-| Local fixture serving                  | [http-server](https://github.com/http-party/http-server)                                                                      | A few before/after instruction files; no website backend               |
-| Automated accessibility checks         | [axe with Playwright](https://playwright.dev/docs/accessibility-testing)                                                      | Resolve findings and manually test keyboard/VoiceOver                  |
+## What the interface should feel like
 
-These are library integrations, not a claim that installing packages creates a complete product. Use only components the current slice needs. Keep Next.js, React, TypeScript, Zod, pnpm, and official shadcn UI from the starter.
+A quiet companion: warm neutral surfaces, dark readable text, a restrained green accent, generous spacing and clear hierarchy. No busy analytics dashboard, stream of agent messages, flashing status, constantly moving cards or guilt-inducing task counters. See the [visual and interaction brief](UI_DIRECTION.md).
 
-Selection capture remains the default. If a readable-page mode is included, it is a separate explicit action using Defuddle, with a preview and no remote extraction. It must not silently replace a failed/empty selection. Mozilla Readability is an alternative to evaluate in the spike, not a second required extractor. PDF.js and Mammoth are documented for future PDF/DOCX import; those formats remain outside this release.
+Four main surfaces:
 
-## The complete demo
+1. **Welcome and enable:** explain browser access and model processing clearly; enable assistance, choose site coverage and reminder preferences once.
+2. **Browser companion:** a compact Chrome side panel showing the task you are doing, what finishing means, recent progress and one next action. Pause and correct are always reachable.
+3. **Return home:** a spacious overview with Continue, Waiting and Finished groups. Emphasize the task you can resume rather than everything unfinished.
+4. **Task detail:** the finish condition, observed checkpoints, changes and evidence. Show a concise story first; expand the observation history only when requested.
 
-1. Open an external instruction page, select the relevant section, and invoke ReEntry with the toolbar or keyboard shortcut.
-2. Preview the capture, then save the goal, application link, and user-confirmed progress in ReEntry. No automatic inspection of private form values.
-3. Pause. The checkpoint survives closing and reopening ReEntry.
-4. For the repeatable demonstration, switch a clearly labeled local instruction fixture at the same URL from one referee to two. This changes page text, not an AI answer.
-5. Return, reopen the source, select the equivalent section, and explicitly capture it again for the saved task.
-6. The actual open-weight model explains the change with old/new excerpts and proposes adding the first referee. The second remains visible as subsequent work.
-7. Inspect or correct the card, then Continue reopens the saved work URL. Exact field restoration and external form persistence are not promised.
+A correction should look like changing a short sentence or choosing “I’m only researching,” not completing another form. Do not reorder a focused card or steal focus when the agent updates it.
 
-Use the existing Selenium form or a licensed local derivative as the work destination. No custom scholarship application is required. User-confirmed progress is a statement supplied by the user, not a claim that ReEntry verified an upload. Keep public-site smoke tests distinct from the controlled change demonstration.
+## What we keep and what we add
 
-## Required planning before implementation
+Keep this repository, the WXT extension, official registry UI, production start/stop commands, NVIDIA/Ollama connections, revision/deletion patterns and existing regression suite. Preserve current manual tasks and their evidence.
 
-Complete Learn `1-start` → `2-scope` → `3-prd` → `4-spec`, preserving actual generated scope/PRD/spec and review status. Carry forward the chosen extension/web-app scope and reuse decisions. This plan is an input, not a claim that those steps occurred. The author subsequently requested Phase 1 implementation on October 22; implementation proceeded with the formal Learn reviews still pending. Do not backfill approval claims.
+Add automatic browser observation, an authenticated background connection, durable agent memory, a bounded tool loop, automatic completion verification and local reminders. Adopt the stack below through Phase 0 integration tests. Keep provider-specific requests behind ReEntry's own interface; switching models must not require changing the task workflow. The [open-source comparison](AGENT_REUSE.md) contains source links, licenses, integration limits and alternatives.
 
-After planning, first prove WXT capture → web app storage with the real extension. Resolve this before UI polish or adding optional extraction modes. Do not claim clipboard/manual import is an integrated extension if the connection is not working.
+Proposed memory default: a local server-side SQLite store is authoritative for new agent tasks, evidence and effect records, integrated with a tested persistent graph checkpointer. The extension has a durable bounded observation/reminder-delivery queue, not an independent competing task database. The existing web-origin Dexie store remains intact for legacy manual tasks. Validate the chosen SQLite/checkpointer package, restart behavior and deployment compatibility in the first spike before installing it for feature work. No cloud database, accounts or hosting are needed.
+
+Browser observation uses Chrome content scripts and events. Reuse Chrome alarms/notifications for reminders, Playwright/MSW/axe for tests, and official shadcn components/blocks for screens. Do not add a second browser automation process merely to watch the user's existing browser. [Architecture and tool boundaries](AGENTIC_PLAN.md).
+
+## Selected tools and exactly how we use them
+
+| Responsibility                                             | Selected tool                                               | ReEntry integration                                                                                                                                                                                   | First phase            |
+| ---------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| Extension lifecycle, content scripts and internal delivery | Existing WXT and webext-core messaging/storage integrations | Keep the extension; add permitted-site observation and the local authenticated delivery adapter.                                                                                                      | 0–1                    |
+| Interactive page context                                   | Page Agent's `@page-agent/page-controller`                  | Use a narrow observation adapter around the standalone controller, with tested filtering and page-behavior controls. Reuse its DOM engine; exclude its browser action methods from the agent's tools. | 0 spike, 1 integration |
+| Agent orchestration                                        | `@langchain/langgraph` with compatible peers                | Express observation, task inference, bounded tool selection, checkpoint updates and verification as a stateful graph using ReEntry's model interface.                                                 | 0 spike, 2 integration |
+| Durable graph state                                        | `@langchain/langgraph-checkpoint-sqlite`                    | Use its file-backed `SqliteSaver`. Keep task/evidence/effect records in the authoritative local SQLite store, with explicit reconciliation between task updates and graph checkpoints.                | 0 spike, 2 integration |
+| Model access                                               | Existing NVIDIA and optional Ollama adapters                | Extend the shared agent decision contract and validate outputs. Credentials stay on the server.                                                                                                       | 2                      |
+| Document-heavy source material                             | Defuddle, when the Phase 1 reader tests establish a gap     | Use local synchronous extraction behind the same observation adapter for instructions/articles. Keep form/status evidence from the interactive reader; do not introduce remote extraction fallback.   | 1, only if needed      |
+| Commerce sandbox                                           | Sauce Labs `sample-app-web`                                 | Run a pinned local upstream shop separately, with its UI/assets and license; disable external reporting and add only missing test variants.                                                           | 0 setup, 1 onward      |
+| Application sandbox                                        | Existing Northstar portal                                   | Reuse its saved drafts and instruction switching; add fictional validation/submission/receipt states for Phase 3.                                                                                     | 0 onward               |
+| Calm interface                                             | Existing official shadcn registry components/blocks         | Compose home, Chrome companion, evidence disclosures and concise corrections through the registry adoption workflow.                                                                                  | Every phase            |
+| Reminders                                                  | Chrome alarms and notifications                             | Store intent, schedule platform alarms, deduplicate delivery and reconcile after restart.                                                                                                             | 4                      |
+| Verification                                               | Existing Playwright, MSW/Serve and axe                      | Exercise the real extension and local sites; inject controlled failures and evaluate the configured model separately.                                                                                 | Every phase            |
+
+Nanobrowser is a reference for extension side-panel, tab-group and permission patterns. Reuse a specific licensed module only when it closes a demonstrated gap; do not fork the complete product or adopt its browser-held credential design. Stagehand and Browser Use remain later options for delegated browser actions. Deep Agents and Mastra remain alternative runtimes, not additional layers on LangGraph. rrweb is optional synthetic recording/replay equipment if ordinary Playwright fixtures prove insufficient. These are deliberate integration boundaries, not required installations.
+
+Phase 0 must resolve the known Page Controller issues: default serialization can include form values, extraction adds annotations, and observation can trigger mutations. Verify filtering before storage/delivery/inference, page behavior and self-induced observation loops. An empty attribute list or disabled operation mask is not proof of safe passive reading. If the package fails, document the failing case and prefer a small attributed adaptation of existing extraction code before considering a new reader. Keep the failing gate open until resolved.
+
+Pin working versions and upstream fixture commits after the smallest integration succeeds; retain licenses and record modifications in provenance. The shop currently needs a newer Node runtime than ReEntry's pinned Node 22.23.2, so isolate its build/runtime and allocate a separate free port. Production use of each new dependency requires its own build and acceptance evidence.
+
+ReEntry-specific code remains responsible for intent inference, related-tab grouping, evidence-backed finish conditions, corrections, stale-update/deletion safeguards and the reminder policy. None of the selected libraries supplies those product judgments automatically.
+
+## Phase 0 — Design the experience and prove the foundation
+
+**Status:** locally verified. The fictional preview, patched reader, file-backed graph restart/effect-replay test, connection contract and pinned shopping sandbox are implemented. The connection is a tested protocol boundary, not an exposed pairing/delivery API. The companion is a web preview of the future native side panel. See [the implementation record](AGENT_FOUNDATION.md).
+
+**What you can try:** a clickable, clearly labelled prototype of the home screen, companion and task detail, including empty, active, interrupted, completed and disconnected states.
+
+**Build:** select the registry theme/type/layout, compose the three core screens with fictional task data, and document the interaction rules. In small separate spikes, test the published Page Controller inside WXT for useful DOM context, data minimization, stable page behavior and bundle compatibility; verify model-directed graph branching and restart persistence using the official LangGraph SQLite checkpointer; settle the authenticated extension connection contract. Follow the concrete [adoption gates](AGENT_REUSE.md#adoption-gates-before-feature-work). Prototype data is never presented as actual agent inference.
+
+Bring up a pinned local Sauce Labs shop at this stage so later phases have a real existing shopping journey to test. Verify browse → cart → checkout → simulated completion and reset using synthetic details, with external reporting disabled. Keep Northstar available alongside it. Record ports, upstream commit/license, isolated runtime and reproducible start/reset instructions. This is test equipment; it does not establish automatic ReEntry task tracking.
+
+**Pass when:** the core journey is understandable without a walkthrough; primary actions, pause and correction work; the layout is calm at desktop and side-panel widths; keyboard focus is clear; the reader supplies useful context without seeded sensitive values escaping its adapter or disturbing the tested pages; persistence resumes a sample workflow after a real process restart without duplicating an accepted effect; the local shop journey and reset work reproducibly. If a chosen library fails this spike, record and resolve that concrete failure before feature dependencies are adopted.
+
+**Result:** a visual baseline and tested architecture, before another round of engineering-first screens.
+
+## Phase 1 — Let ReEntry observe the browser
+
+**What you can try:** enable assistance and browse the application sandbox. ReEntry receives relevant page changes without selecting text or filling a task form.
+
+**Build:** permission/site controls, visible pause, navigation/DOM/form-status observation triggers, bounded snapshots and a durable queue to the authenticated local backend. The observation adapter calls the Phase 0-tested Page Controller; use Defuddle only for a demonstrated document-extraction gap. Retain the smallest useful evidence. Filter password/payment/hidden-token fields and unnecessary raw answers before persistence, delivery or hosted processing. Ignore the extension's own UI, reader annotations and repetitive mutations. Store current consent separately from old per-capture agreement. Exercise both Northstar and the local upstream shop.
+
+**Pass when:** permitted page changes arrive, denied/paused sites do not; a saved observation survives worker restart; backend downtime queues bounded events and reconnects without duplicates; unpaired requests are rejected; redaction tests cover seeded sensitive examples. The companion shows honest connected, paused, unavailable and catching-up states without a wall of logs.
+
+**Result:** an automatic browser context stream, not yet an intelligent task agent.
+
+## Phase 2 — Infer tasks and finish conditions
+
+**What you can try:** browsing an application or progressing toward checkout creates a task automatically. Its short description and intended finish condition appear in the companion and home screen.
+
+**Build:** a provider-independent agent decision contract, LangGraph orchestration using the Phase 0-tested file-backed SQLite checkpointer, stable task IDs and cross-tab grouping. Let the model choose among bounded observation/history/task tools. Persist accepted decisions and graph progress with version checks and idempotent effect records. The browser reader supplies context; the graph owns orchestration; the model transport remains replaceable. Distinguish candidate intent, ongoing work and completion uncertainty; honor user corrections over later guesses.
+
+**Pass when:** no manual checkpoint form is required; shopping research is distinguishable from buying; an ordinary product visit does not become a forced purchase obligation; unrelated tasks stay separate; browser/server restart resumes rather than duplicates the task; stale inference cannot replace newer evidence. Test the common model contract with fakes and the actual configured NVIDIA model. Other provider support is claimed only after its adapter/evaluation passes.
+
+**Result:** the first useful automatic version of ReEntry.
+
+## Phase 3 — Track progress and verify completion
+
+**What you can try:** watch a task move through meaningful checkpoints as you act. Leave during checkout or an application, return, and see exactly where you stopped. Successfully finishing completes the correct task automatically.
+
+**Build:** evidence-linked intermediate checkpoints, task-specific finish conditions, fresh confirmation checks, changed-instruction reconciliation, cancellation/dismissal and correction. Saving a draft, attempting submission and successful submission are distinct states. The default card shows the useful next action; supporting evidence sits under “Why this?”.
+
+Extend Northstar only with missing fictional validation/submission/receipt states. Reuse the local Sauce Labs shop's existing cart, review, cancel and completion flow; add controlled missing failure/receipt variants rather than another commerce implementation. Keep test-only expected answers outside the agent's observed context.
+
+**Pass when:** successful order/application confirmations complete the matching task; clicking Submit, failed payment, validation errors, an unrelated receipt or old confirmation do not; one-to-two-referee changes revise the remaining work without losing progress; prompt injection cannot grant tools or fabricate completion; corrections survive later updates; deletion prevents delayed events from resurrecting the task.
+
+**Result:** an evidenced task companion rather than an activity summarizer.
+
+## Phase 4 — Handle interruptions and reminders
+
+**What you can try:** stop midway, return later, and receive a short recovery card. If reminders are enabled, ReEntry quietly reminds you of unfinished work and stops reminding once it is completed.
+
+**Build:** interrupted/waiting states, resumable work links, next-action updates, reminder policy, snooze/cancel and idempotent notification delivery. Suggested initial policy: one gentle reminder after 45 minutes away, at most one per task per day, with configurable quiet hours. This is a product default to test, not a deadline inferred from the website. Only schedule real deadline reminders when the deadline and timezone are supported by evidence.
+
+**Pass when:** switching briefly between tabs does not trigger reminders; completing/deleting/dismissing a task cancels stale reminders; restart reconciles missing alarms; duplicate events never produce duplicate notifications; unknown deadlines remain unknown. Document delayed local delivery while Chrome/device is unavailable; do not promise notifications after browser exit.
+
+**Result:** ReEntry supports returning to work without nagging.
+
+## Phase 5 — Make calmness and reliability hold up
+
+**What you can try:** use the whole journey through the companion and home screen with realistic content, long text, several tabs and interruptions.
+
+**Build:** replace prototype bindings with production data throughout, refine spacing/hierarchy/microcopy, preserve focused-card position, and tuck technical details behind disclosures. Verify failure/reconnect states, race conditions, deletion, history, retention limits and control of call budgets. Apply any theme through the documented registry adoption/provenance workflow; do not edit hashes to bless custom primitives.
+
+**Pass when:** the main journey has no required large form; each screen has one clear primary action; background events do not steal focus or repeatedly reshuffle the list; minor updates do not create toasts; keyboard/axe, narrow side panels, 200% text, 400% reflow and reduced motion are covered. Record actual manual Chrome/VoiceOver results or keep unavailable gates explicitly open. On-screen explanations distinguish observed facts, agent inference and user corrections.
+
+**Result:** a calm, coherent daily-use experience rather than a debug interface.
+
+## Phase 6 — Evaluate and prepare the demonstration
+
+**What you can try:** two complete real-model demonstrations: a shopping interruption through order confirmation, and an application interruption through changed requirements and submission confirmation.
+
+**Build:** a versioned evaluation set, adversarial/held-out variants, fresh-profile setup, actual provider runs and honest public evidence. Reuse the polished Northstar portal; extend it with clearly fictional validation/submission/receipt states. Use a pinned local copy of the MIT-licensed Sauce Labs sample shop for commerce, with an isolated compatible runtime, upstream notices and disabled external reporting. Add only missing controlled failure/receipt variants; no real payment integration. See [sandbox reuse](AGENT_REUSE.md#existing-sandboxes-we-can-use).
+
+**Pass when:** report task-discovery errors, wrong task merges, false completions, correction frequency, latency and model-call counts with actual denominators. Require no false completions in the release regression set, without claiming that establishes universal accuracy. Production builds, the full browser suite and CI pass. Record the uninterrupted automatic journey and disclose fictional sites, inherited code, AI help and limits. Existing eligibility, Learn reviews and personal submission attestations remain separate human gates.
+
+**Result:** a technically supported submission candidate showing the agent's substantive contribution.
 
 ## Required testing sandboxes
 
-October 22 presentation update: the author requested a richer demo than bare fixtures. `pnpm sandbox:sites` now builds a fictional Northstar scholarship portal with the existing registry UI, an explicitly saved browser-local draft, sample materials and scenario switching. It remains separate static test equipment with no accounts/uploads/submission backend. The minimal cases below remain automated coverage. See [the current walkthrough](SANDBOX.md).
+| Sandbox                   | Purpose                                                                                           | Reuse and necessary additions                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Northstar application     | Automatic task creation, material/form progress, instruction change, validation versus submission | Existing polished portal; add labelled fictional success/failure/receipt states                                     |
+| Commerce journey          | Research versus purchase, cart, interrupted checkout, success/failure/cancellation                | Pinned Sauce Labs sample shop in a separate local runtime; add only missing negative cases; no real payments        |
+| Unfamiliar page variants  | Expose hardcoded site assumptions                                                                 | Alternate wording, structure, SPA navigation and unrelated confirmations; expected labels stay outside model inputs |
+| Browser lifecycle         | Tab grouping, worker suspension, closed app tab, offline backend and restart                      | Real extension in Playwright profiles; persistent test data and controllable service failures                       |
+| Model/tool failures       | Malformed output, prompt injection, incorrect evidence, stale results, timeouts and budgets       | Existing MSW/Serve and fake transports plus separate actual-provider evaluation                                     |
+| Reminders                 | Deduplication, quiet hours, snooze, completion cancellation and restart                           | Chrome alarm/notification APIs with deterministic scheduling fixtures; actual native smoke where available          |
+| Calm/accessibility states | Layout, focus, motion, notification restraint and comprehension                                   | axe, keyboard, viewport tests and hands-on inspection; record unperformed manual checks                             |
 
-The six coverage areas remain required, but **they are not six applications to build**. Reuse hosted pages, existing test runners, and response fixtures. Implement only the missing ReEntry-specific data and assertions.
+Public test sites are supplementary manual smoke checks, not CI dependencies. Ordinary browsing of an allowed real shopping site can test observation; it does not authorize a test purchase or establish checkout reliability.
 
-| Coverage area                     | Reuse first                                                                                                                                                                             | Minimum additional fixture / acceptance gate                                                                                                                                                         |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| External work and capture         | [Selenium's hosted web form](https://www.selenium.dev/selenium/web/web-form.html) and its [open source](https://github.com/SeleniumHQ/selenium/blob/trunk/common/src/web/web-form.html) | Capture after explicit invocation; save/reopen work URL; confirmed checkpoint survives refresh. No real submissions.                                                                                 |
-| Page shapes and permission limits | [The Internet](https://the-internet.herokuapp.com/): dynamic loading, frames, login, status-code examples                                                                               | Existing pages for manual smoke tests; deterministic local versions or routing for CI. Empty/unsupported pages cannot produce a successful check.                                                    |
-| Delivery and persistence          | Playwright persistent browser profile, WXT storage, Dexie                                                                                                                               | App absent, popup closed, worker restart, browser restart, duplicate delivery, wrong task, quota failure, correction/restore, and task deletion. No silent loss or duplicate checkpoints.            |
-| Changed-source verification       | Static before/after text files served by http-server; Playwright routing                                                                                                                | Same URL, V1 → V2; unchanged; cosmetic edits; contradiction; missing source; selected section mismatch. Failed/incomparable checks stay unverified.                                                  |
-| Model behavior and failures       | MSW handlers, Serve when a separate HTTP endpoint is needed, plus real Ollama                                                                                                           | Invalid JSON, absent evidence, unsupported actions, invented completion, oversized/slow response, service unavailable; invalid output never overwrites facts. Separate live-model evidence required. |
-| Accessibility                     | axe/Playwright plus manual VoiceOver in Chrome                                                                                                                                          | Full keyboard capture → save → recapture → evidence → correction/restore → Continue; labels, focus, announcements, zoom/reflow, and all failure paths.                                               |
+## Working rules and next step
 
-### Online sandboxes we can use immediately
+Each phase includes its visible UI, tests and evidence. Commit a verified slice before the next phase; do not postpone all design until the end. Preserve legacy manual data, server-only credentials, the stable production launcher and existing accessibility functionality. Add dependencies only when their working slice needs them.
 
-- [Selenium web form](https://www.selenium.dev/selenium/web/web-form.html): ordinary external form with different controls. It is generic test equipment, not a scholarship integration.
-- [The Internet dynamic loading](https://the-internet.herokuapp.com/dynamic_loading): content appearing after interaction.
-- [The Internet frames](https://the-internet.herokuapp.com/frames): frame-selection limits; add a second local origin for a genuine cross-origin boundary test if needed.
-- [The Internet login](https://the-internet.herokuapp.com/login) and [status codes](https://the-internet.herokuapp.com/status_codes): unavailable/inappropriate source states.
-
-Use synthetic data and low-volume manual interactions. Do not depend on live public sites for mandatory CI or a deadline-critical recording. Do not attempt to change their content. Keep the existing pages' accessibility problems separate from findings in ReEntry's own controls.
-
-For repeatable/offline tests, reuse only needed upstream files at a recorded commit, preserve notices, and serve them locally. Check referenced assets: Selenium's form uses external CDNs, so cache required resources or remove decorative dependencies in the documented derivative. A downloaded HTML file alone is not necessarily offline-ready. Running the full Ruby/Docker version of The Internet is optional, not a required service.
-
-### The small custom fixture that remains
-
-The reviewed online sites do not supply our stable, resettable “one referee → two referees” scenario. Build only:
-
-1. A short `instructions-v1.html` and `instructions-v2.html`, plus a few data variants for decrease, cosmetic change, deadline change, contradiction, and removed requirement.
-2. A temporary per-run directory served on a different origin from ReEntry, for example port 4174 versus 3000. Reuse a licensed sample form as the work page where needed.
-3. A test fixture that copies the chosen text version to one stable `instructions.html` path. Restore the baseline to reset. Disable server/browser caching for the scenario.
-
-Use the existing http-server CLI, not a custom backend or admin/reset dashboard. Give each test run its own directory/port/profile, and clean up only resources it created. For a manual recording, a documented fixture-switch command changes the served file; reload and recapture normally. Label this as controlled test content, not a real scholarship provider updating its requirements.
-
-Do not add scenario ids, hidden expected answers, or model outputs to captured material. Verify the model receives actual page text. If these tiny files prove insufficient, document the specific missing behavior before creating a more elaborate sandbox.
-
-### Model/API testing without a custom simulator
-
-Write a small set of [MSW response handlers](https://mswjs.io/docs/quick-start), not an HTTP mocking framework. Use MSW in the process under unit/integration test. For a separately running Next.js server that calls Ollama, expose those handlers using [`@msw/serve`](https://mswjs.io/ecosystem/serve/getting-started) on a distinct loopback model-test port. Match the adapter's full HTTP response envelope, not only the inner model JSON.
-
-Use Playwright `route.fulfill` / `route.abort` for browser-page and browser-request cases. Those do not intercept server-to-Ollama traffic. Keep test-only model URLs in server configuration and exclude handlers from production. Older `@mswjs/http-middleware` examples are not the current package choice.
-
-Real-model evaluation remains separate: requirement increase/decrease, unchanged, cosmetic edit, contradiction, and missing evidence. Record actual inputs/outputs, model digest/runtime, prompt version, validation result, latency, and failures. Mocked responses do not establish model quality, and the submission must include a real inference run.
-
-Include source text that instructs the model to ignore the task or mark unfinished work complete. It must remain untrusted evidence and cannot change confirmed progress or trigger privileged actions.
-
-### Real extension and accessibility gates
-
-Use Playwright's bundled Chromium with a persistent context, plus manual unpacked-install checks in target Chrome. Mocked browser APIs or an extension popup opened as a normal test page do not prove a real user invocation grants page access. Manually verify permission/keyboard behavior when automation cannot reproduce the browser action.
-
-Require explicit user capture on ordinary top-level HTTP(S) pages. No selection asks for a selection; no silent whole-page fallback. Restricted browser pages, PDFs, iframe selections, desktop apps, and login/error captures must give an honest unsupported/unverified state. Page text cannot execute commands or gain authority over confirmed progress.
-
-Use axe for automated checks and VoiceOver/keyboard for the actual journey, including selection surviving popup focus, keyboard invocation, tab changes, dialog focus restoration, restrained announcements, 200% text size, 400% web-app zoom/reflow, narrow layouts, and reduced motion. Record OS/browser, issues/fixes, and limitations. An external test page passing/failing axe says nothing by itself about ReEntry.
-
-## Connection and data boundaries
-
-Use WXT entrypoints and storage rather than custom build/storage infrastructure. Use `@webext-core/messaging` for internal extension requests. For the Chrome-only initial bridge, prefer [native website-to-extension messaging](https://developer.chrome.com/docs/extensions/develop/concepts/messaging#send-messages-from-web-pages) with an [externally-connectable allowlist](https://developer.chrome.com/docs/extensions/reference/manifest/externally-connectable):
-
-- Preview/confirm captured text, then save a pending item using WXT storage and open the local ReEntry import page with a capture id only.
-- The app, configured with the installed extension id, requests that capture; the extension validates the exact app origin/port and request before replying. Restrict the manifest too; do not rely on a wildcard alone.
-- The browser client writes through a Dexie transaction and acknowledges the capture only after commit. Retry by capture id, deduplicate, and clear pending data on acknowledgement or explicit deletion.
-- Uninstalled extension, changed extension id, closed app, expired pending item, and worker restart have visible recovery paths. A reply alone is not proof of durable saving.
-
-This replaces the earlier custom HTTP handoff queue. Built-in messaging still needs our small protocol, validation, and acknowledgement adapter. It is not an off-the-shelf ReEntry connector. Prove this path early, including localhost browser restrictions; if incompatible, evaluate an app-origin content-script relay before adding a server queue.
-
-Store the goal, reviewed work/material URLs, confirmed facts, source snapshots (URL/section/raw text/digest/capture time), and up to ten immutable checkpoint revisions. Store AI suggestions separately. Dexie handles database mechanics; ReEntry defines restore/history/delete rules and rejects stale responses for older inputs.
-
-Keep selection evidence unchanged. Extraction/normalization and jsdiff may assist presentation, but record extractor/version/mode and compare equivalent captures. Do not classify an extraction/mode/section mismatch as an authoritative requirement change. Equal text means unchanged **within the captured material**, not the whole website.
-
-Keep Next.js server routes thin using `withRoute`, Zod boundaries, fixed safe logging, and server-only model configuration. Continue opens a user-reviewed HTTP(S) target; no invented model destinations, form autofill/submission, account credentials, or private form reads.
-
-Keep the harness a fixed workflow: prepare context → call the configured model → validate → show a correctable proposal. No LangChain/LangGraph or autonomous agent loop is required. A server-only model interface isolates provider details from capture, storage, validation, and the UI; see [the harness design](HARNESS.md).
-
-Implement local Ollama first, with Qwen3 4B as a candidate subject to feasibility testing. Configure provider/model rather than hardcoding them into recovery logic. Later OpenAI and DeepSeek adapters can reuse AI SDK Core and direct provider packages behind the same interface. They are optional follow-ups, not initial demo prerequisites or implemented support. Use the actual provider's output capabilities, the same application validators, an initial 30-second total deadline, no implicit retries, explicit retry, and no automatic cloud fallback. Validate source ids, exact quotes, action targets, and consistency with confirmed facts. Evidence checks do not prove semantic truth; keep correction/manual recovery available.
-
-Disable Defuddle's optional remote/async extractors for this workflow and keep previews plain text; do not turn returned HTML into executable UI. Local privacy assumes browser, app server, extraction, and model stay on the user's machine. Future hosted inference requires a named-provider disclosure and explicit agreement before sending task context, with credentials kept server-side. Keep telemetry off and task text out of logs. Cloud hosting, Electron, and store publication remain deferred.
-
-## Build order and planned commands
-
-Follow [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for the phase-by-phase execution order, automated tests, hands-on checks, evidence, and completion gates. Phase 0 preserves the genuine Learn process; Phases 1–3 deliver the first real external-capture/model recovery journey; Phases 4–6 complete resilience, accessibility, and release preparation. Do not maintain a competing step order here.
-
-Future layout: `extension/` for WXT; `tests/fixtures/sites/` for minimal licensed HTML/instruction pairs; `tests/mocks/` for MSW handlers; `tests/e2e/` for browser fixtures/assertions. No custom sandbox platforms. Add `docs/TEST_RESULTS.md` only when actual runs exist.
-
-Phase 1–3 extension/web builds, static and MSW model sandboxes, capture/source/recovery browser checks and explicit live-model evaluation are runnable. Resilience/accessibility commands remain planned; see the [command table](IMPLEMENTATION_PLAN.md#commands-and-when-they-become-available). Pin new dependencies only with their working implementation slice and retain upstream notices.
-
-## Delivery targets and completion
-
-IST targets: Oct 21 planning/reuse review; Oct 22 capture/storage and minimal fixtures; Oct 23 interpretation/failure checks; Oct 24 accessibility and recording. Task Forge submission buffer is Oct 24 evening, before Oct 25 at 02:30. DEV deadline is Oct 26 at 12:29; AI Basics is Oct 27 at 02:30. See [event checks](HACKATHONS.md). These are targets, not completion claims.
-
-Before submission: starter `pnpm check`, production web build, WXT extension build, deterministic Playwright/MSW cases, manual keyboard/VoiceOver, and a recorded live-model run. Update the starter smoke test when replacing its homepage. Public websites are supplementary smoke tests; their downtime must not block deterministic CI.
-
-The same roughly two-minute demo supports all three events: accessibility leads Task Forge; product clarity and genuine Learn documents lead AI Basics; substantive open-source interpretation and an observed improvement lead DEV. Disclose starter/library/fixture reuse. The participant writes their own submission copy under the Learn curriculum.
-
-If time tightens, omit readable-page mode, extra page adapters, extra browsers, cloud hosting, and store publishing. Preserve actual extension integration, confirmed progress, source evidence, correction, honest uncertainty, and keyboard access.
+**Next: Phase 1.** Implement enabled-site observations and authenticated background delivery using the verified reader and connection contract. Keep the labelled preview available while live bindings are added. The first user-visible agent milestone is Phase 2: a task and finish condition appear automatically during ordinary browsing. Phase 3 makes its progress/completion judgment trustworthy.

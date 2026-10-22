@@ -1,5 +1,7 @@
 # Presenting the Northstar sandbox
 
+For the separate reused shopping sandbox, run `pnpm sandbox:commerce` and follow [the commerce walkthrough](AGENT_FOUNDATION.md#reused-shopping-sandbox). Its default port is 4177. It uses upstream Sauce Labs UI and simulated orders; Northstar remains the controlled application/changed-instruction scenario.
+
 Northstar is a fictional scholarship portal that runs on a separate local address from ReEntry. It is demonstration equipment, not an actual scholarship provider. All applicant details, award amounts, dates and requirements are fictional. Use sample data only.
 
 ![Northstar award overview, requirements and preparation checklist](evidence/northstar-overview.png)

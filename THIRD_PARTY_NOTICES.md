@@ -28,6 +28,8 @@ SOFTWARE.
 
 Other installed packages retain their licenses in their distributions. The framework shell was generated with create-next-app.
 
+The automatic-agent foundation uses LangGraph.js, its SQLite checkpointer and better-sqlite3 (MIT). Page Agent's MIT controller is adapted through the committed pnpm patch; its DOM engine is derived from Browser Use. Notices are retained in [Page Agent MIT](docs/licenses/page-agent-MIT.txt) and [Browser Use MIT](docs/licenses/browser-use-MIT.txt). The separate shopping sandbox reuses the MIT Sauce Labs sample app at the commit pinned in `sandboxes/commerce-source.json`; its [license](docs/licenses/saucelabs-sample-app-MIT.txt) is retained. The scoped preview theme uses official shadcn Stone tokens and Tailwind Emerald tokens (MIT), with recorded source digests. Implementation modifications and limits are in [the foundation record](docs/AGENT_FOUNDATION.md).
+
 ReEntry additionally uses WXT (MIT), Dexie (Apache-2.0), jsdiff (BSD-3-Clause), and @axe-core/playwright (MPL-2.0); their license files remain in package distributions. Geist is wired through the official shadcn font registry and Next font loader. The extension uses the standard system sans-serif fallback.
 
 The fictional Northstar presentation sandbox reuses the installed shadcn registry components, React, lucide-react icons and theme. Vite 8.3.4 (MIT, already used by WXT and now directly pinned) builds its static pages; http-server (MIT) hosts them locally. The portal copy, layout composition, sample applicant and draft/scenario behavior are original ReEntry demo work, not a forked scholarship service. No external images, fonts, real documents or third-party portal brand assets are used.

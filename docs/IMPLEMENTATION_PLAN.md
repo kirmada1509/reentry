@@ -1,5 +1,7 @@
 # ReEntry phase-wise implementation plan
 
+Historical manual-release implementation plan. The current proposed browser-agent sequence, including UI-first work, is in [BUILD_PLAN.md](BUILD_PLAN.md). Preserve the phase records below as provenance; do not use them as the next iteration's active task order.
+
 Roadmap started October 21, updated October 22, 2026. **Phases 1–3 are implemented and verified; formal Phase 0 Learn reviews remain incomplete.** This translates the agreed browser-extension/web-app direction into small working increments. Product boundaries and reusable tools remain in [BUILD_PLAN.md](BUILD_PLAN.md) and [REUSE.md](REUSE.md).
 
 ## How we will work

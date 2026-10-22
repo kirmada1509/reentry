@@ -16,6 +16,8 @@ The initial home page re-exports the official empty-demo example. Its create/imp
 
 ## Enforcement
 
+The automatic-agent preview has a deliberately scoped theme adoption command, `pnpm ui:theme`. It consumes cached official Stone registry tokens plus the installed Tailwind Emerald-800 token and records the sources/digests and generated variable mapping in provenance. It does not modify component styling or the existing global theme. The source snapshot and generated CSS remain immutable under the guard; changing the adoption tool requires source/provenance review. Registry typography examples can receive product text via their returned elements without changing vendor assets.
+
 docs/ui-provenance.json hashes registry-generated assets. pnpm ui:check rejects changed vendor assets, unregistered components, additional style sheets, raw interactive HTML outside registry code, and non-layout styling in framework entry files. Hooks and CI run the guard.
 
 pnpm ui:add verifies the existing baseline, invokes the CLI, and records the resulting assets. Existing items are reinstalled from upstream; review the diff before committing. Do not edit the manifest to bless handwritten UI.

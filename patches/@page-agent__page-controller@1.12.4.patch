@@ -1,0 +1,109 @@
+diff --git a/dist/lib/PageController.d.ts b/dist/lib/PageController.d.ts
+index c977a0dc5e242dd642452d18db70351e62351a79..f0536a65fc7fcfd28e2a5013d9d965400abbbef3 100644
+--- a/dist/lib/PageController.d.ts
++++ b/dist/lib/PageController.d.ts
+@@ -42,6 +42,8 @@ declare namespace dom {
+ }
+ 
+ declare interface DomConfig {
++    /** ReEntry observation-only adaptation; see docs/AGENT_FOUNDATION.md. */
++    passive?: boolean;
+     viewportExpansion?: number;
+     interactiveBlacklist?: (Element | (() => Element))[];
+     interactiveWhitelist?: (Element | (() => Element))[];
+diff --git a/dist/lib/page-controller.js b/dist/lib/page-controller.js
+index abc5d1e6ca2f2602e6b0a98f3aac5bb3740646af..1413481cdedd88b5ea4f3bb7eef14fb1ead1a5e4 100644
+--- a/dist/lib/page-controller.js
++++ b/dist/lib/page-controller.js
+@@ -1258,6 +1258,9 @@ var dom_tree_default = (args = {
+ 			return id;
+ 		}
+ 		if (node.nodeType !== Node.ELEMENT_NODE && node.nodeType !== Node.TEXT_NODE) return null;
++		// ReEntry passive mode: exclude private/editor subtrees before extraction.
++		const owner = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement;
++		if (args.passive && owner?.closest?.('script,style,template,noscript,iframe,[hidden],[aria-hidden="true"],[data-reentry-private],[data-private],textarea,select,option,[contenteditable]:not([contenteditable="false"]),input[type="password"],input[type="hidden"],input[autocomplete^="cc-"],input[autocomplete="one-time-code"]')) return null;
+ 		if (node.nodeType === Node.TEXT_NODE) {
+ 			const textContent = node.textContent?.trim();
+ 			if (!textContent) return null;
+@@ -1304,7 +1307,7 @@ var dom_tree_default = (args = {
+ 			children: []
+ 		};
+ 		if (isInteractiveCandidate(node) || node.tagName.toLowerCase() === "iframe" || node.tagName.toLowerCase() === "body") {
+-			const attributeNames = node.getAttributeNames?.() || [];
++			const attributeNames = (node.getAttributeNames?.() || []).filter((name) => !args.passive || ["type", "role", "checked", "aria-checked", "aria-expanded", "aria-label"].includes(name));
+ 			for (const name of attributeNames) {
+ 				const value = node.getAttribute(name);
+ 				nodeData.attributes[name] = value;
+@@ -1333,7 +1336,7 @@ var dom_tree_default = (args = {
+ 					* @note if the element failed the isInteractiveCandidate, attributes would be empty.
+ 					*/
+ 					if (nodeData.isInteractive && Object.keys(nodeData.attributes).length === 0) {
+-						const attributeNames = node.getAttributeNames?.() || [];
++						const attributeNames = (node.getAttributeNames?.() || []).filter((name) => !args.passive || ["type", "role", "checked", "aria-checked", "aria-expanded", "aria-label"].includes(name));
+ 						for (const name of attributeNames) {
+ 							const value = node.getAttribute(name);
+ 							nodeData.attributes[name] = value;
+@@ -1435,8 +1438,9 @@ function getFlatTree(config) {
+ 	for (const item of config.interactiveWhitelist || []) if (typeof item === "function") interactiveWhitelist.push(item());
+ 	else interactiveWhitelist.push(item);
+ 	const elements = dom_tree_default({
+-		doHighlightElements: true,
+-		debugMode: true,
++		doHighlightElements: !config.passive,
++		passive: config.passive,
++		debugMode: false,
+ 		focusHighlightIndex: -1,
+ 		viewportExpansion,
+ 		interactiveBlacklist,
+@@ -1802,7 +1806,7 @@ var PageController = class extends EventTarget {
+ 	constructor(config = {}) {
+ 		super();
+ 		this.config = config;
+-		patchReact(this);
++		if (!config.passive) patchReact(this);
+ 		if (config.enableMask) this.initMask();
+ 	}
+ 	/**
+@@ -1855,7 +1859,7 @@ var PageController = class extends EventTarget {
+ 		this.dispatchEvent(new Event("beforeUpdate"));
+ 		this.lastTimeUpdate = Date.now();
+ 		if (this.mask) this.mask.wrapper.style.pointerEvents = "none";
+-		cleanUpHighlights();
++		if (!this.config.passive) cleanUpHighlights();
+ 		const blacklist = [...this.config.interactiveBlacklist || [], ...Array.from(document.querySelectorAll("[data-page-agent-not-interactive]"))];
+ 		this.flatTree = getFlatTree({
+ 			...this.config,
+@@ -1990,21 +1994,10 @@ var PageController = class extends EventTarget {
+ 	* The optional `signal` is exposed to the script scope so cooperative code
+ 	* can abort promptly when the task is stopped.
+ 	*/
+-	async executeJavascript(script, signal) {
+-		try {
+-			const asyncFunction = eval(`(async (signal) => { ${script} })`);
+-			const result = await asyncFunction(signal);
+-			return {
+-				success: true,
+-				message: `✅ Executed JavaScript. Result: ${result}`
+-			};
+-		} catch (error) {
+-			return {
+-				success: false,
+-				message: `❌ Error executing JavaScript: ${error}`
+-			};
+-		}
++	async executeJavascript() {
++		throw new Error("Arbitrary JavaScript execution is disabled in the ReEntry reader build.");
+ 	}
++
+ 	/**
+ 	* Show the visual mask overlay.
+ 	* Only works after mask is setup.
+@@ -2025,7 +2018,7 @@ var PageController = class extends EventTarget {
+ 	* Dispose and clean up resources
+ 	*/
+ 	dispose() {
+-		cleanUpHighlights();
++		if (!this.config.passive) cleanUpHighlights();
+ 		this.flatTree = null;
+ 		this.selectorMap.clear();
+ 		this.elementTextMap.clear();

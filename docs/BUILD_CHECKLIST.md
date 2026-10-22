@@ -1,5 +1,20 @@
 # ReEntry build checklist
 
+This checklist tracks the automatic-agent foundation first and preserves the manual release history below. The current automatic-agent build order is [BUILD_PLAN.md](BUILD_PLAN.md); historical manual checks do not complete the new phases.
+
+## Automatic-agent Phase 0 — Reused foundation
+
+- [x] Compose the labelled calm home, companion and task-detail prototype from official registry UI; verify dialog keyboard/focus and narrow layouts.
+- [x] Integrate Page Controller in a WXT spike; verify useful context, seeded sensitive-data filtering, unchanged test-page focus/values, bounded output and production bundling.
+- [x] Prove LangGraph plus the official SQLite checkpointer across real process restart, with stable task identity and no duplicate accepted effect.
+- [x] Establish the authenticated extension/server contract and single task-state authority design. Pairing/delivery endpoints remain Phase 1 implementation.
+- [x] Pin and run the existing Sauce Labs shop separately; retain attribution, disable reporting/remote fonts and verify checkout/reset with synthetic data.
+- [x] Record dependency/fixture versions and actual acceptance evidence in [AGENT_FOUNDATION.md](AGENT_FOUNDATION.md).
+
+**Local gate passed October 23:** 88 unit/integration tests, 48 production browser cases with two intentional live/demo skips, and separate commerce acceptance. Phase 1 observation and Phase 2 inference remain unimplemented. Native accessibility/zoom acceptance is still open.
+
+Tool assignments and deferred alternatives are in the [selected stack](BUILD_PLAN.md#selected-tools-and-exactly-how-we-use-them). The historical manual-release checklist follows.
+
 Project execution tracker, started October 21, 2026. Phases 1–4 and automated accessibility/release work implemented October 22. Native accessibility and genuine learner/submission gates remain explicit below. Details and test gates: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md); actual evidence: [TEST_RESULTS.md](TEST_RESULTS.md).
 
 This checklist tracks actual project work. It is not the formal Learn `devpost/checklist.md`, which `5-build` generates from the genuinely reviewed scope, PRD, and spec. Do not mark a phase complete until its gate passes.

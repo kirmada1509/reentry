@@ -294,6 +294,13 @@ export default function Home() {
         <Badge variant="secondary">
           Saved on this browser · no AI processing in this step
         </Badge>
+        <div>
+          <Button variant="outline" asChild>
+            <Link href="/preview">
+              Explore the new companion · fictional preview
+            </Link>
+          </Button>
+        </div>
       </header>
       <p role="status" aria-live="polite">
         {loading ? "Loading saved tasks…" : status}

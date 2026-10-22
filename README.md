@@ -6,6 +6,8 @@ An accessible recovery card for unfinished work: preserve the goal, confirmed pr
 
 ReEntry works with local Ollama or NVIDIA-hosted models behind one provider-independent harness. NVIDIA processing needs explicit agreement and a server-only key; no credentials are shipped in the extension. Formal Learn documents are retrospective drafts with unperformed human reviews clearly recorded.
 
+**Automatic-agent iteration:** Phase 0 adds a [calm fictional interface preview](http://127.0.0.1:3000/preview), a tested Page Controller adaptation, real LangGraph/SQLite restart recovery and a reused local shopping sandbox. [Setup and evidence](docs/AGENT_FOUNDATION.md). Automatic browser tracking and task inference are subsequent phases; the preview does not run AI or monitor browsing.
+
 ## Working demo
 
 [Watch/download the 1:48 real-model demo](https://github.com/kirmada1509/reentry/releases/download/v0.1.0/reentry-demo.mp4) · [SRT captions](https://github.com/kirmada1509/reentry/releases/download/v0.1.0/reentry-demo.srt) · [VTT captions](https://github.com/kirmada1509/reentry/releases/download/v0.1.0/reentry-demo.vtt) · [Preview release and screenshots](https://github.com/kirmada1509/reentry/releases/tag/v0.1.0)
@@ -32,6 +34,8 @@ For a presentation-ready external task, run `pnpm sandbox:sites` in another term
 - [Original product concept](reentry.md)
 - [Bounded product brief](docs/PRODUCT.md)
 - [Scope, architecture, and testing sandboxes](docs/BUILD_PLAN.md)
+- [Calm UI direction for the browser agent](docs/UI_DIRECTION.md)
+- [Agent tools, memory, and observation contracts](docs/AGENTIC_PLAN.md)
 - [Phase-wise implementation plan and test gates](docs/IMPLEMENTATION_PLAN.md)
 - [Build checklist and current phase](docs/BUILD_CHECKLIST.md)
 - [Release setup, verification and limitations](docs/RELEASE.md)

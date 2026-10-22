@@ -1,5 +1,15 @@
 # Active work and handoff
 
+## Current automatic-agent iteration
+
+Phase 0 is implemented and locally verified. See [AGENT_FOUNDATION.md](AGENT_FOUNDATION.md) for commands, source pins, known limits and the settled pairing/delivery protocol. The fictional calm home/companion/detail preview is at http://127.0.0.1:3000/preview; it uses a separate preview storage key and does not run AI. Page Controller 1.12.4 is patched for passive extraction and tested through the real activeTab grant. LangGraph 1.5.2 plus its official SQLite checkpointer 1.1.0 survives process termination and effect replay with fake decisions. The pinned Sauce Labs shop runs separately at http://127.0.0.1:4177 with reporting/remote fonts disabled and Node 24 isolated from the root Node 22 pin.
+
+Verification: `pnpm check` passed 88 unit/integration tests; the full production web/extension suite passed 48 cases with two intentional live/demo skips; separate commerce checkout/validation/cart-reload/reset/no-external-request acceptance passed. Production builds and HTTP smoke passed. UI screenshots are saved with the foundation evidence. Hosted CI status should be checked separately; local results do not establish its outcome.
+
+Next concrete task: Phase 1 of [BUILD_PLAN.md](BUILD_PLAN.md). Implement explicit site/session consent, native companion connection states, enabled-page observation/debounce, bounded durable extension queue and authenticated pairing/delivery. Use the tested reader and strict connection boundary; server SQLite will own accepted agent task state while the legacy web Dexie database remains intact. No continuous observation, live agent model loop, automatic task discovery or reminder delivery is implemented yet. Phase 2 is the first useful automatic-inference milestone. Preserve the manual release, default-origin production launcher, model transports and reviewable provenance.
+
+The [research comparison](AGENT_REUSE.md) documents alternatives: Defuddle only for a demonstrated extraction gap; Nanobrowser as a targeted reference; other automation tools/frameworks deferred. Genuine Learn reviews, eligibility and native accessibility remain separate open human gates.
+
 ## Delivered
 
 The author authorized autonomous implementation, public repository creation/push and technical release preparation. Checkpoint revisions, ten-item history, restore, recoverable drafts, conflict handling, deletion/replay safeguards, extension cleanup outbox and improved registry-composed screens are implemented.

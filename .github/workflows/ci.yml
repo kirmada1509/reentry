@@ -35,6 +35,7 @@ jobs:
       - run: pnpm test:e2e
         env:
           REENTRY_TEST_PRODUCTION: "1"
+      - run: pnpm test:commerce
       - if: failure()
         uses: actions/upload-artifact@v6
         with:

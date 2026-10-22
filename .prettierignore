@@ -10,6 +10,7 @@ src/hooks
 src/lib/utils.ts
 src/app/globals.css
 docs/ui-provenance.json
+docs/ui-sources
 
 # Vendored Devpost Learn curriculum; preserve upstream source
 .agents/skills/[1-6]-*/

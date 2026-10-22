@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/saucelabs/sample-app-web",
+  "commit": "3f05b93c488c48c94721c95be3037c3d2d476d80",
+  "archiveSha256": "a9cb32d349d83dbe43268ff6eb6359fefd17cf7cc084774faf8e88669a86ea44",
+  "license": "MIT",
+  "node": "24.9.0",
+  "npm": "11.6.0"
+}

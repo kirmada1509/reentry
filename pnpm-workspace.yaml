@@ -1,4 +1,5 @@
 allowBuilds:
+  better-sqlite3: true
   esbuild: true
   sharp: false
   unrs-resolver: false
@@ -6,3 +7,9 @@ allowBuilds:
 savePrefix: ""
 engineStrict: true
 nodeVersion: 22.23.2
+minimumReleaseAgeExclude:
+  - "@langchain/langgraph-checkpoint@1.2.1"
+  - "@langchain/langgraph-sdk@1.12.6"
+  - "@langchain/langgraph@1.5.2"
+patchedDependencies:
+  "@page-agent/page-controller@1.12.4": patches/@page-agent__page-controller@1.12.4.patch

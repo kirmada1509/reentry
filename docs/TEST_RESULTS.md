@@ -1,5 +1,16 @@
 # ReEntry verification evidence
 
+## Automatic-agent Phase 0 — October 23, 2026 (IST)
+
+The calm fictional preview, standalone Page Controller adaptation, real LangGraph/SQLite persistence spike and reused commerce sandbox are implemented. These results do not establish automatic browser tracking or live agent inference. [Reproduction and limitations](AGENT_FOUNDATION.md).
+
+- `pnpm check`: passed all guards, lint/types and 88 unit/integration tests across fourteen files, including separate-process crash/restart/effect replay and extension-origin/token boundary rejection.
+- Production web and Chrome extension builds: passed, including the local-only unlisted reader. Existing manifest permissions and extension ID remain unchanged.
+- `REENTRY_TEST_PRODUCTION=1 pnpm test:e2e`: 48 passed; two explicit live-model/demo skips. Three new cases verify preview correction/reload, 360px companion axe/focus/reflow and real activeTab reader behavior with seeded private values and zero test-page mutations.
+- `pnpm test:commerce`: passed cart retention across reload, empty-field validation, simulated order confirmation and reset, with all browser requests restricted to the local host. The first run exposed Google Fonts requests; the local derivative now removes them. Reporting imports are inert local aliases.
+- `pnpm smoke`: passed after restoring the default-origin production extension/app build.
+- Native VoiceOver/browser zoom and universal page support are unverified. The graph uses a fake decision model; no new hosted inference, reminders, continuous monitoring or live pairing is claimed.
+
 ## Phase 1 — October 22, 2026 (IST)
 
 Implementation checkpoint: Git commit titled `feat: implement phase-one capture and durable checkpoints`; this record is included with that implementation. Prior baseline: `f86a3f4`. These results describe Phase 1, not completion of the full product or Learn curriculum.
