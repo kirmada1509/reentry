@@ -20,6 +20,10 @@ docs/ui-provenance.json hashes registry-generated assets. pnpm ui:check rejects 
 
 pnpm ui:add verifies the existing baseline, invokes the CLI, and records the resulting assets. Existing items are reinstalled from upstream; review the diff before committing. Do not edit the manifest to bless handwritten UI.
 
+Static `min-w-0` and `wrap-anywhere` layout utilities are allowed to contain long task text and URLs at narrow widths; they do not replace registry-owned appearance.
+
 Framework root layout and page composition remain necessary. Semantic layout tags and a limited set of static layout utilities are allowed. The check is a practical repository policy, not a proof that arbitrary JavaScript cannot create UI.
 
 For another open-source UI library, establish its source/license and update the adoption script and guard deliberately. The current automation supports the official shadcn registry. A new user requirement can change this preference; do not silently manufacture a replacement component.
+
+Font registry items may update framework font wiring. The adoption script formats that application layout and records the acquisition without treating the whole layout as immutable vendor code. Vendored components/theme/utilities keep their hashes. The web root supplies the registry's `--font-sans` through Next/Geist; the extension entry supplies the standard system-font fallback because it has no Next font loader.

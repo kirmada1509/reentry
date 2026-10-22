@@ -98,7 +98,7 @@ export default function CapturePage() {
   }
 
   return (
-    <main className="container mx-auto max-w-2xl p-6 grid gap-6">
+    <main className="wrap-anywhere container mx-auto max-w-2xl p-6 grid gap-6">
       <header className="grid gap-2">
         <h1>ReEntry · Review capture</h1>
         <p>

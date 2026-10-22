@@ -1,6 +1,6 @@
 # ReEntry product brief
 
-Updated October 22, 2026: capture, persistent checkpoints, source comparison and the Phase 3 AI recovery flow are implemented using existing open-source tools. Verification status and limits are in [TEST_RESULTS.md](TEST_RESULTS.md). Later resilience, accessibility and release gates remain pending. Original intent: [reentry.md](../reentry.md). This brief is planning input, not a substitute for the required Learn documents.
+Updated October 22, 2026: capture, persistent checkpoints, source comparison and the Phase 3 AI recovery flow are implemented using existing open-source tools. Verification status and limits are in [TEST_RESULTS.md](TEST_RESULTS.md). Revision/draft/deletion resilience and automated accessibility/production acceptance are now implemented. Native accessibility and final submission gates remain pending. Original intent: [reentry.md](../reentry.md). This brief is planning input, not a substitute for the required Learn documents.
 
 ## Outcome
 

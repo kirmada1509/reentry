@@ -1,6 +1,6 @@
 # Event requirements and open checks
 
-Checked October 21, 2026. This is submission preparation, not organizer confirmation of eligibility. Dates below use Asia/Kolkata.
+Checked October 21, 2026; partial recheck October 22: AI Basics rules and the DEV challenge page were retrieved. Task Forge and the DEV contest-rules direct fetches were unavailable, so those details still require final confirmation. This is submission preparation, not organizer confirmation of eligibility. Dates below use Asia/Kolkata.
 
 | Event                    | Published timing                                                                    | Submission emphasis                                      |
 | ------------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------- |
@@ -34,6 +34,6 @@ The [challenge page](https://dev.to/challenges/hacktoberfest-week3-2026-10-19) p
 
 - Confirm participant age, student status where required, residency, and event registration. Do not infer them from repository ownership.
 - Record actual first ReEntry implementation date and later contributions separately from inherited history.
-- Complete Learn workflow before ReEntry features. Current status: onboarding completed; scope draft awaiting review; PRD/spec pending.
+- Preserve the truthful sequence: onboarding and a scope draft preceded coding; PRD/spec/checklist were prepared retrospectively. Genuine reviews/reflections remain pending. Do not backdate workflow completion.
 - Confirm any cross-event restrictions with organizers where rules leave uncertainty. Distinct presentation alone does not establish eligibility.
 - Recheck official pages before submitting and retain submission receipts. No organizer has been contacted by this agent.

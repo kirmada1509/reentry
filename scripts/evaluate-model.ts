@@ -24,9 +24,17 @@ const cases = [
     "Attach your transcript. Supply two referees. Do not supply any referees.",
   ],
 ] as const;
+const requested = process.argv
+  .find((value) => value.startsWith("--case="))
+  ?.slice(7);
+if (requested && !cases.some(([name]) => name === requested))
+  throw new Error("Choose an existing evaluation case.");
+const selectedCases = requested
+  ? cases.filter(([name]) => name === requested)
+  : cases;
 const records = [];
 let failures = 0;
-for (const [name, text] of cases) {
+for (const [name, text] of selectedCases) {
   const input = await recoveryFixture(text);
   if (name === "missing-evidence") {
     delete input.check.after;

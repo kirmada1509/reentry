@@ -50,8 +50,14 @@ test("@a11y empty library, extension preview, capture form, editor, history and 
 }, info) => {
   const app = await extension.context.newPage();
   await app.goto(appUrl);
+  expect(
+    await app.evaluate(() => getComputedStyle(document.body).fontFamily),
+  ).toMatch(/Geist/);
   await accessible(app);
   const { preview } = await captureSelection(extension.context);
+  expect(
+    await preview.evaluate(() => getComputedStyle(document.body).fontFamily),
+  ).toContain("system-ui");
   await accessible(preview);
   const form = await confirmPreview(extension.context, preview);
   await accessible(form);
@@ -137,4 +143,35 @@ test("@a11y comparison and recovery, including errors and narrow layouts", async
     path: info.outputPath("recovery-narrow.png"),
     fullPage: true,
   });
+});
+
+test("@a11y long confirmed text reflows and 200-percent text retains usable controls", async ({
+  extension,
+}) => {
+  const fixture = await scenario();
+  const check = await seed(extension.context, fixture.url);
+  const id = new URL(check.url()).searchParams.get("task");
+  await check.goto(`${appUrl}/task?task=${id}`);
+  await check.getByLabel("Your goal", { exact: true }).fill("A".repeat(300));
+  await check
+    .getByLabel("What have you completed?", { exact: true })
+    .fill("B".repeat(3000));
+  await check.getByRole("checkbox").check();
+  await check
+    .getByRole("button", { name: "Save checkpoint revision", exact: true })
+    .click();
+  await expect(check.getByRole("status")).toContainText("revision 2");
+  await check.setViewportSize({ width: 320, height: 800 });
+  await noOverflow(check);
+  await check.setViewportSize({ width: 1280, height: 900 });
+  await check.evaluate(() => {
+    document.documentElement.style.fontSize = "200%";
+  });
+  await noOverflow(check);
+  await expect(
+    check.getByRole("button", {
+      name: "Save checkpoint revision",
+      exact: true,
+    }),
+  ).toBeVisible();
 });

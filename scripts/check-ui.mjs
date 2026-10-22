@@ -36,7 +36,7 @@ const layoutTags = new Set([
   "pre",
 ]);
 const layoutClass =
-  /^(?:container|flex|grid|block|hidden|flex-col|flex-wrap|grow|shrink-0|w-full|h-full|min-h-screen|mx-auto|items-(?:start|center|end)|justify-(?:start|center|between|end)|gap-\d+|grid-cols-\d+|max-w-(?:sm|md|lg|xl|[2-7]xl)|[pm][xytrbl]?-\d+)$/;
+  /^(?:container|min-w-0|wrap-anywhere|flex|grid|block|hidden|flex-col|flex-wrap|grow|shrink-0|w-full|h-full|min-h-screen|mx-auto|items-(?:start|center|end)|justify-(?:start|center|between|end)|gap-\d+|grid-cols-\d+|max-w-(?:sm|md|lg|xl|[2-7]xl)|[pm][xytrbl]?-\d+)$/;
 const frameworkEntry =
   /(?:^|\/)(?:page|layout|loading|error|global-error|not-found|template|default)\.[jt]sx?$|^extension\/entrypoints\/[^/]+\/main\.tsx$/;
 

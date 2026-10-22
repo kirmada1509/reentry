@@ -22,8 +22,8 @@ for (const endpoint of ["live", "ready"]) {
 }
 const page = await fetch(base, { signal: AbortSignal.timeout(20000) });
 assert.equal(page.status, 200);
-assert.match(await page.text(), /Save your place/);
-const missing = await fetch(base + "/missing-starter-smoke", {
+assert.match(await page.text(), /Find your way back/);
+const missing = await fetch(base + "/missing-reentry-smoke", {
   signal: AbortSignal.timeout(10000),
 });
 assert.equal(missing.status, 404);

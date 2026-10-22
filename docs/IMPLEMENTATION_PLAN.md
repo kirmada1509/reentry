@@ -155,7 +155,7 @@ Prepare a roughly two-minute real run with the controlled fixture clearly identi
 
 ## Commands and when they become available
 
-Existing and Phase 1–3 commands are runnable, including the MSW model sandbox and explicit live evaluation. Phase 4–5 test tags remain planned and have no implemented cases yet.
+Existing and Phase 1–3 commands are runnable, including the MSW model sandbox and explicit live evaluation. Phase 4–5 tags and production-mode acceptance are implemented; native accessibility and actual event submission gates remain separate.
 
 | Phase introduced | Command                            | Purpose                                                                              |
 | ---------------- | ---------------------------------- | ------------------------------------------------------------------------------------ |

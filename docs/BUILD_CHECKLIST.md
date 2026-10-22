@@ -1,6 +1,6 @@
 # ReEntry build checklist
 
-Project execution tracker, started October 21, 2026. Phases 1–3 implemented October 22. Details and test gates: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md); actual evidence: [TEST_RESULTS.md](TEST_RESULTS.md).
+Project execution tracker, started October 21, 2026. Phases 1–4 and automated accessibility/release work implemented October 22. Native accessibility and genuine learner/submission gates remain explicit below. Details and test gates: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md); actual evidence: [TEST_RESULTS.md](TEST_RESULTS.md).
 
 This checklist tracks actual project work. It is not the formal Learn `devpost/checklist.md`, which `5-build` generates from the genuinely reviewed scope, PRD, and spec. Do not mark a phase complete until its gate passes.
 
@@ -17,10 +17,12 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 - [x] Run `1-start`, carry forward the supplied idea, and save an honest ignored learner profile.
 - [ ] Establish review format and review the generated scope draft.
 - [ ] Save learner-approved `devpost/scope.md` through `2-scope`.
-- [ ] Run `3-prd`; save and review the concrete screens, behavior, states, and accessibility requirements.
-- [ ] Run `4-spec`; save and review the technical plan, data contracts, connection boundary, and model investigation.
+- [x] Prepare substantive retrospective PRD from supplied decisions and actual implementation.
+- [ ] Complete genuine PRD review through the Learn workflow.
+- [x] Prepare substantive retrospective specification and implementation mapping.
+- [ ] Complete genuine specification review through the Learn workflow.
 - [ ] Generate the formal Learn build checklist through `5-build` against the approved documents.
-- [ ] Verify required planning documents are substantive and public-ready, with real review status and upstream attribution.
+- [x] Verify planning drafts are substantive and public-ready, with truthful pending review status and upstream attribution.
 
 **Learn gate remains incomplete.** On October 22 the author explicitly requested Phase 1 implementation; that instruction took precedence over the roadmap’s sequencing. Scope/PRD/spec reviews and the formal Learn checklist remain pending. Do not claim the prescribed learning process was followed in order.
 
@@ -60,18 +62,19 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 
 ## Phase 4 — Correction and resilience
 
-- [ ] Save corrections as revisions; restore prior contents as a new revision and enforce bounded history.
-- [ ] Handle app/popup/worker/browser interruptions and failed writes with visible pending/unsaved states.
-- [ ] Reject stale inference/transfer results and conflicting saves without losing newer state.
-- [ ] Delete task-associated history, evidence, proposals, and pending captures; prevent resurrection.
-- [ ] Pass `@resilience` checks and hands-on edit/restore/interruption/deletion checks.
+- [x] Save corrections as revisions; restore prior contents as a new revision and enforce bounded history.
+- [x] Handle app/popup/worker/browser interruptions and failed writes with visible pending/unsaved states.
+- [x] Reject stale inference/transfer results and conflicting saves without losing newer state.
+- [x] Delete task-associated history, evidence, proposals, and pending captures; prevent resurrection.
+- [x] Pass automated `@resilience` checks, including browser restart and worker suspension.
+- [ ] Native hands-on confirmation of edit/restore/interruption/deletion (Mac locked).
 
 **Gate:** tested failures cause no silent loss, duplicate checkpoint, stale overwrite, or deleted-task resurrection.
 
 ## Phase 5 — Complete accessible acceptance
 
-- [ ] Finish deterministic coverage for all six sandbox groups in [BUILD_PLAN.md](BUILD_PLAN.md#required-testing-sandboxes).
-- [ ] Add axe checks for ReEntry UI and pass `@a11y` plus core browser regressions.
+- [x] Finish deterministic coverage for all six sandbox groups in [BUILD_PLAN.md](BUILD_PLAN.md#required-testing-sandboxes).
+- [x] Add axe checks for ReEntry UI and pass `@a11y` plus core browser regressions.
 - [ ] Complete keyboard-only and VoiceOver journeys, including permission invocation and error recovery.
 - [ ] Check focus, labels, announcements, 200% text, 400% web reflow, narrow layouts, and reduced motion.
 - [x] Finish six-case evaluation for the current NVIDIA Ultra default (five real inferences plus missing evidence blocked before inference); retain actual evidence/limits in [TEST_RESULTS.md](TEST_RESULTS.md). Local Ollama retains its separate three-case regression.
@@ -81,9 +84,9 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 
 ## Phase 6 — Reproducible release
 
-- [ ] Verify fresh-profile setup and actual production web/extension builds together.
-- [ ] Update README setup, extension-id configuration, fixture reset, model setup, licenses, and disclosures.
-- [ ] Update production smoke tests and CI; run workspace, build, and deterministic end-to-end gates.
+- [x] Verify fresh-profile setup and actual production web/extension builds together.
+- [x] Update README setup, extension-id configuration, fixture reset, model setup, licenses, and disclosures.
+- [x] Update production smoke tests and CI; run workspace, build, and deterministic end-to-end gates.
 - [ ] Record the roughly two-minute working demo with real inference and disclosed controlled test content.
 - [ ] Complete Learn final review, learning wrap-up/app map, and the actual shipping workflow.
 - [ ] Prepare public repository/video and participant-written submission materials; verify event eligibility and deadlines.
@@ -92,4 +95,6 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 
 ## Recording progress
 
-When tests exist, save real outcomes in `docs/TEST_RESULTS.md`: phase, commit, commands, automated/manual results, evidence links, and limitations. Keep the next action in [WORK.md](WORK.md). Capture/source/recovery browser cases, static/MSW sandboxes and explicit live-model evaluation are runnable; resilience and accessibility tags remain planned. Never tick a box because a file merely exists or a mock produced the desired answer.
+When tests exist, save real outcomes in `docs/TEST_RESULTS.md`: phase, commit, commands, automated/manual results, evidence links, and limitations. Keep the next action in [WORK.md](WORK.md). Capture/source/recovery/resilience/accessibility cases, static/MSW sandboxes, production browser acceptance and explicit live-model evaluation are runnable. Never tick a box because a file merely exists or a mock produced the desired answer.
+
+Native Chrome/VoiceOver, real 200% text/400% browser zoom, personal attestations and final submission remain pending. Automated checks do not substitute for them.

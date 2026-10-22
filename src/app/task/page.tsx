@@ -247,7 +247,7 @@ export default function TaskPage() {
     }
   }
   return (
-    <main className="container mx-auto max-w-3xl grid gap-6 p-6">
+    <main className="wrap-anywhere container mx-auto max-w-3xl grid gap-6 p-6">
       <header className="grid gap-3">
         <Badge variant="secondary">ReEntry · Checkpoint editor</Badge>
         <CardTitle>

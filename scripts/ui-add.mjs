@@ -23,11 +23,17 @@ const snapshot = () =>
   );
 const before = snapshot();
 run("pnpm", ["exec", "shadcn", "add", ...items, "--yes", "--overwrite"]);
+// Font registry items wire the framework layout. Keep that application file
+// editable and formatted; only vendored assets belong in the hash manifest.
+if (items.some((item) => item.startsWith("font-")))
+  run("pnpm", ["exec", "prettier", "--write", "src/app/layout.tsx"]);
 const after = snapshot();
 const manifestPath = path.join(root, "docs/ui-provenance.json");
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 for (const [name, digest] of Object.entries(after)) {
-  if (digest !== before[name]) manifest.files[name] = digest;
+  const framework = /(?:^|\/)(?:page|layout)\.[jt]sx?$/.test(name);
+  if (framework) delete manifest.files[name];
+  else if (digest !== before[name]) manifest.files[name] = digest;
 }
 manifest.acquisitions.push({
   items,

@@ -216,7 +216,7 @@ export default function RecoverPage() {
     }
   }
   return (
-    <main className="container mx-auto max-w-3xl grid gap-6 p-6">
+    <main className="wrap-anywhere container mx-auto max-w-3xl grid gap-6 p-6">
       <header className="grid gap-2">
         <CardTitle>
           <h1>ReEntry · Recover your next step</h1>
@@ -306,6 +306,11 @@ export default function RecoverPage() {
                     rows={3}
                   />
                   <Button
+                    variant={
+                      record.reviewedAction === action.trim()
+                        ? "outline"
+                        : "default"
+                    }
                     disabled={!action.trim() || action.length > 1000}
                     onClick={() => void review()}
                   >
@@ -383,6 +388,7 @@ export default function RecoverPage() {
               </div>
             )}
             <Button
+              variant={record ? "outline" : "default"}
               disabled={
                 loading ||
                 busy ||

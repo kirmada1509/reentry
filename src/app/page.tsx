@@ -282,7 +282,7 @@ export default function Home() {
     }
   }
   return (
-    <main className="container mx-auto max-w-3xl grid gap-6 p-6">
+    <main className="wrap-anywhere container mx-auto max-w-3xl grid gap-6 p-6">
       <header className="grid gap-2">
         <CardTitle>
           <h1>ReEntry · Find your way back</h1>

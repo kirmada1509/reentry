@@ -21,6 +21,7 @@ async function availableOrigin(): Promise<string> {
 const appOrigin =
   process.env.REENTRY_TEST_APP_ORIGIN ?? (await availableOrigin());
 const live = process.env.REENTRY_TEST_LIVE === "1";
+const production = process.env.REENTRY_TEST_PRODUCTION === "1";
 const modelOrigin =
   process.env.REENTRY_TEST_MODEL_ORIGIN ?? (await availableOrigin());
 const sourceOrigin =
@@ -59,10 +60,12 @@ export default defineConfig({
         ]
       : []),
     {
-      command: `pnpm exec wxt build extension --mode e2e && pnpm exec next dev --hostname 127.0.0.1 --port ${new URL(appOrigin).port}`,
+      command: production
+        ? `pnpm extension:build && pnpm build && pnpm exec next start --hostname 127.0.0.1 --port ${new URL(appOrigin).port}`
+        : `pnpm exec wxt build extension --mode e2e && pnpm exec next dev --hostname 127.0.0.1 --port ${new URL(appOrigin).port}`,
       url: appOrigin,
       reuseExistingServer: false,
-      timeout: 120_000,
+      timeout: production ? 240_000 : 120_000,
       env: {
         REENTRY_APP_ORIGIN: appOrigin,
         REENTRY_AI_PROVIDER: live

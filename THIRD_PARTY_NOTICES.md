@@ -27,3 +27,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 Other installed packages retain their licenses in their distributions. The framework shell was generated with create-next-app.
+
+ReEntry additionally uses WXT (MIT), Dexie (Apache-2.0), jsdiff (BSD-3-Clause), and @axe-core/playwright (MPL-2.0); their license files remain in package distributions. Geist is wired through the official shadcn font registry and Next font loader. The extension uses the standard system sans-serif fallback.
+
+NVIDIA Nemotron 3 Ultra weights are governed by OpenMDW-1.1 according to the [official model card](https://build.nvidia.com/nvidia/nemotron-3-ultra-550b-a55b/modelcard); NVIDIA's hosted trial service has separate API trial terms. ReEntry does not redistribute those weights or the proprietary NIM runtime. Local Ollama/Qwen setup retains its own upstream terms. See docs/PROVENANCE.md and docs/NVIDIA.md.

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ReEntry app map</title>
+  </head>
+  <body>
+    <main>
+      <h1>ReEntry: follow one recovery</h1>
+      <p>
+        A take-home guide to the actual product. This map is not evidence that a
+        learner walkthrough occurred.
+      </p>
+      <ol>
+        <li>
+          <details open>
+            <summary>Select and review instructions</summary>
+            <p>
+              The WXT background worker reads an explicit selection. The capture
+              preview shows the exact text and source. Browser form field values
+              are outside the capture boundary.
+            </p>
+            <p>
+              <code>extension/entrypoints/background.ts</code> →
+              <code>capture/page.tsx</code>
+            </p>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>Save a confirmed checkpoint</summary>
+            <p>
+              The browser validates a capture through native extension
+              messaging. Dexie commits the task and first revision before the
+              extension receives an acknowledgement.
+            </p>
+            <p>
+              <code>src/app/page.tsx</code> →
+              <code>src/features/tasks/storage.ts</code>
+            </p>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>Check what changed</summary>
+            <p>
+              A source tab is bound to one task. The user recaptures the
+              equivalent section. ReEntry keeps immutable before/current
+              evidence and reports changed, unchanged or unverified captured
+              material.
+            </p>
+            <p>
+              <code>src/app/check/page.tsx</code> →
+              <code>src/features/sources/</code>
+            </p>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>Ask the configured model</summary>
+            <p>
+              The server prepares bounded context, calls NVIDIA or local Ollama,
+              and validates evidence and confirmed progress. It has no browser
+              tools or autonomous actions. Hosted processing requires fresh
+              agreement.
+            </p>
+            <p>
+              <code>src/app/api/recovery/route.ts</code> →
+              <code>src/features/recovery/harness.ts</code> →
+              <code>src/lib/ai/</code>
+            </p>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>Review, correct and continue</summary>
+            <p>
+              The user reviews the proposed action. Its input digest must still
+              match the task/source before saving or continuing. The app opens
+              only the saved work link.
+            </p>
+            <p>
+              <code>src/app/recover/page.tsx</code> →
+              <code>src/features/recovery/storage.ts</code>
+            </p>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>Edit, restore or delete</summary>
+            <p>
+              The checkpoint editor keeps drafts separate from confirmed facts.
+              Saves use expected revisions, restore creates a new revision, and
+              deletion uses minimal replay markers plus an extension-cleanup
+              outbox.
+            </p>
+            <p>
+              <code>src/app/task/page.tsx</code> →
+              <code>src/features/tasks/</code>
+            </p>
+          </details>
+        </li>
+      </ol>
+      <p>
+        Start with the README. Test outcomes and limitations belong in
+        docs/TEST_RESULTS.md. Credentials and personal learner context are
+        excluded from publication.
+      </p>
+    </main>
+  </body>
+</html>

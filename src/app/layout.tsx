@@ -3,11 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { connection } from "next/server";
 import { getEnvironment } from "@/lib/env";
 import "./globals.css";
+import { cn } from "@/lib/utils";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -28,7 +26,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       data-reentry-origin={env.REENTRY_APP_ORIGIN}
       data-reentry-extension-id={env.REENTRY_EXTENSION_ID}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistMono.variable,
+        "font-sans",
+        geist.variable,
+      )}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

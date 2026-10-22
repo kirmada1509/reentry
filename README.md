@@ -2,7 +2,9 @@
 
 An accessible recovery card for unfinished work: preserve the goal, confirmed progress, materials, changed instructions, and one concrete next action.
 
-**Status:** Phases 1–3 are implemented: capture instructions, save a persistent checkpoint, return to its source, and compare a fresh selection with the original evidence. Task-bound recapture preserves confirmed progress and the saved action. Phase 3 adds a model-independent recovery harness, local Ollama or explicitly approved NVIDIA-hosted inference, and an editable recovery suggestion. See the [AI setup and walkthrough](docs/PHASE3.md). Formal Learn planning reviews remain incomplete; the author explicitly requested implementation.
+**Status:** The core recovery journey, checkpoint editing, ten-revision history/restore, draft recovery, conflict protection and deletion cleanup are implemented. The screens use accessible registry components and automated axe/focus/reflow checks. Production browser acceptance passes 40 deterministic cases; native VoiceOver and manual zoom/text-setting acceptance remain open because the Mac was locked during testing. See [release preparation](docs/RELEASE.md) and [actual evidence](docs/TEST_RESULTS.md).
+
+ReEntry works with local Ollama or NVIDIA-hosted models behind one provider-independent harness. NVIDIA processing needs explicit agreement and a server-only key; no credentials are shipped in the extension. Formal Learn documents are retrospective drafts with unperformed human reviews clearly recorded.
 
 ## Start locally
 
@@ -23,6 +25,11 @@ The starter pins Node 22.23.2 and pnpm 12.5.1. No cloud credentials or model run
 - [Scope, architecture, and testing sandboxes](docs/BUILD_PLAN.md)
 - [Phase-wise implementation plan and test gates](docs/IMPLEMENTATION_PLAN.md)
 - [Build checklist and current phase](docs/BUILD_CHECKLIST.md)
+- [Release setup, verification and limitations](docs/RELEASE.md)
+- [Retrospective product requirements](devpost/prd.md)
+- [Retrospective technical specification](devpost/spec.md)
+- [App map](devpost/app-map.html)
+- [Submission preparation](submissions/)
 - [Working Phase 1: setup and walkthrough](docs/PHASE1.md)
 - [Working Phase 2: return and compare](docs/PHASE2.md)
 - [Phase 3: local AI recovery](docs/PHASE3.md)
@@ -41,6 +48,6 @@ The Devpost Learn process requires genuine scope/PRD/spec reviews before its for
 
 ## Engineering
 
-Read [AGENTS.md](AGENTS.md). Use the official shadcn registry workflow. `pnpm check` includes web and extension type checks; `pnpm build` and `pnpm extension:build` compile each surface. Run `pnpm exec playwright install chromium`, then `pnpm test:e2e` for the real-extension capture and comparison suite. Tests allocate ports and temporary profiles and build a separate test extension. The original starter guide is preserved in [docs/STARTER-README.md](docs/STARTER-README.md).
+Read [AGENTS.md](AGENTS.md). Use the official shadcn registry workflow. `pnpm check` includes web and extension type checks; `pnpm build` and `pnpm extension:build` compile each surface. Run `pnpm exec playwright install chromium`, then `pnpm test:e2e` for the real-extension suite. Use `REENTRY_TEST_PRODUCTION=1 pnpm test:e2e` for production builds; CI runs that deterministic gate. `node scripts/publication-audit.mjs` checks history/tracked files and built browser assets for focused credential patterns and configured key values. Tests allocate ports and temporary profiles and build a separate test extension. The original starter guide is preserved in [docs/STARTER-README.md](docs/STARTER-README.md).
 
-Built from [kirmada1509/agent-starter](https://github.com/kirmada1509/agent-starter), with history and MIT license preserved. The source remote is named `upstream`; a separate ReEntry GitHub repository has not been created or published. UI attribution remains in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Built from [kirmada1509/agent-starter](https://github.com/kirmada1509/agent-starter), with history and MIT license preserved. The starter source remote remains `upstream`; the separate ReEntry repository is https://github.com/kirmada1509/reentry. Publication status is recorded in the release evidence. UI attribution remains in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
