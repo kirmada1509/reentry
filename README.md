@@ -2,9 +2,15 @@
 
 An accessible recovery card for unfinished work: preserve the goal, confirmed progress, materials, changed instructions, and one concrete next action.
 
-**Status:** The core recovery journey, checkpoint editing, ten-revision history/restore, draft recovery, conflict protection and deletion cleanup are implemented. The screens use accessible registry components and automated axe/focus/reflow checks. Production browser acceptance passes 40 deterministic cases; native VoiceOver and manual zoom/text-setting acceptance remain open because the Mac was locked during testing. See [release preparation](docs/RELEASE.md) and [actual evidence](docs/TEST_RESULTS.md).
+**Status:** The core recovery journey, checkpoint editing, ten-revision history/restore, draft recovery, conflict protection and deletion cleanup are implemented. The screens use accessible registry components and automated axe/focus/reflow checks. Production browser acceptance and supporting evidence are recorded; native VoiceOver and manual zoom/text-setting acceptance remain open because the Mac was locked during testing. See [release preparation](docs/RELEASE.md) and [actual evidence](docs/TEST_RESULTS.md).
 
 ReEntry works with local Ollama or NVIDIA-hosted models behind one provider-independent harness. NVIDIA processing needs explicit agreement and a server-only key; no credentials are shipped in the extension. Formal Learn documents are retrospective drafts with unperformed human reviews clearly recorded.
+
+## Working demo
+
+[Watch/download the 1:48 real-model demo](https://github.com/kirmada1509/reentry/releases/download/v0.1.0/reentry-demo.mp4) · [SRT captions](https://github.com/kirmada1509/reentry/releases/download/v0.1.0/reentry-demo.srt) · [VTT captions](https://github.com/kirmada1509/reentry/releases/download/v0.1.0/reentry-demo.vtt) · [Preview release and screenshots](https://github.com/kirmada1509/reentry/releases/tag/v0.1.0)
+
+The recording uses fictional instruction changes and actual NVIDIA inference, with user review, correction, restore and continuation. GitHub video delivery is prepared; AI Basics still needs a public YouTube/Vimeo upload. Native accessibility acceptance and human Learn/submission activities remain explicitly pending.
 
 ## Start locally
 
@@ -14,7 +20,7 @@ pnpm extension:build
 pnpm dev
 ```
 
-Open **http://127.0.0.1:3000**. In Chrome's `chrome://extensions`, enable Developer mode, choose **Load unpacked**, and select `extension/.output/chrome-mv3`. Select instructions on another page and invoke the extension's toolbar action or shortcut. Review the capture, confirm, then save a checkpoint in ReEntry. Follow the [Phase 1 walkthrough](docs/PHASE1.md) for sandbox and retry instructions.
+Open **http://127.0.0.1:3000**. In Chrome's `chrome://extensions`, enable Developer mode, choose **Load unpacked**, and select `extension/.output/chrome-mv3`. Select instructions on another page and invoke the extension's toolbar action or shortcut. Review the capture, confirm, then save a checkpoint in ReEntry. After updates, rebuild and choose Reload for ReEntry in Chrome extensions; keep the same extension ID, app origin and browser profile. Follow the [Phase 1 walkthrough](docs/PHASE1.md) for sandbox and retry instructions.
 
 The starter pins Node 22.23.2 and pnpm 12.5.1. No cloud credentials or model runtime are needed for Phases 1–2. Return using the same browser profile and exact app address.
 

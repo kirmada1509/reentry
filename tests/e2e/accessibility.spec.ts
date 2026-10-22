@@ -17,17 +17,18 @@ import {
   saveComparison,
 } from "./source-journey";
 async function accessible(page: Page) {
-  await page
-    .locator("[data-slot=dialog-content]")
-    .evaluateAll(async (elements) => {
-      await Promise.all(
-        elements.flatMap((element) =>
-          element
-            .getAnimations()
-            .map((animation) => animation.finished.catch(() => undefined)),
-        ),
-      );
-    });
+  // Scan the settled interaction state, including the registry's button color
+  // transitions when a generated result changes the primary action.
+  await page.evaluate(async () => {
+    await Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) =>
+          Number.isFinite(animation.effect?.getComputedTiming().endTime ?? 0),
+        )
+        .map((animation) => animation.finished.catch(() => undefined)),
+    );
+  });
   const result = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();

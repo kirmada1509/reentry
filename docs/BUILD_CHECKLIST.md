@@ -87,9 +87,11 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 - [x] Verify fresh-profile setup and actual production web/extension builds together.
 - [x] Update README setup, extension-id configuration, fixture reset, model setup, licenses, and disclosures.
 - [x] Update production smoke tests and CI; run workspace, build, and deterministic end-to-end gates.
-- [ ] Record the roughly two-minute working demo with real inference and disclosed controlled test content.
-- [ ] Complete Learn final review, learning wrap-up/app map, and the actual shipping workflow.
-- [ ] Prepare public repository/video and participant-written submission materials; verify event eligibility and deadlines.
+- [x] Record the 1:48 working demo with real NVIDIA inference, captions and disclosed fictional instruction changes.
+- [x] Prepare retrospective scope/PRD/spec/checklist and technical app map.
+- [ ] Complete genuine Learn final review, learning/reflection and personal shipping activities.
+- [x] Prepare public repository, GitHub video release, technical submission drafts and publication audit.
+- [ ] Upload video publicly to YouTube/Vimeo for AI Basics; complete participant-written/personal answers, eligibility and final submission.
 
 **Gate:** a new user can reproduce the release, and demo/test evidence matches the built version. Publishing and submission are not claimed until actually performed.
 

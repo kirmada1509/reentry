@@ -1,21 +1,26 @@
 # Active work and handoff
 
-## Current result
+## Delivered
 
-The author authorized autonomous implementation of the remaining plan, including public repository creation/push after audit. Checkpoint revisions, drafts, conflict handling, restore, deletion/replay safeguards, extension cleanup outbox and improved registry-composed screens are implemented.
+The author authorized autonomous implementation, public repository creation/push and technical release preparation. Checkpoint revisions, ten-item history, restore, recoverable drafts, conflict handling, deletion/replay safeguards, extension cleanup outbox and improved registry-composed screens are implemented.
 
-## Verification so far
+Public source: https://github.com/kirmada1509/reentry. Preview assets: https://github.com/kirmada1509/reentry/releases/tag/v0.1.0. The release includes a 108-second actual-NVIDIA MP4, SRT/VTT captions and screenshots. Source instructions are explicitly fictional. README and docs/RELEASE.md explain reproducible setup and limits.
 
-- `pnpm check`: 86 tests across thirteen files and existing guards passed.
-- Eight focused resilience/accessibility browser cases passed.
-- Production web and extension acceptance: 34 deterministic cases passed, one live-only skip.
-- Additional worker-reload, unavailable-app and source variants are being checked separately.
-- Fresh NVIDIA evaluation: cosmetic/increase/unchanged/contradiction passed, missing evidence blocked before inference, decrease hit the 30-second deadline. An explicit isolated repeat is recorded separately; no application retry/fallback was added.
+## Verification
+
+- `pnpm check`: 86 unit/integration tests across thirteen files plus formatting/lint/web+extension types/UI provenance/focused secrets/context guards.
+- Production web/extension suite: 41 deterministic cases passed, with two explicit live/recording skips. The additional empty-library delete-all case passed separately.
+- Final actual-NVIDIA demo/live-context accessibility: three passed, one synthetic-only skip. Final deterministic accessibility subset: three passed. Tests include browser restart, worker suspension, failed writes, stale results, edit conflicts, history/restore/deletion, axe, focus, long text, 320px reflow and simulated 200% text.
+- Fresh clone bootstrap of `3cbf03f` passed without copied private context or credentials. Focused publication audit covers history, tracked files and built browser assets.
+- Fresh six-scenario NVIDIA evaluation retained an initial decrease timeout; an isolated explicit repeat passed. No application retry/fallback was added. Evidence/limitations: docs/TEST_RESULTS.md and docs/evidence/.
+- Production CI is configured; its live status is on GitHub. Final runtime smoke/publication results are reported at delivery.
 
 ## Decisions
 
-Keep the local Chrome/web product, NVIDIA default with explicit agreement, optional local Ollama and provider-independent harness. Other provider keys remain unused. Secrets, personal learner profile and raw runtime evidence stay ignored. Retrospective Learn drafts/app map are prepared; human review/reflection is not fabricated.
+Keep the local Chrome/web product, NVIDIA default with explicit agreement, optional Ollama and provider-independent harness. Other provider keys are unused. Credentials, learner profile and raw runtime profiles remain ignored. Official registry font wiring fixes the starter's serif fallback; finite transition settling makes axe scans deterministic without suppressing contrast rules.
 
-## Remaining execution
+## Remaining human gates
 
-Finish production supplemental cases, actual live demo, publication audit/repository, README/release materials and final checks. Record any inaccessible native VoiceOver/video-upload steps as outstanding rather than asserting completion. Final contest submission and personal attestations are separate.
+The Mac was locked and could not be automatically unlocked. Native Chrome/VoiceOver and actual browser text/zoom acceptance remain unperformed. A public YouTube/Vimeo upload for AI Basics is still needed. Retrospective Learn documents/app map and technical submission drafts are prepared; genuine learner reviews/reflections, personal answers, eligibility/registration attestations and final submissions are not fabricated. No contest was submitted.
+
+Rebuild/reload the extension in Chrome after updates while retaining the same ID/origin/profile. Browser storage is not an encrypted vault or backup. Clearing site data removes saved work.

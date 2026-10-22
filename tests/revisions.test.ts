@@ -1,5 +1,7 @@
 import "fake-indexeddb/auto";
 import { captureSchema } from "@/features/capture/protocol";
+import { inputDigest, validateInput } from "@/features/recovery/validate";
+import { continuationTarget } from "@/features/recovery/storage";
 import Dexie from "dexie";
 import { afterEach, expect, test } from "vitest";
 import {
@@ -48,15 +50,50 @@ test("migration preserves revision-one tasks and seeds history without deleting 
   const fixture = await recoveryFixture();
   await old.table("tasks").put(fixture.task);
   await old.table("checks").put(fixture.check);
+  const recoveryId = crypto.randomUUID();
   await old.table("recoveries").put({
-    id: crypto.randomUUID(),
+    id: recoveryId,
     taskId: fixture.task.id,
+    checkId: fixture.check.id,
+    inputDigest: await inputDigest(await validateInput(fixture)),
+    createdAt: new Date().toISOString(),
+    proposal: {
+      assessment: "changed",
+      summary: "Two referees are required.",
+      confirmedProgress: fixture.task.progress,
+      changes: [
+        {
+          description: "Referee requirement",
+          before: {
+            sourceId: fixture.check.before.id,
+            quote: "Supply one referee.",
+          },
+          after: {
+            sourceId: fixture.check.after!.id,
+            quote: "Supply two referees.",
+          },
+        },
+      ],
+      questions: [],
+      nextAction: { instruction: "Find first referee", target: "work" },
+    },
+    execution: {
+      provider: "ollama",
+      model: "qwen3:4b",
+      modelDigest: null,
+      promptVersion: "recovery-3",
+      schemaVersion: 1,
+      durationMs: 1,
+      settings: {},
+    },
     reviewedAction: "Preserve me",
+    reviewedAt: new Date().toISOString(),
   });
   old.close();
   const db = database(name);
   expect((await taskHistory(db, fixture.task.id))[0]).toEqual(fixture.task);
   expect(await db.checks.count()).toBe(1);
+  expect(await continuationTarget(db, recoveryId)).toBe(fixture.task.workUrl);
   expect((await db.recoveries.toArray())[0]?.reviewedAction).toBe(
     "Preserve me",
   );

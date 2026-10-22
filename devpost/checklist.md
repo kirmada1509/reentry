@@ -28,7 +28,7 @@ This maps the implemented work to the Learn templates after coding began. It is 
   - Verify (mechanical): real-extension and model evidence in TEST_RESULTS.md.
   - Learner check: change a fictional requirement, recapture, inspect/correct the action and continue.
   - Commit: existing Phases 2–3 commits and NVIDIA commit `0f897cb`.
-- [ ] **3. Correct, restore and recover from interruption**
+- [x] **3. Correct, restore and recover from interruption**
   - Becomes usable: revision editing, draft recovery, deletion and conflict handling.
   - Why now: makes the working kernel dependable.
   - PRD ref: Corrections and persistence; Deletion.

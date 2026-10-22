@@ -39,3 +39,9 @@ Browser storage is local to one profile and origin. It is not an encrypted vault
 The repository includes retrospective scope, PRD, specification, implementation mapping and app map. They disclose their creation order and pending learner reviews. The author must not claim completion of interviews, reviews, personal learning reflections or eligibility that did not occur.
 
 Prepared event-specific drafts live under `submissions/`. Verify current forms/rules and supply actual registration, eligibility and personal answers before submitting. No contest submission or receipt is implied by repository/video preparation. Demo content is fictional and controlled; it does not show a real scholarship provider changing requirements.
+
+## Video assets
+
+The [v0.1.0 preview release](https://github.com/kirmada1509/reentry/releases/tag/v0.1.0) provides the 108-second MP4, SRT/VTT captions and screenshots. The video is a browser recording of actual NVIDIA inference using fictional content, with no fabricated narration or manual screen-reader result. AI Basics still requires an actual public YouTube/Vimeo upload.
+
+To record again with the configured server-only credentials, set `REENTRY_TEST_PRODUCTION=1`, `REENTRY_TEST_LIVE=1` and `REENTRY_RECORD_DEMO=1`, then run `pnpm test:e2e --grep @demo` with the required environment loaded. Run `node scripts/package-demo.mjs` to package the raw browser capture; this optional packaging step requires FFmpeg on the recording machine. Files are written to ignored `.runtime/release/`.

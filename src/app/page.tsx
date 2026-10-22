@@ -606,7 +606,7 @@ export default function Home() {
           </AlertDescription>
         </Alert>
       )}
-      {!capture && tasks.length > 0 && (
+      {!loading && !capture && (
         <Dialog
           open={deleteOpen}
           onOpenChange={(value) => {

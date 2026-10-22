@@ -371,3 +371,32 @@ test("@resilience unavailable app leaves a confirmed capture for explicit retry"
     app.getByRole("heading", { name: "Your saved tasks (1)" }),
   ).toBeVisible();
 });
+
+test("@resilience delete-all can clear pending captures before the first checkpoint", async ({
+  extension,
+}) => {
+  const { context, worker } = extension;
+  await captureSelection(context);
+  const app = await context.newPage();
+  await app.goto(appUrl);
+  await expect(
+    app.getByRole("heading", { name: "Your saved tasks (0)" }),
+  ).toBeVisible();
+  await app
+    .getByRole("button", { name: "Delete all saved data", exact: true })
+    .click();
+  await app
+    .getByRole("button", { name: "Confirm delete all", exact: true })
+    .click();
+  await expect(app.getByRole("status")).toContainText("deleted");
+  await expect
+    .poll(() =>
+      worker.evaluate(
+        async () =>
+          (await chrome.storage.local.get("reentry-pending"))[
+            "reentry-pending"
+          ],
+      ),
+    )
+    .toEqual([]);
+});
