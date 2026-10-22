@@ -51,14 +51,12 @@ test("@a11y empty library, extension preview, capture form, editor, history and 
 }, info) => {
   const app = await extension.context.newPage();
   await app.goto(appUrl);
-  expect(
-    await app.evaluate(() => getComputedStyle(document.body).fontFamily),
-  ).toMatch(/Geist/);
+  await expect(app.locator("body")).toHaveCSS("font-family", /Geist/);
   await accessible(app);
   const { preview } = await captureSelection(extension.context);
-  expect(
-    await preview.evaluate(() => getComputedStyle(document.body).fontFamily),
-  ).toContain("system-ui");
+  // Opening the extension tab can precede its stylesheet and entrypoint. Retry
+  // the computed style rather than inspecting the browser's initial default font.
+  await expect(preview.locator("body")).toHaveCSS("font-family", /system-ui/);
   await accessible(preview);
   const form = await confirmPreview(extension.context, preview);
   await accessible(form);
