@@ -90,10 +90,10 @@ export default defineConfig({
       },
     },
     {
-      command: `pnpm exec http-server "$REENTRY_TEST_FIXTURE_DIR" -a 127.0.0.1 -p ${new URL(sourceOrigin).port} -c-1`,
+      command: `pnpm sandbox:build && pnpm exec http-server "$REENTRY_TEST_FIXTURE_DIR" -a 127.0.0.1 -p ${new URL(sourceOrigin).port} -c-1`,
       url: `${sourceOrigin}/instructions.html`,
       reuseExistingServer: false,
-      timeout: 20_000,
+      timeout: 60_000,
     },
   ],
 });

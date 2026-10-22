@@ -6,7 +6,7 @@ Phase 2 adds source checking to an existing saved task. It preserves both captur
 
 Use the [Phase 1 setup](PHASE1.md), rebuild with `pnpm extension:build`, and reload the unpacked extension in Chrome. Keep the same browser profile and exact ReEntry address so your saved tasks remain available.
 
-1. Run `pnpm sandbox:sites` in another terminal. Open http://127.0.0.1:4173/instructions.html. If the port is busy, use `pnpm sandbox:sites start 4176` and use port 4176 throughout.
+1. Run `pnpm sandbox:sites` in another terminal. Open its printed Northstar portal address, normally http://127.0.0.1:4176/instructions.html, and use that same address throughout. The [presentation sandbox](SANDBOX.md) includes an application draft; the minimal HTML files remain automated fixtures.
 2. Select the instruction paragraph, invoke ReEntry, confirm the preview, and save a task with your goal, progress and next action. The initial version asks for one referee.
 3. Close ReEntry. In another terminal run `pnpm sandbox:switch v2`. This replaces only the fictional HTML file served at the same URL; no expected answer is sent to ReEntry.
 4. Return to ReEntry, open the saved checkpoint, and choose **Check instructions again**. Choose **Open source and check again**. This opens a source tab bound to that task and check.
@@ -14,7 +14,7 @@ Use the [Phase 1 setup](PHASE1.md), rebuild with `pnpm extension:build`, and rel
 6. Inspect the saved and new text, URLs, section labels and capture times. Confirm that you selected the same instruction section, then choose **Save source comparison**.
 7. The result shows one → two referees as labelled removed/added fragments. Refresh: both snapshots, confirmed progress and the saved next action remain available. The action is explicitly marked **not reassessed**.
 
-Each start of `sandbox:sites` resets the fixture to V1. While it runs, `sandbox:switch v1`, `v2`, or `cosmetic` replaces that file. Reload an already-open source tab after switching. `cosmetic` changes punctuation only and still counts as a text edit. The server is the existing http-server package with caching disabled; this is fictional instruction content, not a scholarship backend or a model simulator.
+Each start of `sandbox:sites` builds the portal and resets requirements to V1. While it runs, `sandbox:switch v1`, `v2`, or `cosmetic` changes the served scenario JSON. Reload an already-open source tab after switching. Saved browser drafts are retained. `cosmetic` changes punctuation only and still counts as a text edit. The server is the existing http-server package with caching disabled; this is fictional instruction content with browser-local form state, not a scholarship backend or a model simulator.
 
 ## What the states mean
 

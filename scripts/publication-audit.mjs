@@ -59,7 +59,11 @@ for (const name of names) {
     if (body.includes(value))
       issues.push(`${name}: contains configured ${key}`);
 }
-for (const directory of [".next/static", "extension/.output/chrome-mv3"]) {
+for (const directory of [
+  ".next/static",
+  "extension/.output/chrome-mv3",
+  ".runtime/sites",
+]) {
   for (const file of filesUnder(path.join(root, directory))) {
     const body = readFileSync(file, "utf8");
     for (const [key, value] of actualSecrets)

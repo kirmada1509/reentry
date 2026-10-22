@@ -9,7 +9,7 @@ Public source: https://github.com/kirmada1509/reentry. Preview assets: https://g
 ## Verification
 
 - `pnpm check`: 86 unit/integration tests across thirteen files plus formatting/lint/web+extension types/UI provenance/focused secrets/context guards.
-- Final complete production web/extension suite: 42 deterministic cases passed together, with two explicit live/recording skips.
+- Latest complete production web/extension suite: 45 deterministic cases passed together, with two explicit live/recording skips, including three new Northstar portal journeys.
 - Final actual-NVIDIA demo/live-context accessibility: three passed, one synthetic-only skip. Final deterministic accessibility subset: three passed. Tests include browser restart, worker suspension, failed writes, stale results, edit conflicts, history/restore/deletion, axe, focus, long text, 320px reflow and simulated 200% text.
 - Fresh clone bootstrap of `3cbf03f` passed without copied private context or credentials. Focused publication audit covers history, tracked files and built browser assets.
 - Fresh six-scenario NVIDIA evaluation retained an initial decrease timeout; an isolated explicit repeat passed. No application retry/fallback was added. Evidence/limitations: docs/TEST_RESULTS.md and docs/evidence/.
@@ -18,6 +18,10 @@ Public source: https://github.com/kirmada1509/reentry. Preview assets: https://g
 ## Local start/stop scripts
 
 `./start.sh` / `pnpm local:start` builds the extension and starts the existing managed development server. `./stop.sh` / `pnpm local:stop` uses the owned-process stop operation. Executable shell entrypoints resolve the project directory, so full-path invocation also works. Verified start/smoke, duplicate-start refusal, stop from another directory and repeated stop; `pnpm check`, production web build and extension build pass. The local development server is running at http://127.0.0.1:3000. Reload ReEntry in Chrome after the extension rebuild.
+
+## Presentation sandbox
+
+The author requested a richer presentation sandbox. `pnpm sandbox:sites` now builds and serves a fictional Northstar scholarship portal using the existing official registry components, Vite and http-server. It has award requirements, saved browser-local application fields, a simulated transcript attachment, preparation progress, review/reset dialogs and V1/V2/cosmetic switching at the same source URL. No portal backend/accounts/uploads were added. Default port 4176 falls forward when occupied; explicit occupied ports fail clearly. Minimal fixtures remain automated test equipment. See docs/SANDBOX.md and docs/TEST_RESULTS.md for the verified journey and evidence. The portal is running at http://127.0.0.1:4176/instructions.html; ReEntry is running at http://127.0.0.1:3000. Native VoiceOver/manual zoom gates remain open.
 
 ## Decisions
 

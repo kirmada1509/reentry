@@ -22,6 +22,8 @@ pnpm ui:add verifies the existing baseline, invokes the CLI, and records the res
 
 Static `min-w-0` and `wrap-anywhere` layout utilities are allowed to contain long task text and URLs at narrow widths; they do not replace registry-owned appearance.
 
+The standalone scholarship sandbox also composes the installed registry components. Its CSS entry is restricted to importing the registered shared theme and declaring the registry source directory for Tailwind scanning outside the sandbox's Vite root; it contains no authored visual rules. The guard checks its exact content and scans sandbox composition too. Responsive prefixes and column spans are permitted for the existing layout utilities so the main content and checklist stack at narrow widths. Registry appearance and hashes remain unchanged.
+
 Framework root layout and page composition remain necessary. Semantic layout tags and a limited set of static layout utilities are allowed. The check is a practical repository policy, not a proof that arbitrary JavaScript cannot create UI.
 
 For another open-source UI library, establish its source/license and update the adoption script and guard deliberately. The current automation supports the official shadcn registry. A new user requirement can change this preference; do not silently manufacture a replacement component.

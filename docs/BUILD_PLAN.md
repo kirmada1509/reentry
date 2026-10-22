@@ -46,6 +46,8 @@ After planning, first prove WXT capture → web app storage with the real extens
 
 ## Required testing sandboxes
 
+October 22 presentation update: the author requested a richer demo than bare fixtures. `pnpm sandbox:sites` now builds a fictional Northstar scholarship portal with the existing registry UI, an explicitly saved browser-local draft, sample materials and scenario switching. It remains separate static test equipment with no accounts/uploads/submission backend. The minimal cases below remain automated coverage. See [the current walkthrough](SANDBOX.md).
+
 The six coverage areas remain required, but **they are not six applications to build**. Reuse hosted pages, existing test runners, and response fixtures. Implement only the missing ReEntry-specific data and assertions.
 
 | Coverage area                     | Reuse first                                                                                                                                                                             | Minimum additional fixture / acceptance gate                                                                                                                                                         |

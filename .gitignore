@@ -56,3 +56,4 @@ doppler.yaml
 /output/
 /test-results/
 /playwright-report/
+/.playwright-cli/

@@ -25,6 +25,8 @@ Open **http://127.0.0.1:3000**. In Chrome's `chrome://extensions`, enable Develo
 
 The starter pins Node 22.23.2 and pnpm 12.5.1. No cloud credentials or model runtime are needed for Phases 1–2. Return using the same browser profile and exact app address.
 
+For a presentation-ready external task, run `pnpm sandbox:sites` in another terminal and open the printed **Northstar demo portal** address. It includes a saved application draft, sample transcript, preparation checklist and switchable referee requirements. Follow the [sandbox walkthrough](docs/SANDBOX.md) for the complete interruption-and-return demo.
+
 ## Project documents
 
 - [Original product concept](reentry.md)

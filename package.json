@@ -38,6 +38,7 @@
     "extension:build": "wxt build extension",
     "extension:typecheck": "wxt prepare extension && tsc --project extension/tsconfig.json --noEmit",
     "sandbox:sites": "node scripts/sandbox-sites.mjs",
+    "sandbox:build": "vite build --config sandboxes/scholarship/vite.config.ts",
     "test:e2e": "playwright test",
     "sandbox:switch": "node scripts/sandbox-sites.mjs switch",
     "sandbox:model": "tsx scripts/sandbox-model.ts",
@@ -89,6 +90,7 @@
     "tailwindcss": "4.3.3",
     "tsx": "4.23.15",
     "typescript": "5.9.3",
+    "vite": "8.3.4",
     "vitest": "5.0.5",
     "wxt": "0.21.4"
   },
