@@ -6,6 +6,14 @@ import { findSecrets, scanRepository } from "./check-secrets.mjs";
 import { filesUnder, root } from "./project.mjs";
 
 nextEnv.loadEnvConfig(root);
+const extraDirectories = process.argv
+  .slice(2)
+  .map((directory) => path.resolve(root, directory));
+for (const directory of extraDirectories)
+  if (!existsSync(directory) || !lstatSync(directory).isDirectory())
+    throw new Error(
+      "An explicit publication asset directory is missing or invalid.",
+    );
 const issues = [...scanRepository()];
 const objects = execFileSync("git", ["rev-list", "--objects", "--all"], {
   cwd: root,
@@ -59,16 +67,13 @@ for (const name of names) {
     if (body.includes(value))
       issues.push(`${name}: contains configured ${key}`);
 }
-const extraDirectories = process.argv
-  .slice(2)
-  .map((directory) => path.resolve(root, directory));
 for (const directory of [
   ".next/static",
   "extension/.output/chrome-mv3",
   ".runtime/sites",
   ...extraDirectories,
 ]) {
-  for (const file of filesUnder(path.join(root, directory))) {
+  for (const file of filesUnder(path.resolve(root, directory))) {
     const body = readFileSync(file, "utf8");
     if (extraDirectories.includes(path.resolve(root, directory)))
       for (const label of findSecrets(path.relative(root, file), body))
