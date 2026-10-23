@@ -65,3 +65,7 @@ This maps the implemented work to the Learn templates after coding began. It is 
 
 - Author requested feature implementation before formal Learn planning reviews were completed.
 - Author then requested autonomous completion without further advice/approval requests. Technical work proceeds; unperformed human activities remain pending.
+
+## Retrospective automatic-agent addendum
+
+Phases 0–6 of the later browser-agent direction are mapped in [BUILD_CHECKLIST.md](../docs/BUILD_CHECKLIST.md). Actual discovery, progress, completion, return/reminder policy and calm screens are implemented. Phase 6 supplies frozen evaluation, bounded model-output repairs, two actual-NVIDIA recordings and fresh-checkout evidence; failed trials and remaining acceptance gates are preserved in [AGENT_RELEASE.md](../docs/AGENT_RELEASE.md). These later artifacts do not establish that pre-build learner reviews or hands-on checkpoints occurred.

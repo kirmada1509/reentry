@@ -1,0 +1,39 @@
+{
+  "provider": "nvidia",
+  "promptVersion": "agent-3.4",
+  "fictionalSites": true,
+  "selectedTrialIds": ["application-9", "shopping-2"],
+  "operatorRetries": 0,
+  "operatorCorrections": 0,
+  "separateRestartChecksPassed": true,
+  "recordings": {
+    "application": {
+      "kind": "application",
+      "durationSeconds": 83.88,
+      "width": 1280,
+      "height": 900,
+      "underThreeMinutes": true,
+      "uninterrupted": true,
+      "cuts": 0,
+      "speedChanges": 0,
+      "audio": "Browser recording has no audio; separate SRT/VTT captions supplied.",
+      "sourceSha256": "2e061c4acf096b231e1957be0c7cc2b179b37957119eaed3b815a67bd7faabed",
+      "mp4Sha256": "623ba68f58c886b43b56e40cea5c2f62273c4a431280af19f71fd0ba58539515",
+      "captionCount": 8
+    },
+    "shopping": {
+      "kind": "shopping",
+      "durationSeconds": 73.88,
+      "width": 1280,
+      "height": 900,
+      "underThreeMinutes": true,
+      "uninterrupted": true,
+      "cuts": 0,
+      "speedChanges": 0,
+      "audio": "Browser recording has no audio; separate SRT/VTT captions supplied.",
+      "sourceSha256": "e49313047550c8bc212e22d6fa6050fefacca6b62b37abdc709305301d3a36bb",
+      "mp4Sha256": "95418dd5d6f6455138e28a52ffbab110f78b2774bf00a68e3702ae4a0ccbc029",
+      "captionCount": 8
+    }
+  }
+}

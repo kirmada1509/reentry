@@ -1,0 +1,52 @@
+Automatic-agent Phase 6 verification — October 24, 2026 (IST)
+
+Runtime prompt: agent-3.4. Product fixes through f92bd20; recording/evaluation
+tools through 7b7b326; publication-path fix 2233791. No dependency changed.
+
+Local pnpm check: passed; 185 tests / 25 files, format/lint/types/UI/secrets/context.
+Complete production root browser suite: 65 passed; 3 explicit live/recording skips.
+Commerce suite: 2 passed; 2 explicit live/recording skips.
+Current real-NVIDIA application-9: passed, 5 accepted jobs / 6 calls, restart passed.
+Current real-NVIDIA shopping-2: passed, 5 accepted jobs / 5 calls, restart passed.
+MP4s: 83.88 / 73.88 seconds, uncut, no speed change, SRT/VTT supplied.
+Fresh local clone of 7b7b326: frozen-lock bootstrap, 183 then-current tests,
+extension build and web build passed. Example-only config; no copied configured
+credential, learner profile or agent database. Tracked checkout clean.
+Two subsequent publication-path/missing-directory tests bring the total to 185.
+
+Hosted Verify 40036866545: success on 2233791a3b67394fa0642ecc150863446399d94c.
+https://github.com/kirmada1509/reentry/actions/runs/40036866545
+Hosted production root: 65 passed (6.7m). Commerce: 2 passed (33.2s).
+Hosted production startup and HTTP smoke passed.
+Final documentation/evidence commit is checked separately in GitHub Actions.
+
+Publication asset audit: passed at 721 history blobs, tracked files, built
+browser assets and the explicitly supplied distribution directory. A final
+post-build audit is recorded at handoff. This is a focused guard, not proof
+that arbitrary secrets can never exist. Raw browser traces/profiles stay private.
+
+Real model failures, availability interruptions and selected successful takes
+are retained in agent-phase6-nvidia.json, agent-phase6-provider-regressions.json,
+agent-phase6-browser-trials.json and agent-phase6-output-diagnostics.json.
+Human correction frequency, time saved and cognitive benefit were not measured.
+Native VoiceOver, actual zoom/text, side-panel, permission/banner checks remain
+manual gates. Genuine Learn reviews, YouTube/Vimeo delivery, personal eligibility
+and actual contest submissions are not claimed.
+
+Final current provider replay: complete, 23/25 steps; regression 10/10.
+24 calls/24 model jobs, one scripted correction; no operator retries.
+Discovery errors 0/12; wrong merges 0/1; accepted false completions 0/26;
+zero missing negative checks. Two unsafe proposals rejected; strict exit 1.
+No current provider outage. Median 2507ms; p95 5215ms; step work 66105ms;
+60-second request pacing excluded. No all-pass or universal quality claim.
+
+Final default-origin pnpm local:start: extension + web production builds passed.
+Managed production app restored at http://127.0.0.1:3000.
+Final pnpm smoke: passed (page, liveness, readiness, correlation IDs, missing route).
+Reload the unpacked extension and refresh existing app tabs after the rebuild.
+
+Final post-default-build publication audit: passed; 721 history blobs, tracked
+files, final browser assets and explicit distribution directory checked.
+Current native inventory: Mac locked; automatic unlock failed; no accessible
+native apps/browser session. In-app browser had no tabs. Native manual checks
+and authenticated YouTube/Vimeo delivery remain unavailable/unperformed.

@@ -79,3 +79,7 @@ Electron, accounts, cloud sync/hosting, store publication, background monitoring
 ## Open Questions
 
 Native VoiceOver acceptance, personal eligibility, genuine learner review/reflection and final contest submission must be recorded from actual evidence. These are not retroactively completed by this document.
+
+## Automatic-agent retrospective addendum — October 24
+
+The author subsequently expanded the product to chosen-site task observation, model-inferred goals/finish conditions, evidence-linked progress, bounded confirmation, interruptions/reminders and calm live screens. Current implementation, evaluations and limits are recorded in [the agent release record](../docs/AGENT_RELEASE.md) and [architecture](../docs/AGENTIC_PLAN.md). The earlier manual journey remains available. This addendum was written after those changes; it is not a learner approval or evidence that the original scope anticipated the full iteration. Genuine reviews/reflections remain pending.

@@ -1,23 +1,21 @@
 # ReEntry — Task Forge submission preparation
 
-Factual draft, prepared with AI assistance. Final form completion, participant eligibility and submission remain outstanding.
+Factual AI-assisted draft. Participant eligibility, registration, personal answers and final submission remain outstanding.
 
-## Product
+## Product and demonstration
 
-ReEntry helps someone return to unfinished work with a goal, user-confirmed progress, selected instruction evidence and one reviewed next action. A Chrome extension captures selected text; a local web app keeps the checkpoint, compares explicit recaptures and presents correctable AI interpretation.
+ReEntry is a local Chrome extension and web app for returning to interrupted browser work. After site and model-processing agreement, the agent infers the goal, proposed finish condition, progress and next action without a checkpoint form. The user can inspect evidence, correct intent, pause or dismiss it.
 
-## Demonstration
+Lead with the [automatic application recording](https://github.com/kirmada1509/reentry/releases/tag/v0.2.0): save a fictional Northstar draft, put it aside, return after the instructions require a second referee, inspect preserved progress and the new next step, encounter validation failure, complete final review and observe the matching fictional receipt. ReEntry never submits the form. The separate site owns its draft; no universal field restoration is claimed.
 
-Use the finished recording: pause a fictional scholarship-like application, return after a one-to-two-referee instruction change, inspect evidence, correct a checkpoint, restore its earlier contents, review the next action and reopen the saved work link. The separate application owns its form state; no autofill, submission or exact field restoration is claimed.
+## Accessibility evidence and limits
 
-## Accessibility evidence
+The home and companion put tasks first and use labelled registry controls, restrained announcements, dialog focus restoration and disclosures. Tests cover keyboard activation, correction errors, focused-card stability, axe, 320px reflow, simulated 200% text and reduced motion. Native VoiceOver, actual browser zoom/text, side-panel placement and OS permission/notification acceptance remain manual gates. Do not claim complete screen-reader conformance or a clinical benefit.
 
-Standard labelled controls, semantic headings, restrained status messages, dialogs with focus restoration, keyboard activation, automated axe scans, 320px layouts and reduced-motion checks are covered by tests. Do not describe automated checks as complete screen-reader conformance. Native Chrome/VoiceOver and real zoom/text-setting acceptance remain pending while the Mac is locked.
+## Disclosures and access
 
-## Disclosures
+Source: https://github.com/kirmada1509/reentry. Setup and evaluation: `docs/AGENT_RELEASE.md`; results and retained failures: `docs/TEST_RESULTS.md`. Judges can reproduce locally with their own model setup; no hosted multi-user service or store publication is claimed.
 
-Built from kirmada1509/agent-starter, with upstream history/license and third-party notices preserved. Original ReEntry work includes the extension bridge, transactional checkpoints, task-bound source comparison, provider-independent harness, evidence validation, revisions, draft recovery and deletion cleanup. AI coding assistance and NVIDIA-hosted processing are disclosed; local Ollama remains an explicit alternative.
+Inherited `agent-starter`, Page Agent, LangGraph/SQLite, official registry components and the sample shop are credited. ReEntry-specific observation, task/progress logic, recovery controls, evidence validation and tests are original AI-assisted contributions. NVIDIA-hosted processing uses a server-only key and explicit agreement; the optional local route is separate. Read-only interpretation, bounded host checks and user correction do not guarantee the truth of arbitrary website text.
 
-## Links and outstanding checks
-
-Source: https://github.com/kirmada1509/reentry. Setup and actual tests: README, docs/RELEASE.md and docs/TEST_RESULTS.md. Add the final publicly accessible video link after upload. Recheck https://taskforge.devpost.com/rules before submitting; the automated rules fetch was unavailable on October 22. Supply actual student/age/residency/registration information and real creation dates. No eligibility attestation is invented.
+Recheck https://taskforge.devpost.com/rules and supply genuine student/age/residency/registration and original-work disclosures. No eligibility certification or submission receipt is supplied by this package.

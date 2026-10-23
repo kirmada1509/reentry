@@ -2,7 +2,11 @@
 
 This is a local, single-user Chrome extension plus web app. A public repository and demo communicate the working product; cloud hosting and extension-store publication are outside this release.
 
-## Reproduce from a fresh checkout/profile
+## Current automatic-agent preview
+
+The automatic journey and current real-model video assets are documented in [AGENT_RELEASE.md](AGENT_RELEASE.md) and the [v0.2.0 preview](https://github.com/kirmada1509/reentry/releases/tag/v0.2.0). It has its own complete-agent evaluation, including failed and availability-interrupted trials. The manual capture/recovery instructions below remain available; historical manual evidence does not establish the new agent's accuracy. Start with `./start.sh` and http://127.0.0.1:3000/observe for automatic tasks.
+
+## Reproduce the manual journey from a fresh checkout/profile
 
 1. Install the pinned Node/pnpm versions from the README and run `pnpm bootstrap`.
 2. Configure the exact local app address and stable unpacked extension ID using `.env.example`. Keep actual credentials in ignored `.env.local`. The standard address is http://127.0.0.1:3000; localhost and 127.0.0.1 have separate storage.

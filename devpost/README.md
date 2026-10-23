@@ -12,3 +12,5 @@ The author requested implementation before formal planning review was complete, 
 - Submission: technical materials can be prepared automatically. Personal statements, eligibility attestations, exit survey and final submission cannot be truthfully invented.
 
 Do not backdate documents, claim learner reflections, or mark human checkpoints complete because the app works. Credentials and the learner profile are excluded from the public repository.
+
+The later automatic-browser iteration has retrospective scope/PRD/spec/checklist addenda and a pointer from the original manual app map to its current architecture/evaluation. Those additions describe actual implementation and do not change the pending learner statuses above.

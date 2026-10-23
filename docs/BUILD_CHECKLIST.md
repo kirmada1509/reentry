@@ -79,7 +79,22 @@ Task discovery was the Phase 2 boundary; Phase 3 completion is tracked below and
 - [x] Pass 167 workspace tests/project guards, all six affected production task/calm journeys, commerce (two passed, one live skip), default-origin builds and HTTP smoke. The full local run passed 64 cases with two skips and one focus-fixture issue fixed in the affected rerun; publication/CI are reported at handoff.
 - [ ] Native VoiceOver, side-panel placement, actual browser zoom/text preferences, permission prompts and OS banners remain manual gates.
 
-[Phase 5 behavior, screenshots and verification bounds](AGENT_CALM.md). Next: automatic-agent Phase 6, complete-agent evaluation and demonstration.
+[Phase 5 behavior, screenshots and verification bounds](AGENT_CALM.md).
+
+## Automatic-agent Phase 6 — Evaluation and demonstration
+
+- [x] Commit a versioned 25-step corpus before first inference; keep expected labels outside prompts and distinguish exposed-cohort replays from the first held-out run.
+- [x] Report discovery/merge errors, forbidden completions, missing negative checks, actual job latency/call attempts and scripted versus operator corrections. Do not invent a natural human correction rate.
+- [x] Preserve actual failed model trials and diagnostic responses; validate all bounded citations and limit summary-only repair to the existing durable call budget.
+- [x] Record two current real-NVIDIA browser journeys with fresh profiles and separate restart checks: application 83.88 seconds/six model calls; shopping 73.88 seconds/five calls. Include SRT/VTT captions, screenshots and hashes.
+- [x] Pass production web/extension builds, all deterministic browser regressions (65 root and two commerce cases), and credential-free clone bootstrap/check/build verification.
+- [x] Prepare reproducible tools, attribution, truthful Learn addenda and event-specific submission drafts.
+- [x] Complete a fresh current-prompt provider cohort without unavailable/unverifiable cases: 23/25 steps, 10/10 regressions, zero accepted false completions across 26 negative checks. Retain every interrupted/failed run. See [actual evaluation status](AGENT_RELEASE.md).
+- [ ] All-passing model-quality result: two unsafe completion proposals were rejected; the strict current evaluator exits 1. Do not weaken guards or hide those failures.
+- [x] Verify hosted implementation CI (2233791) and the explicitly scoped publication-asset audit; prepare the public [v0.2.0 preview package](https://github.com/kirmada1509/reentry/releases/tag/v0.2.0). Final exact-head status is recorded on GitHub Actions.
+- [ ] Native accessibility/permission/banner acceptance, genuine learner reviews/reflections, required YouTube/Vimeo upload, eligibility/registration and actual submissions remain human gates.
+
+[Phase 6 protocol, evidence and remaining gates](AGENT_RELEASE.md).
 
 Tool assignments and deferred alternatives are in the [selected stack](BUILD_PLAN.md#selected-tools-and-exactly-how-we-use-them). The historical manual-release checklist follows.
 

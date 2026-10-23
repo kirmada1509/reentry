@@ -1,0 +1,86 @@
+{
+  "fictionalSourcesOnly": true,
+  "diagnosticReplayIsNotTheOriginalFailedResponse": true,
+  "citationDiagnostic": {
+    "originalResponseUnavailable": true,
+    "references": 24,
+    "oldHostAccepted": false,
+    "fixture": "tests/fixtures/agent-portal-citations.json"
+  },
+  "summaryDiagnosticReplay": {
+    "valid": true,
+    "summaryCharacters": 80
+  },
+  "capturedBrowserResponses": [
+    {
+      "trial": "application-5",
+      "responses": [
+        {
+          "httpStatus": 200,
+          "tool": "upsert_task",
+          "summaryCharacters": 342,
+          "references": 14
+        }
+      ]
+    },
+    {
+      "trial": "application-7",
+      "responses": [
+        {
+          "httpStatus": 200,
+          "tool": "upsert_task",
+          "summaryCharacters": 358,
+          "references": 14
+        },
+        {
+          "httpStatus": 200,
+          "tool": null,
+          "summaryCharacters": 255,
+          "references": 0
+        }
+      ]
+    },
+    {
+      "trial": "application-9",
+      "responses": [
+        {
+          "httpStatus": 200,
+          "tool": "upsert_task",
+          "summaryCharacters": 171,
+          "references": 14
+        },
+        {
+          "httpStatus": 200,
+          "tool": "upsert_task",
+          "summaryCharacters": 252,
+          "references": 5
+        },
+        {
+          "httpStatus": 200,
+          "tool": null,
+          "summaryCharacters": 102,
+          "references": 0
+        },
+        {
+          "httpStatus": 200,
+          "tool": "upsert_task",
+          "summaryCharacters": 207,
+          "references": 3
+        },
+        {
+          "httpStatus": 200,
+          "tool": "upsert_task",
+          "summaryCharacters": 172,
+          "references": 5
+        },
+        {
+          "httpStatus": 200,
+          "tool": "complete_task",
+          "summaryCharacters": null,
+          "references": 8
+        }
+      ]
+    }
+  ],
+  "note": "Length/reference counts explain format compatibility only. They do not prove semantic equivalence or attribute unknown original failures."
+}

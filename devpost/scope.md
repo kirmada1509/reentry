@@ -69,3 +69,7 @@ Additional supported page types, optional readable-page capture using an existin
 ## Review Status
 
 Draft generated during the actual `2-scope` workflow from the learner's supplied brief and subsequent decisions. Not yet learner-approved. Detailed product and technical plans follow this review; no implementation result is claimed.
+
+## Automatic-agent retrospective addendum — October 24
+
+The author subsequently expanded the product to chosen-site task observation, model-inferred goals/finish conditions, evidence-linked progress, bounded confirmation, interruptions/reminders and calm live screens. Current implementation, evaluations and limits are recorded in [the agent release record](../docs/AGENT_RELEASE.md) and [architecture](../docs/AGENTIC_PLAN.md). The earlier manual journey remains available. This addendum was written after those changes; it is not a learner approval or evidence that the original scope anticipated the full iteration. Genuine reviews/reflections remain pending.

@@ -1,0 +1,414 @@
+{
+  "version": "agent-release-v1",
+  "corpusSha256": "d754025b1ef5fc632b3bedf726cb14c3ba507db75fea7a1ea2404f479b2507ed",
+  "note": "Only the first run was held out from development. Later runs reuse an exposed corpus. Complete means all planned steps attempted; it does not mean all steps passed. Missing negative checks are never counted as verified successes.",
+  "currentTrial": 7,
+  "currentStrictEvaluationExitStatus": 1,
+  "currentLimitation": "23/25 steps passed; unsafe completion proposals after cancellation and from an old receipt were rejected. No accepted false completion in 26 negative checks, none missing.",
+  "currentCohorts": {
+    "regression": {
+      "steps": 10,
+      "passed": 10,
+      "discovery": {
+        "errors": 0,
+        "opportunities": 3
+      },
+      "merging": {
+        "wrongMerges": 0,
+        "opportunities": 0
+      },
+      "completion": {
+        "falseCompletions": 0,
+        "negativeChecks": 8,
+        "unverifiableChecks": 0
+      },
+      "corrections": {
+        "scripted": 0,
+        "operator": 0,
+        "steps": 10,
+        "requiredHumanRate": "not measured"
+      },
+      "model": {
+        "calls": 10,
+        "jobs": 10,
+        "failedJobs": 0
+      },
+      "latencyMs": {
+        "samples": 10,
+        "median": 2468,
+        "p95": 3161,
+        "total": 25226
+      }
+    },
+    "held-out": {
+      "steps": 15,
+      "passed": 13,
+      "discovery": {
+        "errors": 0,
+        "opportunities": 9
+      },
+      "merging": {
+        "wrongMerges": 0,
+        "opportunities": 1
+      },
+      "completion": {
+        "falseCompletions": 0,
+        "negativeChecks": 18,
+        "unverifiableChecks": 0
+      },
+      "corrections": {
+        "scripted": 1,
+        "operator": 0,
+        "steps": 15,
+        "requiredHumanRate": "not measured"
+      },
+      "model": {
+        "calls": 14,
+        "jobs": 14,
+        "failedJobs": 2
+      },
+      "latencyMs": {
+        "samples": 14,
+        "median": 2658,
+        "p95": 6183,
+        "total": 40879
+      }
+    }
+  },
+  "trials": [
+    {
+      "trial": 1,
+      "promptVersion": "agent-3",
+      "commit": "dd95b6a64bc615cbc3e540c5300fddc527283ba8",
+      "complete": true,
+      "interruptedBy": null,
+      "pacingMs": 0,
+      "summary": {
+        "steps": 25,
+        "passed": 21,
+        "discovery": {
+          "errors": 0,
+          "opportunities": 12
+        },
+        "merging": {
+          "wrongMerges": 0,
+          "opportunities": 1
+        },
+        "completion": {
+          "falseCompletions": 0,
+          "negativeChecks": 26,
+          "unverifiableChecks": 0
+        },
+        "corrections": {
+          "scripted": 1,
+          "operator": 0,
+          "steps": 25,
+          "requiredHumanRate": "not measured"
+        },
+        "model": {
+          "calls": 25,
+          "jobs": 24,
+          "failedJobs": 3
+        },
+        "latencyMs": {
+          "samples": 24,
+          "median": 2943,
+          "p95": 13601,
+          "total": 113060
+        }
+      }
+    },
+    {
+      "trial": 2,
+      "promptVersion": "agent-3.1",
+      "commit": "79de73f37f061abc07c3d2c24eb73fc3ddc09a1a",
+      "complete": true,
+      "interruptedBy": null,
+      "pacingMs": 0,
+      "summary": {
+        "steps": 25,
+        "passed": 22,
+        "discovery": {
+          "errors": 0,
+          "opportunities": 12
+        },
+        "merging": {
+          "wrongMerges": 0,
+          "opportunities": 1
+        },
+        "completion": {
+          "falseCompletions": 0,
+          "negativeChecks": 26,
+          "unverifiableChecks": 0
+        },
+        "corrections": {
+          "scripted": 1,
+          "operator": 0,
+          "steps": 25,
+          "requiredHumanRate": "not measured"
+        },
+        "model": {
+          "calls": 24,
+          "jobs": 24,
+          "failedJobs": 3
+        },
+        "latencyMs": {
+          "samples": 24,
+          "median": 2457,
+          "p95": 7017,
+          "total": 73489
+        }
+      }
+    },
+    {
+      "trial": 3,
+      "promptVersion": "agent-3.2",
+      "commit": "d2778fc3fa77a6f33430b85acdc0f10346842560",
+      "complete": true,
+      "interruptedBy": null,
+      "pacingMs": 0,
+      "summary": {
+        "steps": 25,
+        "passed": 18,
+        "discovery": {
+          "errors": 1,
+          "opportunities": 12
+        },
+        "merging": {
+          "wrongMerges": 0,
+          "opportunities": 1
+        },
+        "completion": {
+          "falseCompletions": 0,
+          "negativeChecks": 26,
+          "unverifiableChecks": 4
+        },
+        "corrections": {
+          "scripted": 1,
+          "operator": 0,
+          "steps": 25,
+          "requiredHumanRate": "not measured"
+        },
+        "model": {
+          "calls": 24,
+          "jobs": 24,
+          "failedJobs": 6
+        },
+        "latencyMs": {
+          "samples": 24,
+          "median": 2308,
+          "p95": 5781,
+          "total": 90425
+        }
+      }
+    },
+    {
+      "trial": 4,
+      "promptVersion": "agent-3.4",
+      "commit": "f92bd20f94a226d1085cfd0828ad96c952fb37a5",
+      "complete": true,
+      "interruptedBy": null,
+      "pacingMs": 0,
+      "summary": {
+        "steps": 25,
+        "passed": 9,
+        "discovery": {
+          "errors": 3,
+          "opportunities": 12
+        },
+        "merging": {
+          "wrongMerges": 0,
+          "opportunities": 1
+        },
+        "completion": {
+          "falseCompletions": 0,
+          "negativeChecks": 26,
+          "unverifiableChecks": 12
+        },
+        "corrections": {
+          "scripted": 1,
+          "operator": 0,
+          "steps": 25,
+          "requiredHumanRate": "not measured"
+        },
+        "model": {
+          "calls": 24,
+          "jobs": 24,
+          "failedJobs": 16
+        },
+        "latencyMs": {
+          "samples": 24,
+          "median": 220,
+          "p95": 11535,
+          "total": 49942
+        }
+      }
+    },
+    {
+      "trial": 5,
+      "promptVersion": "agent-3.4",
+      "commit": "f92bd20f94a226d1085cfd0828ad96c952fb37a5",
+      "complete": false,
+      "interruptedBy": "MODEL_RATE_LIMITED",
+      "pacingMs": 10000,
+      "summary": {
+        "steps": 5,
+        "passed": 4,
+        "discovery": {
+          "errors": 1,
+          "opportunities": 2
+        },
+        "merging": {
+          "wrongMerges": 0,
+          "opportunities": 0
+        },
+        "completion": {
+          "falseCompletions": 0,
+          "negativeChecks": 4,
+          "unverifiableChecks": 1
+        },
+        "corrections": {
+          "scripted": 0,
+          "operator": 0,
+          "steps": 5,
+          "requiredHumanRate": "not measured"
+        },
+        "model": {
+          "calls": 5,
+          "jobs": 5,
+          "failedJobs": 1
+        },
+        "latencyMs": {
+          "samples": 5,
+          "median": 5638,
+          "p95": 10428,
+          "total": 26396
+        }
+      }
+    },
+    {
+      "trial": 6,
+      "promptVersion": "agent-3.4",
+      "commit": "f92bd20f94a226d1085cfd0828ad96c952fb37a5",
+      "complete": false,
+      "interruptedBy": "MODEL_RATE_LIMITED",
+      "pacingMs": 20000,
+      "summary": {
+        "steps": 4,
+        "passed": 3,
+        "discovery": {
+          "errors": 0,
+          "opportunities": 1
+        },
+        "merging": {
+          "wrongMerges": 0,
+          "opportunities": 0
+        },
+        "completion": {
+          "falseCompletions": 0,
+          "negativeChecks": 3,
+          "unverifiableChecks": 0
+        },
+        "corrections": {
+          "scripted": 0,
+          "operator": 0,
+          "steps": 4,
+          "requiredHumanRate": "not measured"
+        },
+        "model": {
+          "calls": 4,
+          "jobs": 4,
+          "failedJobs": 1
+        },
+        "latencyMs": {
+          "samples": 4,
+          "median": 2978,
+          "p95": 4309,
+          "total": 11645
+        }
+      }
+    },
+    {
+      "trial": 7,
+      "promptVersion": "agent-3.4",
+      "commit": "7b7b326a148bc5d3b07c51c892e9d1c0c0e1c3a8",
+      "complete": true,
+      "interruptedBy": null,
+      "pacingMs": 60000,
+      "summary": {
+        "steps": 25,
+        "passed": 23,
+        "discovery": {
+          "errors": 0,
+          "opportunities": 12
+        },
+        "merging": {
+          "wrongMerges": 0,
+          "opportunities": 1
+        },
+        "completion": {
+          "falseCompletions": 0,
+          "negativeChecks": 26,
+          "unverifiableChecks": 0
+        },
+        "corrections": {
+          "scripted": 1,
+          "operator": 0,
+          "steps": 25,
+          "requiredHumanRate": "not measured"
+        },
+        "model": {
+          "calls": 24,
+          "jobs": 24,
+          "failedJobs": 2
+        },
+        "latencyMs": {
+          "samples": 24,
+          "median": 2507,
+          "p95": 5215,
+          "total": 66105
+        }
+      }
+    }
+  ],
+  "humanCorrectionFrequency": "not measured; one planned scripted correction is not a natural correction-rate estimate",
+  "selectedRecordings": {
+    "provider": "nvidia",
+    "promptVersion": "agent-3.4",
+    "fictionalSites": true,
+    "selectedTrialIds": ["application-9", "shopping-2"],
+    "operatorRetries": 0,
+    "operatorCorrections": 0,
+    "separateRestartChecksPassed": true,
+    "recordings": {
+      "application": {
+        "kind": "application",
+        "durationSeconds": 83.88,
+        "width": 1280,
+        "height": 900,
+        "underThreeMinutes": true,
+        "uninterrupted": true,
+        "cuts": 0,
+        "speedChanges": 0,
+        "audio": "Browser recording has no audio; separate SRT/VTT captions supplied.",
+        "sourceSha256": "2e061c4acf096b231e1957be0c7cc2b179b37957119eaed3b815a67bd7faabed",
+        "mp4Sha256": "623ba68f58c886b43b56e40cea5c2f62273c4a431280af19f71fd0ba58539515",
+        "captionCount": 8
+      },
+      "shopping": {
+        "kind": "shopping",
+        "durationSeconds": 73.88,
+        "width": 1280,
+        "height": 900,
+        "underThreeMinutes": true,
+        "uninterrupted": true,
+        "cuts": 0,
+        "speedChanges": 0,
+        "audio": "Browser recording has no audio; separate SRT/VTT captions supplied.",
+        "sourceSha256": "e49313047550c8bc212e22d6fa6050fefacca6b62b37abdc709305301d3a36bb",
+        "mp4Sha256": "95418dd5d6f6455138e28a52ffbab110f78b2774bf00a68e3702ae4a0ccbc029",
+        "captionCount": 8
+      }
+    }
+  }
+}

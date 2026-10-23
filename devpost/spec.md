@@ -70,3 +70,7 @@ A fixed harness instead of an autonomous agent framework; selected text instead 
 ## Decisions and Open Issues
 
 The author's model-framework question resulted in the existing small provider boundary. Later NVIDIA integration demonstrates replacement without changing capture or task storage. Agent implementation choices include optimistic concurrency and a deletion outbox. Retrospective documents do not establish prescribed curriculum completion; actual learner review, native accessibility observations and submission attestations remain pending where unperformed.
+
+## Automatic-agent retrospective addendum — October 24
+
+The author subsequently expanded the product to chosen-site task observation, model-inferred goals/finish conditions, evidence-linked progress, bounded confirmation, interruptions/reminders and calm live screens. Current implementation, evaluations and limits are recorded in [the agent release record](../docs/AGENT_RELEASE.md) and [architecture](../docs/AGENTIC_PLAN.md). The earlier manual journey remains available. This addendum was written after those changes; it is not a learner approval or evidence that the original scope anticipated the full iteration. Genuine reviews/reflections remain pending.

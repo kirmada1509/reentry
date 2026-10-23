@@ -1,0 +1,280 @@
+{
+  "syntheticSites": true,
+  "notes": "Each directory is a separate fresh-profile trial, not an application auto-retry. Original responses before diagnostic capture are unavailable. Raw videos, profiles and traces are not published. Application-6 failed TypeScript setup before any inference; application-8 encountered provider throttling. Accepted current recordings are application-9 and shopping-2.",
+  "trials": [
+    {
+      "id": "application-1",
+      "exitStatus": 1,
+      "complete": false,
+      "promptVersion": null,
+      "setupFailed": false,
+      "modelCallReservations": 2,
+      "operatorRetries": 0,
+      "operatorCorrections": 0,
+      "checkpoints": ["saved draft"],
+      "httpStatuses": [],
+      "jobs": [
+        {
+          "state": "accepted",
+          "calls": 1
+        },
+        {
+          "state": "failed",
+          "calls": 1
+        }
+      ],
+      "restartPassed": false
+    },
+    {
+      "id": "application-2",
+      "exitStatus": 1,
+      "complete": false,
+      "promptVersion": null,
+      "setupFailed": false,
+      "modelCallReservations": 1,
+      "operatorRetries": 0,
+      "operatorCorrections": 0,
+      "checkpoints": [],
+      "httpStatuses": [],
+      "jobs": [
+        {
+          "state": "failed",
+          "calls": 1
+        }
+      ],
+      "restartPassed": false
+    },
+    {
+      "id": "application-3",
+      "exitStatus": 1,
+      "complete": false,
+      "promptVersion": "agent-3.1",
+      "setupFailed": false,
+      "modelCallReservations": 1,
+      "operatorRetries": 0,
+      "operatorCorrections": 0,
+      "checkpoints": [],
+      "httpStatuses": [],
+      "jobs": [
+        {
+          "state": "failed",
+          "calls": 1
+        }
+      ],
+      "restartPassed": false
+    },
+    {
+      "id": "application-4",
+      "exitStatus": 1,
+      "complete": false,
+      "promptVersion": "agent-3.2",
+      "setupFailed": false,
+      "modelCallReservations": 1,
+      "operatorRetries": 0,
+      "operatorCorrections": 0,
+      "checkpoints": [],
+      "httpStatuses": [],
+      "jobs": [
+        {
+          "state": "failed",
+          "calls": 1
+        }
+      ],
+      "restartPassed": false
+    },
+    {
+      "id": "application-5",
+      "exitStatus": 1,
+      "complete": false,
+      "promptVersion": "agent-3.2",
+      "setupFailed": false,
+      "modelCallReservations": 1,
+      "operatorRetries": 0,
+      "operatorCorrections": 0,
+      "checkpoints": [],
+      "httpStatuses": [200],
+      "jobs": [
+        {
+          "state": "failed",
+          "calls": 1
+        }
+      ],
+      "restartPassed": false
+    },
+    {
+      "id": "application-6",
+      "exitStatus": 1,
+      "complete": false,
+      "promptVersion": null,
+      "setupFailed": true,
+      "modelCallReservations": 0,
+      "operatorRetries": 0,
+      "operatorCorrections": 0,
+      "checkpoints": [],
+      "httpStatuses": [],
+      "jobs": [],
+      "restartPassed": false
+    },
+    {
+      "id": "application-7",
+      "exitStatus": 1,
+      "complete": false,
+      "promptVersion": "agent-3.3",
+      "setupFailed": false,
+      "modelCallReservations": 2,
+      "operatorRetries": 0,
+      "operatorCorrections": 0,
+      "checkpoints": [],
+      "httpStatuses": [200, 200],
+      "jobs": [
+        {
+          "state": "failed",
+          "calls": 2
+        }
+      ],
+      "restartPassed": false
+    },
+    {
+      "id": "application-8",
+      "exitStatus": 1,
+      "complete": false,
+      "promptVersion": "agent-3.4",
+      "setupFailed": false,
+      "modelCallReservations": 2,
+      "operatorRetries": 0,
+      "operatorCorrections": 0,
+      "checkpoints": [],
+      "httpStatuses": [200, 429],
+      "jobs": [
+        {
+          "state": "failed",
+          "calls": 2
+        }
+      ],
+      "restartPassed": false
+    },
+    {
+      "id": "application-9",
+      "exitStatus": 0,
+      "complete": true,
+      "promptVersion": "agent-3.4",
+      "setupFailed": false,
+      "modelCallReservations": 6,
+      "operatorRetries": 0,
+      "operatorCorrections": 0,
+      "checkpoints": [
+        "saved draft",
+        "changed requirements",
+        "blocked submission",
+        "final review",
+        "confirmed application"
+      ],
+      "httpStatuses": [200, 200, 200, 200, 200, 200],
+      "jobs": [
+        {
+          "state": "accepted",
+          "calls": 1
+        },
+        {
+          "state": "accepted",
+          "calls": 2
+        },
+        {
+          "state": "accepted",
+          "calls": 1
+        },
+        {
+          "state": "accepted",
+          "calls": 1
+        },
+        {
+          "state": "accepted",
+          "calls": 1
+        }
+      ],
+      "restartPassed": true
+    },
+    {
+      "id": "shopping-1",
+      "exitStatus": 0,
+      "complete": true,
+      "promptVersion": null,
+      "setupFailed": false,
+      "modelCallReservations": 5,
+      "operatorRetries": 0,
+      "operatorCorrections": 0,
+      "checkpoints": [
+        "research",
+        "cart",
+        "validation",
+        "final review",
+        "confirmed purchase"
+      ],
+      "httpStatuses": [],
+      "jobs": [
+        {
+          "state": "accepted",
+          "calls": 1
+        },
+        {
+          "state": "accepted",
+          "calls": 1
+        },
+        {
+          "state": "accepted",
+          "calls": 1
+        },
+        {
+          "state": "accepted",
+          "calls": 1
+        },
+        {
+          "state": "accepted",
+          "calls": 1
+        }
+      ],
+      "restartPassed": true
+    },
+    {
+      "id": "shopping-2",
+      "exitStatus": 0,
+      "complete": true,
+      "promptVersion": "agent-3.4",
+      "setupFailed": false,
+      "modelCallReservations": 5,
+      "operatorRetries": 0,
+      "operatorCorrections": 0,
+      "checkpoints": [
+        "research",
+        "cart",
+        "validation",
+        "final review",
+        "confirmed purchase"
+      ],
+      "httpStatuses": [],
+      "jobs": [
+        {
+          "state": "accepted",
+          "calls": 1
+        },
+        {
+          "state": "accepted",
+          "calls": 1
+        },
+        {
+          "state": "accepted",
+          "calls": 1
+        },
+        {
+          "state": "accepted",
+          "calls": 1
+        },
+        {
+          "state": "accepted",
+          "calls": 1
+        }
+      ],
+      "restartPassed": true
+    }
+  ]
+}
