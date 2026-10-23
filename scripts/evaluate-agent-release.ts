@@ -10,6 +10,7 @@ import {
 import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 import { ObservationStore } from "../src/features/observation/store";
 import { createTaskHarness } from "../src/features/agent/harness";
 import { agentProcessing } from "../src/features/agent/processing";
@@ -32,6 +33,9 @@ if (!output)
   );
 const bytes = readFileSync("tests/fixtures/agent-release-v1.json");
 const corpus = evaluationCorpus.parse(JSON.parse(bytes.toString()));
+const pacingMs = Number(process.argv[3] ?? "10000");
+if (!Number.isInteger(pacingMs) || pacingMs < 0 || pacingMs > 60000)
+  throw new Error("Evaluation pacing must be 0–60000 milliseconds.");
 const directory = mkdtempSync(path.join(tmpdir(), "reentry-release-eval-"));
 const results: Array<
   ReturnType<typeof scoreStep> & {
@@ -54,7 +58,12 @@ const report = {
   }).trim(),
   createdAt: new Date().toISOString(),
   synthetic: true,
+  observationClock:
+    "Nine-second synthetic increments; job latency uses the real clock.",
   complete: false,
+  plannedSteps: corpus.traces.reduce((n, t) => n + t.steps.length, 0),
+  interruptedBy: null as string | null,
+  pacingMs,
   provider: processing.provider,
   model: processing.model,
   timeoutMs: env.REENTRY_AGENT_TIMEOUT_MS,
@@ -74,7 +83,7 @@ function flush() {
   writeFileSync(output, JSON.stringify(report, null, 2) + "\n");
 }
 try {
-  for (const trace of corpus.traces) {
+  traces: for (const trace of corpus.traces) {
     let now = Date.now();
     const store = new ObservationStore(
       path.join(directory, `${trace.id}.sqlite`),
@@ -100,6 +109,7 @@ try {
       const roles = new Map<string, string>(),
         streams = new Map<string, string>();
       for (const step of trace.steps) {
+        if (results.length && !step.correction) await delay(pacingMs);
         now += 9000;
         const before = store.agent.tasks();
         let calls = 0;
@@ -190,18 +200,28 @@ try {
         console.log(
           `${trace.id}/${step.id}: ${score.passed && !failedJob ? "passed" : "FAILED"}; calls=${calls}`,
         );
+        if (
+          outcome &&
+          typeof outcome === "object" &&
+          "failureCode" in outcome &&
+          outcome.failureCode === "MODEL_RATE_LIMITED"
+        ) {
+          report.interruptedBy = "MODEL_RATE_LIMITED";
+          break traces;
+        }
       }
     } finally {
       store.close();
     }
   }
-  report.complete = true;
+  report.complete = results.length === report.plannedSteps;
 } finally {
   flush();
   rmSync(directory, { recursive: true, force: true });
 }
 console.log(JSON.stringify(report.summary));
 if (
+  !report.complete ||
   report.summary.passed !== report.summary.steps ||
   report.summary.completion.falseCompletions
 )

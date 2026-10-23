@@ -59,13 +59,20 @@ for (const name of names) {
     if (body.includes(value))
       issues.push(`${name}: contains configured ${key}`);
 }
+const extraDirectories = process.argv
+  .slice(2)
+  .map((directory) => path.resolve(root, directory));
 for (const directory of [
   ".next/static",
   "extension/.output/chrome-mv3",
   ".runtime/sites",
+  ...extraDirectories,
 ]) {
   for (const file of filesUnder(path.join(root, directory))) {
     const body = readFileSync(file, "utf8");
+    if (extraDirectories.includes(path.resolve(root, directory)))
+      for (const label of findSecrets(path.relative(root, file), body))
+        issues.push(`${path.relative(root, file)}: ${label}`);
     for (const [key, value] of actualSecrets)
       if (body.includes(value))
         issues.push(`${path.relative(root, file)}: contains configured ${key}`);

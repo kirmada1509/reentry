@@ -51,7 +51,9 @@
     "test:agent:live": "tsx scripts/test-agent-live.ts",
     "test:agent:progress": "node --conditions=react-server --import tsx scripts/evaluate-agent-progress.ts",
     "test:agent:model": "node --conditions=react-server --import tsx scripts/evaluate-agent.ts",
-    "test:agent:release": "node --conditions=react-server --import tsx scripts/evaluate-agent-release.ts"
+    "test:agent:release": "node --conditions=react-server --import tsx scripts/evaluate-agent-release.ts",
+    "test:agent:demo": "tsx scripts/record-agent-demo.ts",
+    "demo:package": "tsx scripts/package-agent-demo.ts"
   },
   "dependencies": {
     "@axiomhq/js": "1.8.0",

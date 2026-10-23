@@ -66,7 +66,13 @@ export default defineConfig({
       url: appOrigin,
       reuseExistingServer: false,
       timeout: production ? 240_000 : 120_000,
+      ...(process.env.REENTRY_AGENT_DEMO_KIND
+        ? { stdout: "pipe" as const }
+        : {}),
       env: {
+        ...(process.env.REENTRY_AGENT_DEMO_KIND
+          ? { NODE_OPTIONS: "--import ./scripts/capture-agent-evaluation.mjs" }
+          : {}),
         REENTRY_APP_ORIGIN: appOrigin,
         REENTRY_AGENT_DB: path.join(
           process.env.REENTRY_TEST_FIXTURE_DIR!,
