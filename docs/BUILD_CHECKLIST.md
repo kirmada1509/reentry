@@ -50,7 +50,7 @@ Task discovery was the Phase 2 boundary; Phase 3 completion is tracked below and
 - [x] Add explicit human finish, reopen and revision-aware deletion with minimal recreation markers and context cleanup.
 - [x] Extend the existing Northstar with fictional validation/final review/saved receipts; reuse the existing shop checkout.
 - [x] Pass the deterministic Northstar changed-requirement/validation/receipt/restart/axe journey and failed-receipt-storage case.
-- [x] Pass 133 workspace tests/project guards, all four affected production journeys, commerce, actual live NVIDIA purchase completion/restart, default-origin builds and HTTP smoke; retain the separate reader timeout and successful explicit replay. The complete local run passed 58 cases with two intentional skips and one subsequently fixed model-fixture issue; hosted CI reruns the full set and is reported at handoff.
+- [x] Pass 134 workspace tests/project guards, all four affected production journeys, commerce, actual live NVIDIA purchase completion/restart, default-origin builds and HTTP smoke; retain the separate reader timeout and successful explicit replay. The complete local run passed 58 cases with two intentional skips and one subsequently fixed model-fixture issue; hosted CI reruns the full set and is reported at handoff.
 - [ ] Native VoiceOver, side-panel placement and actual browser zoom acceptance remain manual gates.
 
 [Progress and completion setup/bounds](AGENT_PROGRESS.md). Reminders remain Phase 4.

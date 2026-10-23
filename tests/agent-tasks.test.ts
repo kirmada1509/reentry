@@ -953,3 +953,37 @@ it("accepts redundant matching source metadata but never lets a model forge chec
       ),
     ).toThrow();
 });
+
+it("resumes a Phase 2 in-flight snapshot without losing its existing task after upgrade", async () => {
+  const s = setup();
+  s.enable();
+  s.add(s.event());
+  const fake = model((c) => proposal(c.current, c.tasks[0]?.id ?? null));
+  await createTaskHarness(
+    s.db.agent,
+    () => fake,
+    () => processing,
+    1000,
+  ).tick();
+  const id = s.db.agent.tasks()[0]!.id;
+  s.advance();
+  s.add(s.event("Cedar backpack — updated specifications"));
+  const claimed = s.db.agent.claim(processing.consentId)!;
+  const legacy = JSON.parse(claimed.context!) as {
+    tasks: Array<Record<string, unknown>>;
+  };
+  for (const task of legacy.tasks) delete task.progress;
+  s.db.db
+    .prepare("UPDATE agent_jobs SET context=? WHERE id=?")
+    .run(JSON.stringify(legacy), claimed.id);
+  s.restart();
+  s.advance(220000);
+  const outcome = await createTaskHarness(
+    s.db.agent,
+    () => fake,
+    () => processing,
+    1000,
+  ).tick();
+  expect(outcome?.state).toBe("accepted");
+  expect(s.db.agent.tasks()).toMatchObject([{ id, revision: 2, progress: [] }]);
+});

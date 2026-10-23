@@ -297,7 +297,7 @@ export class TaskStore {
     if (!current || !this.allowed(current)) throw new Error("Context revoked.");
     return {
       current,
-      tasks: snapshot.tasks,
+      tasks: snapshot.tasks.map((task) => taskSchema.parse(task)),
       history: snapshot.history
         .map((key) => this.event(key))
         .filter((e): e is ObservationEvent => Boolean(e)),
