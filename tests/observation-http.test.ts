@@ -245,3 +245,78 @@ it("enforces exact web/extension origin and preserves request IDs for rejections
     ),
   ).toBe(`chrome-extension://${id}`);
 });
+
+it("authenticates reminder delivery and validates local-only work links/settings with request correlation", async () => {
+  const filename = path.join(dir, "reminders.sqlite");
+  vi.stubEnv("REENTRY_AGENT_DB", filename);
+  vi.stubEnv("REENTRY_APP_ORIGIN", "http://127.0.0.1:3000");
+  const app = "http://127.0.0.1:3000",
+    extension = "nabinfdlobegbkgehppcipkhbddjbdka";
+  const local = new ObservationStore(filename);
+  try {
+    const pair = local.pair(local.challenge(), extension);
+    const { session } = local.setSession(
+      pair.deviceId,
+      {
+        allSites: false,
+        origins: ["https://example.com"],
+        policy: "local-observation-v1",
+      },
+      false,
+      app,
+    );
+    const request = (body: unknown, token = pair.token) =>
+      new Request(app + "/api/agent/device", {
+        method: "POST",
+        headers: {
+          host: "127.0.0.1:3000",
+          "content-type": "application/json",
+          "x-reentry-extension": extension,
+          "x-reentry-device": pair.deviceId,
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
+    const input = {
+      action: "recovery_tick",
+      tick: {
+        sessionId: session.id,
+        observedAt: new Date().toISOString(),
+        current: null,
+        notificationsReady: false,
+      },
+    };
+    expect((await DEVICE(request(input, "f".repeat(64)))).status).toBe(401);
+    const response = await DEVICE(request(input));
+    expect(response.status).toBe(200);
+    expect(response.headers.get("x-request-id")).toBeTruthy();
+    expect(await response.json()).toEqual({
+      notification: null,
+      activeIds: [],
+    });
+    const invalid = await DEVICE(
+      request({
+        ...input,
+        tick: {
+          ...input.tick,
+          current: {
+            url: "https://example.com/application?private=token",
+            pageKey: "a".repeat(64),
+          },
+        },
+      }),
+    );
+    expect(invalid.status).toBe(400);
+    expect(invalid.headers.get("x-request-id")).toBeTruthy();
+    const check = await DEVICE(
+      request({
+        action: "notification_check",
+        id: "reentry-return-" + "a".repeat(64),
+        sessionId: session.id,
+      }),
+    );
+    expect(await check.json()).toEqual({ allowed: false });
+  } finally {
+    local.close();
+  }
+});

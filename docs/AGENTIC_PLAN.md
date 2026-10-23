@@ -1,6 +1,6 @@
 # ReEntry browser agent: requested next iteration
 
-Requested October 22, 2026. Phases 0–3 of this direction are now implemented: chosen-site observation, separately consented task inference, evidence-linked progress and bounded matching-confirmation checks. [Completion rules and limits](AGENT_PROGRESS.md). Reminders remain Phase 4. Keep the current repository and preserve the working manual release. The author wants automatic task discovery, inferred completion checkpoints, progress tracking and reminders without selecting text or filling a checkpoint form.
+Requested October 22, 2026. Phases 0–4 of this direction are now implemented: chosen-site observation, separately consented task inference, evidence-linked progress and bounded matching-confirmation checks. [Completion rules and limits](AGENT_PROGRESS.md). [Interruption recovery and optional local reminders](AGENT_REMINDERS.md) are implemented through a deterministic policy. Keep the current repository and preserve the working manual release. The author wants automatic task discovery, inferred completion checkpoints, progress tracking and reminders without selecting text or filling a checkpoint form.
 
 ## Intended experience
 
@@ -28,7 +28,7 @@ Start with a clearly fictional commerce sandbox and a held-out variant. Do not c
 2. Infer its goal and finish condition; track saved draft, present/missing materials, remaining sections and submission status without requiring manual goal/progress entry.
 3. Distinguish draft saved, submit attempted, validation failed and submitted. Task-scoped receipt/success evidence establishes submission completion.
 4. Reconcile changed requirements against the current task. Add a newly required referee without losing prior evidence or confusing AI observations with user-confirmed facts.
-5. Propose/create a local reminder under the enabled reminder policy when a real deadline or interruption supports it. Missing/ambiguous deadlines stay unknown rather than invented.
+5. Apply the opt-in local interruption-reminder policy. Deadline reminders are deferred: missing/ambiguous deadlines stay unknown rather than invented.
 
 Northstar supplies the controlled application journey. Its simulated attachment must stay labelled simulated; the agent must infer from the actual rendered page, without scenario IDs or expected answers in the model context.
 
@@ -60,7 +60,7 @@ References checked October 22: [LangGraph overview](https://docs.langchain.com/o
 - Observe navigation, relevant DOM changes, form input/change status, saves and submit attempts. Debounce and compare bounded snapshots; avoid a model call per keystroke or mutation. Ignore the extension's own UI and repetitive advertising/countdown mutations.
 - Use visible text, semantic labels, links, roles and field completion markers. Exclude passwords, authentication tokens, hidden inputs, payment fields and unnecessary raw form answers. Keep raw observations short-lived and bounded; retain the minimum evidence supporting a checkpoint. DOM redaction must be tested, not assumed perfect.
 - Treat page content as untrusted evidence. It cannot redefine system instructions, grant tools or schedule arbitrary effects. The host validates every tool call and its task/site scope.
-- Expose a small tool set: inspect enabled tabs, inspect a permitted page/section, read task history, propose/revise a task, record an evidenced checkpoint, verify a finish condition, and schedule/cancel a local reminder. No arbitrary JavaScript execution, shell, filesystem or arbitrary remote fetch tool.
+- Keep the implemented model tools bounded: inspect recent history, read a task, propose/revise a task/checkpoint, propose completion, or ignore. Reminder controls and scheduling are deterministic host behavior, not model tools. No arbitrary JavaScript execution, shell, filesystem, browser-action or arbitrary remote-fetch tool.
 - Persist observations and event IDs before processing; apply task updates with expected task versions and input digests. Reject stale inferences, duplicate effects and deleted-task replays. Agent-created progress remains attributed to agent observations, not written as a fabricated user confirmation into the current manual schema.
 - Give each task a stable ID and independent workflow. Tab IDs are ephemeral. Reconcile related tabs without merging unrelated purchases or applications; support dismiss/correct/split when inferred grouping is wrong.
 - Use a bounded loop and per-task call/time budgets, cancellation, cooldowns and visible model-unavailable states. Keep observation usable when inference is offline; queue bounded events rather than silently dropping them or guessing success.
@@ -75,4 +75,4 @@ Success is demonstrated on two task families and unfamiliar variants. “Any tas
 
 ## Next concrete implementation task
 
-Phases 0–2 are implemented. [Foundation evidence](AGENT_FOUNDATION.md), [browser setup](AGENT_OBSERVATION.md) and [inference setup](AGENT_INFERENCE.md) record the actual boundaries. LangGraph now consumes accepted observations through the provider-independent structured interface; SQLite owns jobs, task revisions and idempotent effects. The app and companion show inferred tasks with separate processing consent and corrections. Native accessibility remains open. Next is Phase 3 of [BUILD_PLAN.md](BUILD_PLAN.md): meaningful intermediate checkpoints and fresh task-matched completion verification. No reminder delivery or universal browser understanding is claimed.
+Phases 0–4 are implemented. [Foundation evidence](AGENT_FOUNDATION.md), [browser setup](AGENT_OBSERVATION.md), [inference setup](AGENT_INFERENCE.md), [completion](AGENT_PROGRESS.md) and [interruption/reminder policy](AGENT_REMINDERS.md) record actual boundaries. LangGraph consumes accepted observations through the provider-independent structured interface; SQLite owns jobs, task revisions, effects and reminder reservations. Chrome supplies local scheduling/delivery. The model cannot schedule reminders or execute external website actions. Native permissions, desktop notification banners and accessibility remain manual gates. Next is Phase 5 of [BUILD_PLAN.md](BUILD_PLAN.md): calmness and reliability across realistic content, interruptions and accessibility modes. No universal browser understanding or deadline reminder delivery is claimed.

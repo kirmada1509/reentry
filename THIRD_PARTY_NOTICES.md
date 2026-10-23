@@ -26,7 +26,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Other installed packages retain their licenses in their distributions. The framework shell was generated with create-next-app.
+Other installed packages retain their licenses in their distributions. The framework shell was generated with create-next-app. The generic document notification icon at `extension/public/return.png` is a raster rendering of the inherited `public/file.svg`; it is not an independently designed ReEntry brand asset.
 
 The automatic-agent foundation uses LangGraph.js, its SQLite checkpointer and better-sqlite3 (MIT). Page Agent's MIT controller is adapted through the committed pnpm patch; its DOM engine is derived from Browser Use. Notices are retained in [Page Agent MIT](docs/licenses/page-agent-MIT.txt) and [Browser Use MIT](docs/licenses/browser-use-MIT.txt). The separate shopping sandbox reuses the MIT Sauce Labs sample app at the commit pinned in `sandboxes/commerce-source.json`; its [license](docs/licenses/saucelabs-sample-app-MIT.txt) is retained. The scoped preview theme uses official shadcn Stone tokens and Tailwind Emerald tokens (MIT), with recorded source digests. Implementation modifications and limits are in [the foundation record](docs/AGENT_FOUNDATION.md).
 

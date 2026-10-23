@@ -1,6 +1,6 @@
 # Automatic-agent Phase 2: tasks without a checkpoint form
 
-Implemented October 23, 2026 (IST). This phase connects the real observation stream to the configured model through LangGraph. Shopping research, buying intent and application work can create a task with a proposed finish condition. These are inspectable AI interpretations. Phase 3 now adds [evidenced progress and observed completion](AGENT_PROGRESS.md); reminders remain Phase 4.
+Implemented October 23, 2026 (IST). This phase connects the real observation stream to the configured model through LangGraph. Shopping research, buying intent and application work can create a task with a proposed finish condition. These are inspectable AI interpretations. Phase 3 now adds [evidenced progress and observed completion](AGENT_PROGRESS.md); [interruption recovery and local reminders](AGENT_REMINDERS.md) are now implemented separately.
 
 ## Try it
 

@@ -1,0 +1,33 @@
+Automatic-agent Phase 4 verification, October 23, 2026 (IST)
+
+Production-bundle acceptance uses synthetic local tasks. The Chrome notification API case uses a disposable pregranted-permission manifest copy; native prompt approval and desktop banners remain manual gates.
+
+Workspace checks
+
+ Test Files  19 passed (19)
+      Tests  158 passed (158)
+UI policy passed: registry assets intact; no custom visual components found.
+Secret-pattern check passed. This is a focused guard, not a complete secret detector.
+Always-loaded project policy: 449 words (~815 tokens, heuristic only).
+
+Complete production browser regression before final hardening
+
+  2 skipped
+  61 passed (4.3m)
+
+Final reminder browser journeys after hardening
+
+  ✓  1 tests/e2e/agent-recovery.spec.ts:76:1 › interrupted application has a safe return link, waiting/snooze/cancel controls, persistent settings and accessible recovery (11.1s)
+  ✓  2 tests/e2e/agent-recovery.spec.ts:268:3 › pregranted reminder API fixture › local reminder uses real Chrome APIs once per day across restart and finishing clears its notification (8.6s)
+  2 passed (27.2s)
+
+Reused commerce sandbox
+
+  1 skipped
+  2 passed (13.8s)
+
+Default-origin production startup
+
+Web and extension production builds passed.
+Ready at http://127.0.0.1:3000.
+HTTP smoke passed: ReEntry page, liveness, readiness, correlation IDs, and missing route.

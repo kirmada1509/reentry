@@ -317,7 +317,9 @@ export default function CompanionPage() {
                       hidden tokens and editable answers are excluded by the
                       reader; ordinary page text may still contain personal
                       information. Only enable sites you are comfortable
-                      recording.
+                      recording. Return links also keep the page path locally,
+                      excluding query strings and fragments; paths can contain
+                      personal information.
                     </p>
                     <div className="flex items-start gap-2">
                       <Checkbox
@@ -352,6 +354,12 @@ export default function CompanionPage() {
             <TaskFeed
               sessionId={status.session?.id ?? null}
               data={tasks}
+              remindersReady={status.notificationsReady}
+              allowReminders={() =>
+                browser.permissions.request({
+                  permissions: ["notifications", "idle"],
+                })
+              }
               act={taskAction}
               busy={busy}
               canEnable={Boolean(status.session && !status.session.paused)}

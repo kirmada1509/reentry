@@ -78,7 +78,25 @@ export async function devicePost(request: Request, requestId?: string) {
     result = db.pair(input.challenge, getEnvironment().REENTRY_EXTENSION_ID);
   else {
     const id = db.authenticate(request);
-    if (input.action === "task_change") {
+    if (input.action === "recovery_tick")
+      result = db.agent.recovery.tick(
+        id,
+        input.tick,
+        db.agent.view(agentProcessing()).enabled,
+      );
+    else if (input.action === "notification_check")
+      result = {
+        allowed: db.agent.recovery.mayDeliver(
+          input.id,
+          id,
+          input.sessionId,
+          db.agent.view(agentProcessing()).enabled,
+        ),
+      };
+    else if (input.action === "notification_result") {
+      db.agent.recovery.acknowledge(input.delivery.id, input.delivery.result);
+      result = { acknowledged: true };
+    } else if (input.action === "task_change") {
       const change = agentActionSchema.safeParse(input.change);
       if (!change.success)
         throw new AppError(

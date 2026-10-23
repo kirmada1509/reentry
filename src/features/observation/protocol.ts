@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  recoveryTickSchema,
+  notificationResultSchema,
+} from "../agent/recovery-schema";
 
 export const originSchema = z
   .string()
@@ -68,6 +72,19 @@ export function scopeAllows(
 }
 export const deviceRequestSchema = z.discriminatedUnion("action", [
   z.strictObject({
+    action: z.literal("recovery_tick"),
+    tick: recoveryTickSchema,
+  }),
+  z.strictObject({
+    action: z.literal("notification_check"),
+    id: notificationResultSchema.shape.id,
+    sessionId: z.uuid(),
+  }),
+  z.strictObject({
+    action: z.literal("notification_result"),
+    delivery: notificationResultSchema,
+  }),
+  z.strictObject({
     action: z.literal("pair"),
     challenge: z.string().regex(/^[a-f0-9]{64}$/),
   }),
@@ -112,6 +129,7 @@ export const companionStatusSchema = z.strictObject({
     "reader",
   ]),
   challengeReady: z.boolean(),
+  notificationsReady: z.boolean().default(false),
 });
 export type CompanionStatus = z.infer<typeof companionStatusSchema>;
 export const dashboardSchema = z.strictObject({

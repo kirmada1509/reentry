@@ -33,6 +33,7 @@ export default defineConfig({
     host_permissions: [
       `${new URL(appOrigin).protocol}//${new URL(appOrigin).hostname}/*`,
     ],
+    optional_permissions: ["notifications", "idle"],
     optional_host_permissions: ["http://*/*", "https://*/*"],
     side_panel: { default_path: "companion.html" },
     action: { default_title: "Capture selection with ReEntry" },

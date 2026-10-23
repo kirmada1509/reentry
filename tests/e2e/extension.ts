@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { test as base, expect, chromium } from "@playwright/test";
@@ -13,14 +13,30 @@ const extensionPath = path.resolve(
     : "extension/.output/chrome-mv3-e2e",
 );
 export const test = base.extend<{
+  reminderPermissionFixture: boolean;
   extension: {
     context: BrowserContext;
     worker: Worker;
     restart: () => Promise<{ context: BrowserContext; worker: Worker }>;
   };
 }>({
-  extension: async ({}, runTest, info) => {
+  reminderPermissionFixture: [false, { option: true }],
+  extension: async ({ reminderPermissionFixture }, runTest, info) => {
     const profile = await mkdtemp(path.join(tmpdir(), "reentry-capture-"));
+    let loadedExtension = extensionPath;
+    if (reminderPermissionFixture) {
+      // Headless Chromium cannot approve the native optional-permission dialog.
+      // A disposable COPY predeclares these permissions for real notification
+      // API acceptance. Production assets/manifest and the user's profile stay
+      // untouched. Native grant/deny approval remains a separate manual gate.
+      loadedExtension = path.join(profile, "reminder-extension-fixture");
+      await cp(extensionPath, loadedExtension, { recursive: true });
+      const manifestPath = path.join(loadedExtension, "manifest.json");
+      const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+      manifest.permissions = [...manifest.permissions, "notifications", "idle"];
+      manifest.optional_permissions = [];
+      await writeFile(manifestPath, JSON.stringify(manifest));
+    }
     // Synthetic published demo credentials must not open Chrome's native
     // password UI over the test page. This is only the disposable test profile.
     await mkdir(path.join(profile, "Default"));
@@ -46,8 +62,8 @@ export const test = base.extend<{
           : {}),
         headless: process.env.HEADED !== "1",
         args: [
-          `--disable-extensions-except=${extensionPath}`,
-          `--load-extension=${extensionPath}`,
+          `--disable-extensions-except=${loadedExtension}`,
+          `--load-extension=${loadedExtension}`,
           "--enable-unsafe-extension-debugging",
         ],
       });

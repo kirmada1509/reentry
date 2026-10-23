@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { originSchema } from "../observation/protocol";
+import { reminderPolicySchema, recoveryViewSchema } from "./recovery-schema";
 
 export const evidenceSchema = z.strictObject({
   eventId: z.uuid(),
@@ -92,6 +93,17 @@ export const modelDecisionSchema = z.discriminatedUnion("tool", [
 export type AgentModelDecision = z.infer<typeof modelDecisionSchema>;
 export const agentActionSchema = z.discriminatedUnion("action", [
   z.strictObject({
+    action: z.literal("reminder_policy"),
+    expectedVersion: z.number().int().min(0),
+    policy: reminderPolicySchema,
+  }),
+  z.strictObject({
+    action: z.literal("recovery"),
+    id: z.uuid(),
+    expectedRevision: z.number().int().positive(),
+    change: z.enum(["wait", "resume", "snooze", "mute", "unmute"]),
+  }),
+  z.strictObject({
     action: z.literal("enable"),
     consentId: z.string().length(64),
     sessionId: z.uuid(),
@@ -118,6 +130,7 @@ export const agentActionSchema = z.discriminatedUnion("action", [
 export type AgentAction = z.infer<typeof agentActionSchema>;
 export const agentViewSchema = z.strictObject({
   enabled: z.boolean(),
+  recovery: recoveryViewSchema,
   status: z.enum([
     "off",
     "ready",

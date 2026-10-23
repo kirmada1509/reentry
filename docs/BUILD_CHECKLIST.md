@@ -55,6 +55,19 @@ Task discovery was the Phase 2 boundary; Phase 3 completion is tracked below and
 
 [Progress and completion setup/bounds](AGENT_PROGRESS.md). Reminders remain Phase 4.
 
+## Automatic-agent Phase 4 — Interruptions and local reminders
+
+- [x] Add local activity/return paths without changing model evidence inputs; exclude credentials, queries, fragments, out-of-scope pages and incognito sampling.
+- [x] Compose short interruption/return summaries, explicit waiting/resume and a real continuation action from installed registry components.
+- [x] Add opt-in policy with 45-minute default, once-per-task/local-day attempts, quiet hours/timezone and one-hour snooze/per-task cancellation; keep speculative research quiet.
+- [x] Persist reservations before external delivery and attempt hashes before Chrome; revalidate current durable task/session/settings, distinguish failed creation from lost acknowledgement, and never resend ambiguous attempts that day.
+- [x] Reconcile a missing one-minute alarm on worker/browser restart; clear stale notifications on completion/dismiss/delete, return, waiting/snooze, pause/revocation, policy changes or local outage.
+- [x] Keep Chrome notifications/idle permissions optional; preserve the user's ability to decline/cancel without a delayed policy save. Keep work paths local and notification text generic.
+- [x] Pass 158 workspace tests/nineteen files and all project guards. The complete production regression passed 61 cases with two intentional skips before final hardening; both new reminder journeys passed again afterward and four task/progress cases passed during hardening. Commerce passed two with one live skip. Default-origin production builds and HTTP smoke passed; publication/CI are reported separately at handoff.
+- [ ] Native optional-permission prompt approval/denial, visible desktop banners, VoiceOver, side-panel placement and actual browser zoom/text acceptance (manual gates).
+
+[Return/reminder setup and delivery boundaries](AGENT_REMINDERS.md). Deadline scheduling is intentionally absent; unknown website deadlines remain unknown. Next: automatic-agent Phase 5.
+
 Tool assignments and deferred alternatives are in the [selected stack](BUILD_PLAN.md#selected-tools-and-exactly-how-we-use-them). The historical manual-release checklist follows.
 
 Project execution tracker, started October 21, 2026. Phases 1–4 and automated accessibility/release work implemented October 22. Native accessibility and genuine learner/submission gates remain explicit below. Details and test gates: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md); actual evidence: [TEST_RESULTS.md](TEST_RESULTS.md).

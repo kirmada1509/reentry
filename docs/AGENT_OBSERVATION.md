@@ -21,6 +21,8 @@ Run `pnpm sandbox:sites` and use its printed Northstar origin (normally port 417
 
 Run `pnpm sandbox:commerce` and enable `http://127.0.0.1:4177`. Log into the simulated Sauce Labs shop using its published synthetic credentials. Browse products, add a backpack, enter fictional checkout details and finish. The companion observes the React page/cart and receipt text. It does not yet interpret that receipt as task completion. Attribution and pinned setup are in [AGENT_FOUNDATION.md](AGENT_FOUNDATION.md).
 
+Phase 4 also adds [separate local activity sampling, return paths and optional reminders](AGENT_REMINDERS.md). Return paths stay outside observation/model inputs. The existing observation metadata boundary below still applies to evidence events.
+
 ## Connection and data boundaries
 
 - One-use random pairing challenge, delivered only from the configured app's exact origin/port through the existing validated extension bridge. The extension requires an explicit Connect action to exchange it.

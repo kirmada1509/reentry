@@ -19,6 +19,7 @@ import {
   agentActionSchema,
   agentViewSchema,
 } from "../../src/features/agent/schema";
+import { startRecoveryRuntime } from "./recovery-runtime";
 const ALARM = "reentry-observation-delivery";
 const SCRIPT = "reentry-observer-v1";
 const hostPattern = (origin: string) =>
@@ -87,6 +88,13 @@ export function startObservationRuntime(appOrigin: string) {
     if (!response.ok) throw new DeliveryError(response.status);
     return response.json() as Promise<unknown>;
   }
+  const recovery = startRecoveryRuntime({
+    appOrigin,
+    iconUrl: browser.runtime.getURL("/return.png"),
+    readState: readAgent,
+    post,
+    permitted,
+  });
   async function markFailure(error: unknown, deviceId?: string) {
     await updateAgent((state) => {
       if (deviceId && state.pairing?.deviceId !== deviceId)
@@ -291,14 +299,17 @@ export function startObservationRuntime(appOrigin: string) {
   }
   function flush() {
     if (!flushing)
-      flushing = syncAndDeliver().finally(() => {
-        flushing = null;
-      });
+      flushing = syncAndDeliver()
+        .then(() => recovery.tick())
+        .finally(() => {
+          flushing = null;
+        });
     return flushing;
   }
   async function status(): Promise<CompanionStatus> {
     const state = await readAgent();
     return {
+      notificationsReady: await recovery.ready().catch(() => false),
       paired: Boolean(state.pairing),
       session: state.session
         ? {
@@ -327,12 +338,14 @@ export function startObservationRuntime(appOrigin: string) {
     companion(sender);
     const state = await readAgent();
     if (!state.pairing) throw new Error("Connect the browser first.");
-    return agentViewSchema.parse(
+    const result = agentViewSchema.parse(
       await post(
         { action: "task_change", change: agentActionSchema.parse(data) },
         state.pairing,
       ),
     );
+    await recovery.tick();
+    return result;
   });
   onMessage("agentStatus", async ({ sender }) => {
     companion(sender);

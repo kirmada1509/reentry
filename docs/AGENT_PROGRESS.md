@@ -1,6 +1,6 @@
 # Automatic-agent Phase 3: progress and observed completion
 
-Implemented October 23, 2026 (IST). ReEntry keeps a small evidence trail as you work, reconciles new requirements and can finish a purchase/application after a fresh matching confirmation. Start with [the automatic setup](AGENT_INFERENCE.md). Reminders and interruption scheduling remain Phase 4.
+Implemented October 23, 2026 (IST). ReEntry keeps a small evidence trail as you work, reconciles new requirements and can finish a purchase/application after a fresh matching confirmation. Start with [the automatic setup](AGENT_INFERENCE.md). [Interruption recovery and optional local reminders](AGENT_REMINDERS.md) are now available separately.
 
 ## Try the application journey
 

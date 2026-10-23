@@ -26,6 +26,8 @@ import {
   finalReview,
 } from "./progress";
 
+import { RecoveryStore } from "./recovery-store";
+
 const HOUR = 3_600_000;
 type Settings = {
   enabled: number;
@@ -45,6 +47,7 @@ export type Job = {
   request_id: string;
 };
 export class TaskStore {
+  readonly recovery: RecoveryStore;
   constructor(
     readonly db: Database.Database,
     readonly now = () => Date.now(),
@@ -61,6 +64,7 @@ export class TaskStore {
       CREATE TABLE IF NOT EXISTS agent_deleted_pages (task_id TEXT NOT NULL, origin TEXT NOT NULL, page_key TEXT NOT NULL, deleted_at INTEGER NOT NULL, PRIMARY KEY(task_id,origin,page_key));
       CREATE TABLE IF NOT EXISTS agent_seen_receipts (digest TEXT PRIMARY KEY, first_seen INTEGER NOT NULL);
     `);
+    this.recovery = new RecoveryStore(db, now, () => this.tasks());
   }
   settings() {
     return this.db
@@ -117,6 +121,7 @@ export class TaskStore {
   }
   clear() {
     this.stop();
+    this.recovery.clear();
     for (const table of [
       "agent_tasks",
       "agent_jobs",
@@ -593,6 +598,7 @@ export class TaskStore {
           context.current.page.origin,
           context.current.page.pageKey,
         );
+      this.recovery.capture(task, context.current);
       this.db
         .prepare("INSERT INTO agent_effects VALUES(?,?,?)")
         .run(id, task.id, this.now());
@@ -624,6 +630,10 @@ export class TaskStore {
     requestId: string = randomUUID(),
   ) {
     this.db.transaction(() => {
+      if (input.action === "reminder_policy") {
+        this.recovery.configure(input.policy, input.expectedVersion);
+        return;
+      }
       if (input.action === "disable") {
         this.stop();
         return;
@@ -694,6 +704,17 @@ export class TaskStore {
           "This task changed. Reload and review before saving; your input is still here.",
           409,
         );
+      if (input.action === "recovery") {
+        if (old.dismissed || ["completed", "cancelled"].includes(old.stage))
+          throw new AppError(
+            "TASK_FINISHED",
+            "Reopen this task before changing recovery settings.",
+            409,
+          );
+        this.recovery.view();
+        this.recovery.change(old.id, input.change);
+        return;
+      }
       if (input.action === "delete") {
         this.db
           .prepare(
@@ -703,6 +724,7 @@ export class TaskStore {
         for (const table of ["agent_task_history", "agent_task_pages"])
           this.db.prepare(`DELETE FROM ${table} WHERE task_id=?`).run(old.id);
         this.db.prepare("DELETE FROM agent_tasks WHERE id=?").run(old.id);
+        this.recovery.remove(old.id);
         this.db
           .prepare(
             "UPDATE agent_jobs SET context=NULL,proposal=NULL,state=CASE WHEN state IN ('pending','running') THEN 'stale' ELSE state END",
@@ -744,6 +766,7 @@ export class TaskStore {
         revision: old.revision + 1,
         updatedAt: new Date(this.now()).toISOString(),
       });
+      if (input.action === "reopen") this.recovery.change(old.id, "resume");
       this.remember(task);
       this.db
         .prepare("UPDATE agent_tasks SET body=? WHERE id=?")
@@ -768,6 +791,7 @@ export class TaskStore {
     const remaining = this.remaining();
     return {
       enabled,
+      recovery: this.recovery.view(),
       processing,
       callsRemaining: remaining,
       tasks: this.tasks().filter((t) => !t.dismissed),
