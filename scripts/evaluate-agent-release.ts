@@ -15,6 +15,7 @@ import { createTaskHarness } from "../src/features/agent/harness";
 import { agentProcessing } from "../src/features/agent/processing";
 import { configuredStructuredModel } from "../src/lib/ai/factory";
 import { getEnvironment } from "../src/lib/env";
+import { AGENT_PROMPT_VERSION } from "../src/features/agent/prompt";
 import { evaluationCorpus, scoreStep, summarize } from "./lib/agent-evaluation";
 
 nextEnv.loadEnvConfig(process.cwd());
@@ -46,6 +47,7 @@ const results: Array<
 > = [];
 const report = {
   version: corpus.version,
+  promptVersion: AGENT_PROMPT_VERSION,
   corpusSha256: createHash("sha256").update(bytes).digest("hex"),
   commit: execFileSync("git", ["rev-parse", "HEAD"], {
     encoding: "utf8",

@@ -915,6 +915,15 @@ it("accepts all ten actual-reader citations while retaining three, but never ign
     validateDecision(
       {
         ...readerProgress.candidate,
+        evidenceRefs: Array(24).fill("current:0"),
+      },
+      context,
+    ),
+  ).toThrow(/16/);
+  expect(() =>
+    validateDecision(
+      {
+        ...readerProgress.candidate,
         evidenceRefs: [...readerProgress.candidate.evidenceRefs, "current:999"],
       },
       context,
