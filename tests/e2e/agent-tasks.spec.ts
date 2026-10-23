@@ -143,6 +143,45 @@ test("automatic tasks distinguish research and purchase, group tabs, persist cor
   await expect(
     app.getByText("Saved from another tab", { exact: true }),
   ).toBeVisible();
+  await app.getByRole("button", { name: "Mark finished", exact: true }).click();
+  await app
+    .getByRole("button", { name: "Yes, mark finished", exact: true })
+    .click();
+  await expect(
+    app.getByText("Marked finished by you", { exact: true }),
+  ).toBeVisible();
+  await app.getByRole("button", { name: "Reopen task", exact: true }).click();
+  await expect(app.getByText("Needs clarity", { exact: true })).toBeVisible();
+  await app.getByRole("button", { name: "Delete task", exact: true }).click();
+  const beforeDelete = (
+    await (
+      await app.request.get(`${appUrl}/api/agent/tasks`, {
+        headers: { "x-reentry-web": "1", origin: appUrl },
+      })
+    ).json()
+  ).tasks[0];
+  const changed = await app.request.post(`${appUrl}/api/agent/tasks`, {
+    headers: { "x-reentry-web": "1", origin: appUrl },
+    data: {
+      action: "correct",
+      id: beforeDelete.id,
+      expectedRevision: beforeDelete.revision,
+      goal: "Changed before deletion",
+      intent: beforeDelete.intent,
+      finishCondition: beforeDelete.finishCondition,
+    },
+  });
+  expect(changed.status()).toBe(200);
+  await app
+    .getByRole("button", { name: "Delete task and history", exact: true })
+    .click();
+  await expect(app.getByRole("dialog").getByRole("alert")).toContainText(
+    "changed",
+  );
+  await app.getByRole("button", { name: "Keep task", exact: true }).click();
+  await expect(
+    app.getByText("Changed before deletion", { exact: true }),
+  ).toBeVisible();
   await app.setViewportSize({ width: 360, height: 1000 });
   expect((await new AxeBuilder({ page: app }).analyze()).violations).toEqual(
     [],

@@ -462,6 +462,13 @@ export function startObservationRuntime(appOrigin: string) {
       .join("");
     if (pageKey !== parsed.data.page.pageKey) return false;
     try {
+      // Browser-owned, session-scoped tab identity survives page navigation and
+      // worker suspension. It is never supplied by the website or the model.
+      const streamKey = `reentry-stream:${data.sessionId}:${sender.tab!.id!}`;
+      const streams = await browser.storage.session.get(streamKey);
+      const streamId = streams[streamKey] ?? crypto.randomUUID();
+      await browser.storage.session.set({ [streamKey]: streamId });
+      parsed.data.streamId = z.uuid().parse(streamId);
       const queued = await updateAgent((s) => {
         if (s.halted || s.session?.id !== data.sessionId)
           return { state: s, result: false };

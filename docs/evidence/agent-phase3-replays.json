@@ -1,0 +1,754 @@
+{
+  "synthetic": true,
+  "note": "Explicit actual-NVIDIA diagnostic replays and temporary synthetic-shop validation traces. Temporary runtime tracing was removed. Replays use the source observation clock and do not replace live browser acceptance.",
+  "replays": [
+    {
+      "trial": "phase3-receipt-replay-1",
+      "synthetic": true,
+      "outcome": {
+        "id": "992e911c-83e3-4ee2-95c4-5d32e5c79c9b",
+        "state": "failed",
+        "requestId": "fb5f23a4-2a80-4eac-8489-c746e4c0fadd",
+        "failureCode": "INVALID_DECISION"
+      },
+      "decisions": [
+        {
+          "candidate": {
+            "tool": "complete_task",
+            "taskId": "47867c9b-a3a3-447f-94da-21c166687f1e",
+            "anchorEventId": "69af5af7-811d-404b-8856-bc179765d401",
+            "receiptSubject": "Sauce Labs Backpack",
+            "evidenceRefs": ["current:4", "current:5", "current:6"]
+          },
+          "validation": "Receipt subject must be visible on the current page."
+        }
+      ],
+      "tasks": [
+        {
+          "goal": "Sauce Labs Backpack",
+          "finishCondition": "Order confirmation page showing 'Thank you for your order' with Sauce Labs Backpack and total $32.39",
+          "intent": "purchase",
+          "id": "47867c9b-a3a3-447f-94da-21c166687f1e",
+          "revision": 4,
+          "origin": "http://127.0.0.1:4177",
+          "stage": "ongoing",
+          "nextAction": "Click Finish button to complete the purchase",
+          "evidence": [
+            {
+              "eventId": "69af5af7-811d-404b-8856-bc179765d401",
+              "quote": "[1]<a role=button aria-label=Cart, 1 items>1 />"
+            },
+            {
+              "eventId": "69af5af7-811d-404b-8856-bc179765d401",
+              "quote": "[3]<div >Sauce Labs Backpack />"
+            },
+            {
+              "eventId": "69af5af7-811d-404b-8856-bc179765d401",
+              "quote": "29.99"
+            }
+          ],
+          "corrected": false,
+          "dismissed": false,
+          "updatedAt": "2026-10-23T14:38:52.517Z",
+          "progress": [
+            {
+              "kind": "research",
+              "summary": "Viewing Sauce Labs Backpack product page with description and $29.99 price. Cart is empty. User can add to cart or navigate back to products.",
+              "eventId": "f438c4d1-8a80-4aa8-96ce-69ed2c6a6400",
+              "observedAt": "2026-10-23T14:37:49.801Z",
+              "streamId": "9558c0e4-57ef-4bc3-a6c7-cc0606ba4df2",
+              "evidence": [
+                {
+                  "eventId": "f438c4d1-8a80-4aa8-96ce-69ed2c6a6400",
+                  "quote": "Sauce Labs Backpack"
+                },
+                {
+                  "eventId": "f438c4d1-8a80-4aa8-96ce-69ed2c6a6400",
+                  "quote": "carry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection."
+                },
+                {
+                  "eventId": "f438c4d1-8a80-4aa8-96ce-69ed2c6a6400",
+                  "quote": "29.99"
+                }
+              ]
+            },
+            {
+              "kind": "cart",
+              "summary": "Sauce Labs Backpack (1) in cart at $29.99, on cart page ready to checkout",
+              "eventId": "724c9c59-8800-45bb-a8b9-edeb6169a10e",
+              "observedAt": "2026-10-23T14:38:04.235Z",
+              "streamId": "9558c0e4-57ef-4bc3-a6c7-cc0606ba4df2",
+              "evidence": [
+                {
+                  "eventId": "724c9c59-8800-45bb-a8b9-edeb6169a10e",
+                  "quote": "[1]<a role=button aria-label=Cart, 1 items>1 />"
+                },
+                {
+                  "eventId": "724c9c59-8800-45bb-a8b9-edeb6169a10e",
+                  "quote": "[3]<div >Sauce Labs Backpack />"
+                },
+                {
+                  "eventId": "724c9c59-8800-45bb-a8b9-edeb6169a10e",
+                  "quote": "29.99"
+                }
+              ]
+            },
+            {
+              "kind": "blocked",
+              "summary": "On checkout information page with Sauce Labs Backpack in cart; validation error 'First Name is required' prevents proceeding",
+              "eventId": "4dbf8159-3691-4a55-9bf7-905b7066a012",
+              "observedAt": "2026-10-23T14:38:14.332Z",
+              "streamId": "9558c0e4-57ef-4bc3-a6c7-cc0606ba4df2",
+              "evidence": [
+                {
+                  "eventId": "4dbf8159-3691-4a55-9bf7-905b7066a012",
+                  "quote": "[1]<a role=button aria-label=Cart, 1 items>1 />"
+                },
+                {
+                  "eventId": "4dbf8159-3691-4a55-9bf7-905b7066a012",
+                  "quote": "Checkout: Your Information"
+                },
+                {
+                  "eventId": "4dbf8159-3691-4a55-9bf7-905b7066a012",
+                  "quote": "[2]<input type=text aria-label=First Name />"
+                }
+              ]
+            },
+            {
+              "kind": "review_ready",
+              "summary": "On checkout overview page with Sauce Labs Backpack (1) at $29.99, tax $2.40, total $32.39; Finish button available to complete order",
+              "eventId": "69af5af7-811d-404b-8856-bc179765d401",
+              "observedAt": "2026-10-23T14:38:44.493Z",
+              "streamId": "9558c0e4-57ef-4bc3-a6c7-cc0606ba4df2",
+              "evidence": [
+                {
+                  "eventId": "69af5af7-811d-404b-8856-bc179765d401",
+                  "quote": "[1]<a role=button aria-label=Cart, 1 items>1 />"
+                },
+                {
+                  "eventId": "69af5af7-811d-404b-8856-bc179765d401",
+                  "quote": "[3]<div >Sauce Labs Backpack />"
+                },
+                {
+                  "eventId": "69af5af7-811d-404b-8856-bc179765d401",
+                  "quote": "29.99"
+                }
+              ]
+            }
+          ],
+          "subject": "Sauce Labs Backpack"
+        }
+      ]
+    },
+    {
+      "trial": "phase3-receipt-replay-2",
+      "synthetic": true,
+      "outcome": {
+        "id": "992e911c-83e3-4ee2-95c4-5d32e5c79c9b",
+        "state": "accepted",
+        "requestId": "db682f61-0156-48e8-b9f9-cb868203df56"
+      },
+      "decisions": [
+        {
+          "candidate": {
+            "tool": "complete_task",
+            "taskId": "47867c9b-a3a3-447f-94da-21c166687f1e",
+            "anchorEventId": "69af5af7-811d-404b-8856-bc179765d401",
+            "receiptSubject": null,
+            "evidenceRefs": ["current:4", "current:5", "current:6"]
+          },
+          "validation": {
+            "d": {
+              "tool": "complete_task",
+              "taskId": "47867c9b-a3a3-447f-94da-21c166687f1e",
+              "anchorEventId": "69af5af7-811d-404b-8856-bc179765d401",
+              "receiptSubject": null,
+              "evidence": [
+                {
+                  "eventId": "992e911c-83e3-4ee2-95c4-5d32e5c79c9b",
+                  "quote": "Thank you for your order!"
+                },
+                {
+                  "eventId": "992e911c-83e3-4ee2-95c4-5d32e5c79c9b",
+                  "quote": "Checkout: Complete!"
+                },
+                {
+                  "eventId": "992e911c-83e3-4ee2-95c4-5d32e5c79c9b",
+                  "quote": "Your order has been dispatched, and will arrive just as fast as the pony can get there!"
+                }
+              ]
+            },
+            "allowed": true
+          }
+        }
+      ],
+      "tasks": [
+        {
+          "goal": "Sauce Labs Backpack",
+          "finishCondition": "Order confirmation page showing 'Thank you for your order' with Sauce Labs Backpack and total $32.39",
+          "intent": "purchase",
+          "id": "47867c9b-a3a3-447f-94da-21c166687f1e",
+          "revision": 5,
+          "origin": "http://127.0.0.1:4177",
+          "stage": "completed",
+          "nextAction": "Finished according to the observed confirmation. Reopen if this is incorrect.",
+          "evidence": [
+            {
+              "eventId": "992e911c-83e3-4ee2-95c4-5d32e5c79c9b",
+              "quote": "Thank you for your order!"
+            },
+            {
+              "eventId": "992e911c-83e3-4ee2-95c4-5d32e5c79c9b",
+              "quote": "Checkout: Complete!"
+            },
+            {
+              "eventId": "992e911c-83e3-4ee2-95c4-5d32e5c79c9b",
+              "quote": "Your order has been dispatched, and will arrive just as fast as the pony can get there!"
+            }
+          ],
+          "corrected": false,
+          "dismissed": false,
+          "updatedAt": "2026-10-23T14:38:55.781Z",
+          "progress": [
+            {
+              "kind": "research",
+              "summary": "Viewing Sauce Labs Backpack product page with description and $29.99 price. Cart is empty. User can add to cart or navigate back to products.",
+              "eventId": "f438c4d1-8a80-4aa8-96ce-69ed2c6a6400",
+              "observedAt": "2026-10-23T14:37:49.801Z",
+              "streamId": "9558c0e4-57ef-4bc3-a6c7-cc0606ba4df2",
+              "evidence": [
+                {
+                  "eventId": "f438c4d1-8a80-4aa8-96ce-69ed2c6a6400",
+                  "quote": "Sauce Labs Backpack"
+                },
+                {
+                  "eventId": "f438c4d1-8a80-4aa8-96ce-69ed2c6a6400",
+                  "quote": "carry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection."
+                },
+                {
+                  "eventId": "f438c4d1-8a80-4aa8-96ce-69ed2c6a6400",
+                  "quote": "29.99"
+                }
+              ]
+            },
+            {
+              "kind": "cart",
+              "summary": "Sauce Labs Backpack (1) in cart at $29.99, on cart page ready to checkout",
+              "eventId": "724c9c59-8800-45bb-a8b9-edeb6169a10e",
+              "observedAt": "2026-10-23T14:38:04.235Z",
+              "streamId": "9558c0e4-57ef-4bc3-a6c7-cc0606ba4df2",
+              "evidence": [
+                {
+                  "eventId": "724c9c59-8800-45bb-a8b9-edeb6169a10e",
+                  "quote": "[1]<a role=button aria-label=Cart, 1 items>1 />"
+                },
+                {
+                  "eventId": "724c9c59-8800-45bb-a8b9-edeb6169a10e",
+                  "quote": "[3]<div >Sauce Labs Backpack />"
+                },
+                {
+                  "eventId": "724c9c59-8800-45bb-a8b9-edeb6169a10e",
+                  "quote": "29.99"
+                }
+              ]
+            },
+            {
+              "kind": "blocked",
+              "summary": "On checkout information page with Sauce Labs Backpack in cart; validation error 'First Name is required' prevents proceeding",
+              "eventId": "4dbf8159-3691-4a55-9bf7-905b7066a012",
+              "observedAt": "2026-10-23T14:38:14.332Z",
+              "streamId": "9558c0e4-57ef-4bc3-a6c7-cc0606ba4df2",
+              "evidence": [
+                {
+                  "eventId": "4dbf8159-3691-4a55-9bf7-905b7066a012",
+                  "quote": "[1]<a role=button aria-label=Cart, 1 items>1 />"
+                },
+                {
+                  "eventId": "4dbf8159-3691-4a55-9bf7-905b7066a012",
+                  "quote": "Checkout: Your Information"
+                },
+                {
+                  "eventId": "4dbf8159-3691-4a55-9bf7-905b7066a012",
+                  "quote": "[2]<input type=text aria-label=First Name />"
+                }
+              ]
+            },
+            {
+              "kind": "review_ready",
+              "summary": "On checkout overview page with Sauce Labs Backpack (1) at $29.99, tax $2.40, total $32.39; Finish button available to complete order",
+              "eventId": "69af5af7-811d-404b-8856-bc179765d401",
+              "observedAt": "2026-10-23T14:38:44.493Z",
+              "streamId": "9558c0e4-57ef-4bc3-a6c7-cc0606ba4df2",
+              "evidence": [
+                {
+                  "eventId": "69af5af7-811d-404b-8856-bc179765d401",
+                  "quote": "[1]<a role=button aria-label=Cart, 1 items>1 />"
+                },
+                {
+                  "eventId": "69af5af7-811d-404b-8856-bc179765d401",
+                  "quote": "[3]<div >Sauce Labs Backpack />"
+                },
+                {
+                  "eventId": "69af5af7-811d-404b-8856-bc179765d401",
+                  "quote": "29.99"
+                }
+              ]
+            },
+            {
+              "kind": "confirmed",
+              "summary": "A fresh matching confirmation was observed.",
+              "eventId": "992e911c-83e3-4ee2-95c4-5d32e5c79c9b",
+              "observedAt": "2026-10-23T14:38:54.781Z",
+              "streamId": "9558c0e4-57ef-4bc3-a6c7-cc0606ba4df2",
+              "evidence": [
+                {
+                  "eventId": "992e911c-83e3-4ee2-95c4-5d32e5c79c9b",
+                  "quote": "Thank you for your order!"
+                },
+                {
+                  "eventId": "992e911c-83e3-4ee2-95c4-5d32e5c79c9b",
+                  "quote": "Checkout: Complete!"
+                },
+                {
+                  "eventId": "992e911c-83e3-4ee2-95c4-5d32e5c79c9b",
+                  "quote": "Your order has been dispatched, and will arrive just as fast as the pony can get there!"
+                }
+              ]
+            }
+          ],
+          "subject": "Sauce Labs Backpack",
+          "completedBy": "observation"
+        }
+      ]
+    },
+    {
+      "trial": "phase3-review-replay-1",
+      "synthetic": true,
+      "outcome": {
+        "id": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+        "state": "accepted",
+        "requestId": "9e1f0408-5904-4fb2-bfa5-6fec5e8fb3de"
+      },
+      "decisions": [
+        {
+          "candidate": {
+            "tool": "upsert_task",
+            "taskId": "52e6bbaf-fbda-432a-b975-0842ad67376c",
+            "goal": "Sauce Labs Backpack",
+            "finishCondition": "Order confirmation page showing 'Thank you for your order' with Sauce Labs Backpack and total $32.39",
+            "intent": "purchase",
+            "stage": "ongoing",
+            "nextAction": "Click Finish button to complete the purchase",
+            "checkpoint": {
+              "kind": "review_ready",
+              "summary": "User is on checkout overview page with Sauce Labs Backpack (1 x $29.99), payment via SauceCard #31337, free shipping, total $32.39. Finish button is available to complete order."
+            },
+            "subject": "Sauce Labs Backpack",
+            "evidenceRefs": [
+              "current:4",
+              "current:8",
+              "current:10",
+              "current:12",
+              "current:14",
+              "current:21",
+              "current:24"
+            ]
+          },
+          "validation": {
+            "tool": "upsert_task",
+            "taskId": "52e6bbaf-fbda-432a-b975-0842ad67376c",
+            "goal": "Sauce Labs Backpack",
+            "finishCondition": "Order confirmation page showing 'Thank you for your order' with Sauce Labs Backpack and total $32.39",
+            "intent": "purchase",
+            "stage": "ongoing",
+            "nextAction": "Click Finish button to complete the purchase",
+            "evidence": [
+              {
+                "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+                "quote": "Checkout: Overview"
+              },
+              {
+                "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+                "quote": "[3]<div >Sauce Labs Backpack />"
+              },
+              {
+                "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+                "quote": "29.99"
+              }
+            ],
+            "checkpoint": {
+              "kind": "review_ready",
+              "summary": "User is on checkout overview page with Sauce Labs Backpack (1 x $29.99), payment via SauceCard #31337, free shipping, total $32.39. Finish button is available to complete order."
+            },
+            "subject": "Sauce Labs Backpack"
+          }
+        }
+      ],
+      "tasks": [
+        {
+          "goal": "Sauce Labs Backpack",
+          "finishCondition": "Order confirmation page showing 'Thank you for your order' with Sauce Labs Backpack and total $32.39",
+          "intent": "purchase",
+          "id": "52e6bbaf-fbda-432a-b975-0842ad67376c",
+          "revision": 4,
+          "origin": "http://127.0.0.1:4177",
+          "stage": "ongoing",
+          "nextAction": "Click Finish button to complete the purchase",
+          "evidence": [
+            {
+              "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+              "quote": "Checkout: Overview"
+            },
+            {
+              "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+              "quote": "[3]<div >Sauce Labs Backpack />"
+            },
+            {
+              "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+              "quote": "29.99"
+            }
+          ],
+          "corrected": false,
+          "dismissed": false,
+          "updatedAt": "2026-10-23T14:44:23.477Z",
+          "progress": [
+            {
+              "kind": "research",
+              "summary": "Viewing Sauce Labs Backpack product page with price $29.99 and description. Cart is empty.",
+              "eventId": "c10df153-21a9-4198-a47d-7e8b984014f7",
+              "observedAt": "2026-10-23T14:43:44.912Z",
+              "streamId": "c3922656-dfe5-4371-badf-bb96452a3644",
+              "evidence": [
+                {
+                  "eventId": "c10df153-21a9-4198-a47d-7e8b984014f7",
+                  "quote": "Sauce Labs Backpack"
+                },
+                {
+                  "eventId": "c10df153-21a9-4198-a47d-7e8b984014f7",
+                  "quote": "carry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection."
+                },
+                {
+                  "eventId": "c10df153-21a9-4198-a47d-7e8b984014f7",
+                  "quote": "29.99"
+                }
+              ]
+            },
+            {
+              "kind": "cart",
+              "summary": "Sauce Labs Backpack is in cart (quantity 1, $29.99). User is on cart page with Checkout button available.",
+              "eventId": "4221c2b6-f565-42fe-aafa-7415cc7b80c3",
+              "observedAt": "2026-10-23T14:43:55.304Z",
+              "streamId": "c3922656-dfe5-4371-badf-bb96452a3644",
+              "evidence": [
+                {
+                  "eventId": "4221c2b6-f565-42fe-aafa-7415cc7b80c3",
+                  "quote": "[1]<a role=button aria-label=Cart, 1 items>1 />"
+                },
+                {
+                  "eventId": "4221c2b6-f565-42fe-aafa-7415cc7b80c3",
+                  "quote": "[3]<div >Sauce Labs Backpack />"
+                },
+                {
+                  "eventId": "4221c2b6-f565-42fe-aafa-7415cc7b80c3",
+                  "quote": "29.99"
+                }
+              ]
+            },
+            {
+              "kind": "blocked",
+              "summary": "Checkout form validation error: 'First Name is required'. User is on checkout information page with Sauce Labs Backpack in cart but form fields are empty.",
+              "eventId": "40668446-9465-445c-bb30-5aad558aba45",
+              "observedAt": "2026-10-23T14:44:09.472Z",
+              "streamId": "c3922656-dfe5-4371-badf-bb96452a3644",
+              "evidence": [
+                {
+                  "eventId": "40668446-9465-445c-bb30-5aad558aba45",
+                  "quote": "Checkout: Your Information"
+                },
+                {
+                  "eventId": "40668446-9465-445c-bb30-5aad558aba45",
+                  "quote": "Error: First Name is required"
+                },
+                {
+                  "eventId": "40668446-9465-445c-bb30-5aad558aba45",
+                  "quote": "Swag Labs"
+                }
+              ]
+            },
+            {
+              "kind": "review_ready",
+              "summary": "User is on checkout overview page with Sauce Labs Backpack (1 x $29.99), payment via SauceCard #31337, free shipping, total $32.39. Finish button is available to complete order.",
+              "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+              "observedAt": "2026-10-23T14:44:22.477Z",
+              "streamId": "c3922656-dfe5-4371-badf-bb96452a3644",
+              "evidence": [
+                {
+                  "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+                  "quote": "Checkout: Overview"
+                },
+                {
+                  "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+                  "quote": "[3]<div >Sauce Labs Backpack />"
+                },
+                {
+                  "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+                  "quote": "29.99"
+                }
+              ]
+            }
+          ],
+          "subject": "Sauce Labs Backpack"
+        }
+      ]
+    },
+    {
+      "trial": "phase3-review-replay-2",
+      "synthetic": true,
+      "outcome": {
+        "id": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+        "state": "accepted",
+        "requestId": "8382999a-2ebe-41fd-b369-9b5c38abdc58"
+      },
+      "decisions": [
+        {
+          "candidate": {
+            "tool": "upsert_task",
+            "taskId": "52e6bbaf-fbda-432a-b975-0842ad67376c",
+            "goal": "Sauce Labs Backpack",
+            "finishCondition": "Order confirmation page showing 'Thank you for your order' with Sauce Labs Backpack and total $32.39",
+            "intent": "purchase",
+            "stage": "ongoing",
+            "nextAction": "Click Finish button to complete the purchase",
+            "checkpoint": {
+              "kind": "review_ready",
+              "summary": "Checkout overview page shows Sauce Labs Backpack (1 x $29.99), payment via SauceCard #31337, free shipping, total $32.39. Finish button is available to complete the order."
+            },
+            "subject": "Sauce Labs Backpack",
+            "evidenceRefs": [
+              "current:3",
+              "current:8",
+              "current:10",
+              "current:12",
+              "current:14",
+              "current:21",
+              "current:24"
+            ]
+          },
+          "validation": {
+            "tool": "upsert_task",
+            "taskId": "52e6bbaf-fbda-432a-b975-0842ad67376c",
+            "goal": "Sauce Labs Backpack",
+            "finishCondition": "Order confirmation page showing 'Thank you for your order' with Sauce Labs Backpack and total $32.39",
+            "intent": "purchase",
+            "stage": "ongoing",
+            "nextAction": "Click Finish button to complete the purchase",
+            "evidence": [
+              {
+                "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+                "quote": "[1]<a role=button aria-label=Cart, 1 items>1 />"
+              },
+              {
+                "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+                "quote": "[3]<div >Sauce Labs Backpack />"
+              },
+              {
+                "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+                "quote": "29.99"
+              }
+            ],
+            "checkpoint": {
+              "kind": "review_ready",
+              "summary": "Checkout overview page shows Sauce Labs Backpack (1 x $29.99), payment via SauceCard #31337, free shipping, total $32.39. Finish button is available to complete the order."
+            },
+            "subject": "Sauce Labs Backpack"
+          }
+        }
+      ],
+      "tasks": [
+        {
+          "goal": "Sauce Labs Backpack",
+          "finishCondition": "Order confirmation page showing 'Thank you for your order' with Sauce Labs Backpack and total $32.39",
+          "intent": "purchase",
+          "id": "52e6bbaf-fbda-432a-b975-0842ad67376c",
+          "revision": 4,
+          "origin": "http://127.0.0.1:4177",
+          "stage": "ongoing",
+          "nextAction": "Click Finish button to complete the purchase",
+          "evidence": [
+            {
+              "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+              "quote": "[1]<a role=button aria-label=Cart, 1 items>1 />"
+            },
+            {
+              "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+              "quote": "[3]<div >Sauce Labs Backpack />"
+            },
+            {
+              "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+              "quote": "29.99"
+            }
+          ],
+          "corrected": false,
+          "dismissed": false,
+          "updatedAt": "2026-10-23T14:44:23.477Z",
+          "progress": [
+            {
+              "kind": "research",
+              "summary": "Viewing Sauce Labs Backpack product page with price $29.99 and description. Cart is empty.",
+              "eventId": "c10df153-21a9-4198-a47d-7e8b984014f7",
+              "observedAt": "2026-10-23T14:43:44.912Z",
+              "streamId": "c3922656-dfe5-4371-badf-bb96452a3644",
+              "evidence": [
+                {
+                  "eventId": "c10df153-21a9-4198-a47d-7e8b984014f7",
+                  "quote": "Sauce Labs Backpack"
+                },
+                {
+                  "eventId": "c10df153-21a9-4198-a47d-7e8b984014f7",
+                  "quote": "carry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection."
+                },
+                {
+                  "eventId": "c10df153-21a9-4198-a47d-7e8b984014f7",
+                  "quote": "29.99"
+                }
+              ]
+            },
+            {
+              "kind": "cart",
+              "summary": "Sauce Labs Backpack is in cart (quantity 1, $29.99). User is on cart page with Checkout button available.",
+              "eventId": "4221c2b6-f565-42fe-aafa-7415cc7b80c3",
+              "observedAt": "2026-10-23T14:43:55.304Z",
+              "streamId": "c3922656-dfe5-4371-badf-bb96452a3644",
+              "evidence": [
+                {
+                  "eventId": "4221c2b6-f565-42fe-aafa-7415cc7b80c3",
+                  "quote": "[1]<a role=button aria-label=Cart, 1 items>1 />"
+                },
+                {
+                  "eventId": "4221c2b6-f565-42fe-aafa-7415cc7b80c3",
+                  "quote": "[3]<div >Sauce Labs Backpack />"
+                },
+                {
+                  "eventId": "4221c2b6-f565-42fe-aafa-7415cc7b80c3",
+                  "quote": "29.99"
+                }
+              ]
+            },
+            {
+              "kind": "blocked",
+              "summary": "Checkout form validation error: 'First Name is required'. User is on checkout information page with Sauce Labs Backpack in cart but form fields are empty.",
+              "eventId": "40668446-9465-445c-bb30-5aad558aba45",
+              "observedAt": "2026-10-23T14:44:09.472Z",
+              "streamId": "c3922656-dfe5-4371-badf-bb96452a3644",
+              "evidence": [
+                {
+                  "eventId": "40668446-9465-445c-bb30-5aad558aba45",
+                  "quote": "Checkout: Your Information"
+                },
+                {
+                  "eventId": "40668446-9465-445c-bb30-5aad558aba45",
+                  "quote": "Error: First Name is required"
+                },
+                {
+                  "eventId": "40668446-9465-445c-bb30-5aad558aba45",
+                  "quote": "Swag Labs"
+                }
+              ]
+            },
+            {
+              "kind": "review_ready",
+              "summary": "Checkout overview page shows Sauce Labs Backpack (1 x $29.99), payment via SauceCard #31337, free shipping, total $32.39. Finish button is available to complete the order.",
+              "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+              "observedAt": "2026-10-23T14:44:22.477Z",
+              "streamId": "c3922656-dfe5-4371-badf-bb96452a3644",
+              "evidence": [
+                {
+                  "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+                  "quote": "[1]<a role=button aria-label=Cart, 1 items>1 />"
+                },
+                {
+                  "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+                  "quote": "[3]<div >Sauce Labs Backpack />"
+                },
+                {
+                  "eventId": "8a1f6443-e6d2-4752-8584-c961a1ad8423",
+                  "quote": "29.99"
+                }
+              ]
+            }
+          ],
+          "subject": "Sauce Labs Backpack"
+        }
+      ]
+    }
+  ],
+  "diagnostics": [
+    {
+      "node": "validate",
+      "error": "[\n  {\n    \"origin\": \"array\",\n    \"code\": \"too_big\",\n    \"maximum\": 8,\n    \"inclusive\": true,\n    \"path\": [\n      \"evidenceRefs\"\n    ],\n    \"message\": \"Too big: expected array to have <=8 items\"\n  }\n]",
+      "candidate": {
+        "tool": "upsert_task",
+        "taskId": "8fcd042c-4d90-493d-b6bc-843646611328",
+        "goal": "Sauce Labs Backpack",
+        "finishCondition": "Order confirmation page showing Sauce Labs Backpack purchased for $32.39 total",
+        "intent": "purchase",
+        "stage": "ongoing",
+        "nextAction": "Click Finish button to complete the purchase",
+        "checkpoint": {
+          "kind": "review_ready",
+          "summary": "Checkout overview page shows Sauce Labs Backpack ($29.99) with tax $2.40, total $32.39. Payment: SauceCard #31337. Shipping: Free Pony Express Delivery. Ready to click Finish."
+        },
+        "subject": "Sauce Labs Backpack",
+        "evidenceRefs": [
+          "current:3",
+          "current:4",
+          "current:8",
+          "current:10",
+          "current:12",
+          "current:14",
+          "current:17",
+          "current:19",
+          "current:21",
+          "current:24"
+        ]
+      },
+      "decision": null,
+      "eventId": "a81c7168-c0ce-4bc3-b647-34f553ee72bc",
+      "page": {
+        "origin": "http://127.0.0.1:4177",
+        "title": "Swag Labs \u00b7 ReEntry simulated shop",
+        "content": "[0]<button type=button>Open Menu />\nSwag Labs\n[1]<a role=button aria-label=Cart, 1 items>1 />\nCheckout: Overview\nQTY\nDescription\n1\n[2]<a role=button aria-label=View details for Sau... />\n\t[3]<div >Sauce Labs Backpack />\ncarry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection.\n$\n29.99\nPayment Information:\nSauceCard #31337\nShipping Information:\nFree Pony Express Delivery!\nPrice Total\nItem total: $\n29.99\nTax: $\n2.40\nTotal: $\n32.39\n[4]<button >Cancel />\n\t[5]<img  />\n[6]<button >Finish />\n[7]<a >X />\n[8]<a >Facebook />\n[9]<a >LinkedIn />\n\u00a9\n2026\nSauce Labs. All Rights Reserved. Terms of Service | Privacy Policy",
+        "pageKey": "39032bef71705e665c48c4089412e94f68ec9159477f2c76305539a26c314e18",
+        "fields": []
+      }
+    },
+    {
+      "node": "apply",
+      "error": "Completion evidence is not fresh and task-matched.",
+      "candidate": null,
+      "decision": "{\"tool\":\"complete_task\",\"taskId\":\"8fcd042c-4d90-493d-b6bc-843646611328\",\"anchorEventId\":\"7da3fffb-8567-41d9-852a-2becfa87995c\",\"receiptSubject\":null,\"evidence\":[{\"eventId\":\"03fc26cf-670d-4db3-b7c2-f5f76546fbbc\",\"quote\":\"Thank you for your order!\"},{\"eventId\":\"03fc26cf-670d-4db3-b7c2-f5f76546fbbc\",\"quote\":\"Checkout: Complete!\"},{\"eventId\":\"03fc26cf-670d-4db3-b7c2-f5f76546fbbc\",\"quote\":\"Your order has been dispatched, and will arrive just as fast as the pony can get there!\"}]}",
+      "eventId": "03fc26cf-670d-4db3-b7c2-f5f76546fbbc",
+      "page": {
+        "origin": "http://127.0.0.1:4177",
+        "title": "Swag Labs \u00b7 ReEntry simulated shop",
+        "content": "[0]<button type=button>Open Menu />\nSwag Labs\n[1]<a role=button aria-label=Cart, empty />\nCheckout: Complete!\nThank you for your order!\nYour order has been dispatched, and will arrive just as fast as the pony can get there!\n[2]<button >Back Home />\n[3]<button >Generate PDF order />\n[4]<a >X />\n[5]<a >Facebook />\n[6]<a >LinkedIn />\n\u00a9\n2026\nSauce Labs. All Rights Reserved. Terms of Service | Privacy Policy",
+        "pageKey": "5ffd43f8ffd82b63f3bc5a1ff79561df6cdf2dba84375f55eeec5043190ffcf8",
+        "fields": []
+      }
+    },
+    {
+      "node": "apply",
+      "error": "Completion evidence is not fresh and task-matched.",
+      "candidate": null,
+      "decision": "{\"tool\":\"complete_task\",\"taskId\":\"8fcd042c-4d90-493d-b6bc-843646611328\",\"anchorEventId\":\"7da3fffb-8567-41d9-852a-2becfa87995c\",\"receiptSubject\":null,\"evidence\":[{\"eventId\":\"03fc26cf-670d-4db3-b7c2-f5f76546fbbc\",\"quote\":\"Thank you for your order!\"},{\"eventId\":\"03fc26cf-670d-4db3-b7c2-f5f76546fbbc\",\"quote\":\"Checkout: Complete!\"},{\"eventId\":\"03fc26cf-670d-4db3-b7c2-f5f76546fbbc\",\"quote\":\"Your order has been dispatched, and will arrive just as fast as the pony can get there!\"}]}",
+      "eventId": "03fc26cf-670d-4db3-b7c2-f5f76546fbbc",
+      "page": {
+        "origin": "http://127.0.0.1:4177",
+        "title": "Swag Labs \u00b7 ReEntry simulated shop",
+        "content": "[0]<button type=button>Open Menu />\nSwag Labs\n[1]<a role=button aria-label=Cart, empty />\nCheckout: Complete!\nThank you for your order!\nYour order has been dispatched, and will arrive just as fast as the pony can get there!\n[2]<button >Back Home />\n[3]<button >Generate PDF order />\n[4]<a >X />\n[5]<a >Facebook />\n[6]<a >LinkedIn />\n\u00a9\n2026\nSauce Labs. All Rights Reserved. Terms of Service | Privacy Policy",
+        "pageKey": "5ffd43f8ffd82b63f3bc5a1ff79561df6cdf2dba84375f55eeec5043190ffcf8",
+        "fields": []
+      }
+    }
+  ]
+}

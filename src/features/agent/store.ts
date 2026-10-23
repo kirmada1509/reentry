@@ -1,5 +1,5 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import type Database from "better-sqlite3";
 import { AppError } from "@/lib/http/errors";
 import {
@@ -15,7 +15,16 @@ import type {
   AgentView,
 } from "./schema";
 import { taskSchema } from "./schema";
+import { sourceSpans } from "./prompt";
 import type { DecisionContext } from "./prompt";
+import {
+  affirmativeReceipt,
+  completionAllowed,
+  hasSubject,
+  normalizeSubject,
+  blockingFailure,
+  finalReview,
+} from "./progress";
 
 const HOUR = 3_600_000;
 type Settings = {
@@ -49,6 +58,8 @@ export class TaskStore {
       CREATE TABLE IF NOT EXISTS agent_task_history (task_id TEXT NOT NULL, revision INTEGER NOT NULL, body TEXT NOT NULL, PRIMARY KEY(task_id,revision));
       CREATE TABLE IF NOT EXISTS agent_task_pages (task_id TEXT NOT NULL, origin TEXT NOT NULL, page_key TEXT NOT NULL, PRIMARY KEY(task_id,origin,page_key));
       CREATE TABLE IF NOT EXISTS agent_calls (id INTEGER PRIMARY KEY, created INTEGER NOT NULL);
+      CREATE TABLE IF NOT EXISTS agent_deleted_pages (task_id TEXT NOT NULL, origin TEXT NOT NULL, page_key TEXT NOT NULL, deleted_at INTEGER NOT NULL, PRIMARY KEY(task_id,origin,page_key));
+      CREATE TABLE IF NOT EXISTS agent_seen_receipts (digest TEXT PRIMARY KEY, first_seen INTEGER NOT NULL);
     `);
   }
   settings() {
@@ -112,6 +123,8 @@ export class TaskStore {
       "agent_effects",
       "agent_task_history",
       "agent_task_pages",
+      "agent_deleted_pages",
+      "agent_seen_receipts",
     ])
       this.db.prepare(`DELETE FROM ${table}`).run();
     // Only opaque job identifiers live in graph checkpoints, never page bodies.
@@ -128,7 +141,19 @@ export class TaskStore {
           .run();
   }
   enqueue(event: ObservationEvent, requestId: string = randomUUID()) {
-    if (!this.allowed(event)) return;
+    if (affirmativeReceipt(event.page.content))
+      this.db
+        .prepare("INSERT OR IGNORE INTO agent_seen_receipts VALUES(?,?)")
+        .run(this.receiptDigest(event), Date.parse(event.observedAt));
+    if (
+      !this.allowed(event) ||
+      this.db
+        .prepare(
+          "SELECT 1 FROM agent_deleted_pages WHERE origin=? AND deleted_at>=?",
+        )
+        .get(event.page.origin, Date.parse(event.observedAt))
+    )
+      return;
     const newer = this.superseded(event);
     if (newer) return;
     // Coalesce pending work by site; history remains available through the tool.
@@ -145,6 +170,17 @@ export class TaskStore {
         "INSERT OR IGNORE INTO agent_jobs(id,state,created,request_id) VALUES(?,'pending',?,?)",
       )
       .run(event.eventId, this.now(), requestId);
+  }
+  private receiptDigest(event: ObservationEvent) {
+    return createHash("sha256")
+      .update(
+        event.page.origin +
+          "\n" +
+          event.page.pageKey +
+          "\n" +
+          normalizeSubject(event.page.content.replace(/\[\d+\]/g, "")),
+      )
+      .digest("hex");
   }
   private superseded(event: ObservationEvent) {
     const rowid = (id: string) =>
@@ -347,13 +383,28 @@ export class TaskStore {
         this.finish(id, "ignored");
         return "ignored";
       }
-      if (decision.tool !== "upsert_task") throw new Error("Not an effect.");
+      if (decision.tool !== "upsert_task" && decision.tool !== "complete_task")
+        throw new Error("Not an effect.");
       const old = context.tasks.find((t) => t.id === decision.taskId);
       if (old?.dismissed) {
         this.finish(id, "stale");
         return "stale";
       }
+      if (!old && affirmativeReceipt(context.current.page.content)) {
+        this.finish(id, "ignored");
+        return "ignored";
+      }
       if (!old) {
+        if (
+          this.db
+            .prepare(
+              "SELECT 1 FROM agent_deleted_pages WHERE origin=? AND page_key=?",
+            )
+            .get(context.current.page.origin, context.current.page.pageKey)
+        ) {
+          this.finish(id, "ignored");
+          return "ignored";
+        }
         const pages = this.db
           .prepare(
             "SELECT task_id FROM agent_task_pages WHERE origin=? AND page_key=?",
@@ -362,9 +413,14 @@ export class TaskStore {
           task_id: string;
         }[];
         if (
-          pages.some(
-            (p) => this.tasks().find((t) => t.id === p.task_id)?.dismissed,
-          )
+          pages.some((p) => {
+            const task = this.tasks().find((t) => t.id === p.task_id);
+            return (
+              task &&
+              (task.dismissed ||
+                ["completed", "cancelled"].includes(task.stage))
+            );
+          })
         ) {
           this.finish(id, "ignored");
           return "ignored";
@@ -372,22 +428,158 @@ export class TaskStore {
       }
       if (!old && this.tasks().length >= 100)
         throw new Error("Task capacity reached.");
-      const task = taskSchema.parse({
-        id: old?.id ?? randomUUID(),
-        revision: (old?.revision ?? 0) + 1,
-        origin: context.current.page.origin,
-        goal: old?.corrected ? old.goal : decision.goal,
-        finishCondition: old?.corrected
-          ? old.finishCondition
-          : decision.finishCondition,
-        intent: old?.corrected ? old.intent : decision.intent,
-        corrected: old?.corrected ?? false,
-        stage: decision.stage,
-        nextAction: decision.nextAction,
-        evidence: decision.evidence,
-        dismissed: false,
-        updatedAt: new Date(this.now()).toISOString(),
-      });
+      if (old && ["completed", "cancelled"].includes(old.stage)) {
+        this.finish(id, "ignored");
+        return "ignored";
+      }
+      const event = context.current;
+      let task: AgentTask;
+      if (decision.tool === "complete_task") {
+        if (!old) throw new Error("Missing completion task.");
+        const anchor = this.event(decision.anchorEventId);
+        const between = (
+          this.db
+            .prepare("SELECT body FROM observations ORDER BY rowid")
+            .all() as { body: string }[]
+        )
+          .map((r) => eventSchema.parse(JSON.parse(r.body)))
+          .filter(
+            (e) =>
+              e.streamId === event.streamId &&
+              e.eventId !== event.eventId &&
+              Date.parse(e.observedAt) > Date.parse(anchor?.observedAt ?? "") &&
+              Date.parse(e.observedAt) < Date.parse(event.observedAt),
+          );
+        const seen = this.db
+          .prepare("SELECT first_seen FROM agent_seen_receipts WHERE digest=?")
+          .get(this.receiptDigest(event)) as { first_seen: number } | undefined;
+        if (
+          (decision.receiptSubject &&
+            !hasSubject(decision.receiptSubject, old.subject ?? "")) ||
+          this.tasks().some(
+            (t) =>
+              t.id !== old.id &&
+              t.subject &&
+              !hasSubject(t.subject, old.subject ?? "") &&
+              hasSubject(event.page.content, t.subject),
+          ) ||
+          !completionAllowed(
+            old,
+            event,
+            anchor,
+            between,
+            this.now(),
+            Boolean(seen && seen.first_seen < Date.parse(event.observedAt)),
+          ) ||
+          !decision.evidence.some(
+            (e) => e.eventId === event.eventId && affirmativeReceipt(e.quote),
+          )
+        )
+          throw new Error("Completion evidence is not fresh and task-matched.");
+        const progress = [...old.progress];
+        if (anchor && !progress.some((p) => p.eventId === anchor.eventId))
+          progress.push({
+            kind: "review_ready",
+            summary: "Final review recovered from recent page evidence.",
+            eventId: anchor.eventId,
+            observedAt: anchor.observedAt,
+            streamId: anchor.streamId,
+            evidence: sourceSpans({
+              current: anchor,
+              tasks: [],
+              history: [],
+              toolResults: [],
+            })
+              .slice(0, 3)
+              .map(({ eventId, quote }) => ({ eventId, quote })),
+          });
+        task = taskSchema.parse({
+          ...old,
+          revision: old.revision + 1,
+          stage: "completed",
+          completedBy: "observation",
+          nextAction:
+            "Finished according to the observed confirmation. Reopen if this is incorrect.",
+          evidence: decision.evidence,
+          updatedAt: new Date(this.now()).toISOString(),
+          progress: [
+            ...progress.slice(-11),
+            {
+              kind: "confirmed",
+              summary: "A fresh matching confirmation was observed.",
+              eventId: event.eventId,
+              observedAt: event.observedAt,
+              streamId: event.streamId,
+              evidence: decision.evidence,
+            },
+          ],
+        });
+      } else {
+        const subject = old?.subject ?? decision.subject;
+        const knownSubject = Boolean(
+          old?.subject &&
+          decision.subject &&
+          hasSubject(old.subject, decision.subject) &&
+          hasSubject(decision.subject, old.subject),
+        );
+        if (
+          decision.subject &&
+          ((!hasSubject(event.page.content, decision.subject) &&
+            !(
+              knownSubject &&
+              event.streamId &&
+              old?.progress.at(-1)?.streamId === event.streamId
+            )) ||
+            (old &&
+              !hasSubject(
+                old.subject ??
+                  old.goal + " " + old.evidence.map((e) => e.quote).join(" "),
+                decision.subject,
+              )))
+        )
+          throw new Error(
+            "Subject must be supported by this task and current evidence.",
+          );
+        const checkpoint =
+          decision.checkpoint && blockingFailure(event.page.content)
+            ? { ...decision.checkpoint, kind: "blocked" as const }
+            : decision.checkpoint;
+        if (
+          checkpoint?.kind === "review_ready" &&
+          (!subject || !finalReview(event, subject))
+        )
+          throw new Error(
+            "Final review requires current subject and final action.",
+          );
+        const progress = [...(old?.progress ?? [])];
+        if (checkpoint)
+          progress.push({
+            ...checkpoint,
+            eventId: event.eventId,
+            observedAt: event.observedAt,
+            streamId: event.streamId,
+            evidence: decision.evidence,
+          });
+        task = taskSchema.parse({
+          id: old?.id ?? randomUUID(),
+          revision: (old?.revision ?? 0) + 1,
+          origin: context.current.page.origin,
+          goal: old?.corrected ? old.goal : decision.goal,
+          finishCondition: old?.corrected
+            ? old.finishCondition
+            : decision.finishCondition,
+          intent: old?.corrected ? old.intent : decision.intent,
+          corrected: old?.corrected ?? false,
+          stage:
+            checkpoint?.kind === "cancelled" ? "cancelled" : decision.stage,
+          nextAction: decision.nextAction,
+          evidence: decision.evidence,
+          dismissed: false,
+          updatedAt: new Date(this.now()).toISOString(),
+          subject,
+          progress: progress.slice(-12),
+        });
+      }
       this.db
         .prepare(
           "INSERT INTO agent_tasks VALUES(?,?) ON CONFLICT(id) DO UPDATE SET body=excluded.body",
@@ -502,6 +694,25 @@ export class TaskStore {
           "This task changed. Reload and review before saving; your input is still here.",
           409,
         );
+      if (input.action === "delete") {
+        this.db
+          .prepare(
+            "INSERT OR IGNORE INTO agent_deleted_pages SELECT task_id,origin,page_key,? FROM agent_task_pages WHERE task_id=?",
+          )
+          .run(this.now(), old.id);
+        for (const table of ["agent_task_history", "agent_task_pages"])
+          this.db.prepare(`DELETE FROM ${table} WHERE task_id=?`).run(old.id);
+        this.db.prepare("DELETE FROM agent_tasks WHERE id=?").run(old.id);
+        this.db
+          .prepare(
+            "UPDATE agent_jobs SET context=NULL,proposal=NULL,state=CASE WHEN state IN ('pending','running') THEN 'stale' ELSE state END",
+          )
+          .run();
+        this.db
+          .prepare("UPDATE agent_settings SET version=version+1 WHERE id=1")
+          .run();
+        return;
+      }
       const task = taskSchema.parse({
         ...old,
         ...(input.action === "correct"
@@ -510,10 +721,26 @@ export class TaskStore {
               finishCondition: input.finishCondition,
               intent: input.intent,
               corrected: true,
+              completedBy: undefined,
               nextAction: "Review the task using your corrected goal.",
               stage: input.intent === "research" ? "candidate" : "uncertain",
             }
-          : { dismissed: true }),
+          : input.action === "finish"
+            ? {
+                stage: "completed",
+                completedBy: "user",
+                nextAction:
+                  "Marked finished by you. Reopen if you need to return.",
+              }
+            : input.action === "reopen"
+              ? {
+                  stage: "uncertain",
+                  completedBy: undefined,
+                  progress: [],
+                  nextAction:
+                    "Review the current page to establish fresh progress.",
+                }
+              : { dismissed: true }),
         revision: old.revision + 1,
         updatedAt: new Date(this.now()).toISOString(),
       });

@@ -1,6 +1,6 @@
 # ReEntry browser agent: requested next iteration
 
-Requested October 22, 2026. Phases 0–2 of this direction are now implemented: chosen-site observation and separately consented task inference. Completion verification and reminders below remain planned. Keep the current repository and preserve the working manual release. The author wants automatic task discovery, inferred completion checkpoints, progress tracking and reminders without selecting text or filling a checkpoint form.
+Requested October 22, 2026. Phases 0–3 of this direction are now implemented: chosen-site observation, separately consented task inference, evidence-linked progress and bounded matching-confirmation checks. [Completion rules and limits](AGENT_PROGRESS.md). Reminders remain Phase 4. Keep the current repository and preserve the working manual release. The author wants automatic task discovery, inferred completion checkpoints, progress tracking and reminders without selecting text or filling a checkpoint form.
 
 ## Intended experience
 

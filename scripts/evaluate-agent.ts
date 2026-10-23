@@ -66,6 +66,7 @@ const harness = createTaskHarness(
 );
 const results: unknown[] = [];
 let researchId: string | undefined;
+const streamId = randomUUID();
 async function run(
   name: string,
   title: string,
@@ -78,6 +79,7 @@ async function run(
     version: 1 as const,
     eventId: randomUUID(),
     deviceId: device.deviceId,
+    streamId,
     sessionId: session.id,
     observedAt: new Date(now).toISOString(),
     reason: "navigation" as const,
@@ -218,11 +220,31 @@ try {
       );
     },
   );
+  await run(
+    "captured reader final review records a valid completion anchor",
+    readerPages.review.title,
+    readerPages.review.content,
+    "1",
+    () =>
+      store.agent
+        .tasks()
+        .find((t) => t.id === readerTaskId)
+        ?.progress.at(-1)?.kind === "review_ready",
+  );
+  await run(
+    "captured generic receipt completes only the linked reviewed purchase",
+    readerPages.receipt.title,
+    readerPages.receipt.content,
+    "2",
+    () =>
+      store.agent.tasks().find((t) => t.id === readerTaskId)?.stage ===
+      "completed",
+  );
   writeFileSync(
     output,
     JSON.stringify(
       {
-        version: "agent-v2-reference-citations",
+        version: "agent-v3-reader-progress",
         synthetic: true,
         createdAt: new Date().toISOString(),
         provider: processing.provider,

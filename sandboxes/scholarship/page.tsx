@@ -50,6 +50,8 @@ import {
   emptyDraft,
   requirements,
   scenarioSchema,
+  RECEIPT_KEY,
+  receiptSchema,
 } from "./model";
 import type { ApplicationDraft, Version } from "./model";
 
@@ -83,6 +85,17 @@ export default function ScholarshipPortal() {
   const [status, setStatus] = useState("");
   const [resetOpen, setResetOpen] = useState(false);
   const [resetError, setResetError] = useState("");
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [submissionError, setSubmissionError] = useState("");
+  const [receipt, setReceipt] = useState(() => {
+    try {
+      return receiptSchema.parse(
+        JSON.parse(localStorage.getItem(RECEIPT_KEY) ?? "null"),
+      );
+    } catch {
+      return null;
+    }
+  });
   const dirty = JSON.stringify(draft) !== savedDraft;
   const checklist = version ? completion(draft, version) : [];
   const completed = checklist.filter((item) => item.complete).length;
@@ -137,7 +150,9 @@ export default function ScholarshipPortal() {
 
   function reset() {
     try {
+      localStorage.removeItem(RECEIPT_KEY);
       localStorage.removeItem(DRAFT_KEY);
+      setReceipt(null);
       setDraft({ ...emptyDraft });
       setSavedDraft(JSON.stringify(emptyDraft));
       setHasSaved(false);
@@ -162,6 +177,36 @@ export default function ScholarshipPortal() {
     setStatus(
       "Requirements selected. Use the ReEntry extension to capture them.",
     );
+  }
+
+  function submitFictional() {
+    const missing = checklist
+      .filter((item) => !item.complete)
+      .map((item) => item.label);
+    if (!version || missing.length) {
+      setSubmissionError(
+        `Validation error: ${missing.join(", ") || "requirements unavailable"}. Application not submitted.`,
+      );
+      return;
+    }
+    try {
+      const next = receiptSchema.parse({
+        id: crypto.randomUUID(),
+        submittedAt: new Date().toISOString(),
+      });
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      localStorage.setItem(RECEIPT_KEY, JSON.stringify(next));
+      setReceipt(next);
+      setReviewOpen(false);
+      setSubmissionError("");
+      setStatus(
+        "Fictional application submitted. The receipt is saved in this browser.",
+      );
+    } catch {
+      setSubmissionError(
+        "The fictional receipt could not be saved. Submission is unverified. Keep this page open and retry.",
+      );
+    }
   }
 
   return (
@@ -197,7 +242,7 @@ export default function ScholarshipPortal() {
           <CardTitle>
             <h1>
               {application
-                ? "Your scholarship application"
+                ? "Your Northstar Opportunity Award application"
                 : "Northstar Opportunity Award"}
             </h1>
           </CardTitle>
@@ -378,6 +423,29 @@ export default function ScholarshipPortal() {
                   </CardContent>
                 </Card>
               </>
+            ) : receipt ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    <h2>Application successfully submitted</h2>
+                  </CardTitle>
+                  <CardDescription>
+                    Northstar Opportunity Award · Fictional submission receipt
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-3">
+                  <p>
+                    Your Northstar Opportunity Award application has been
+                    received.
+                  </p>
+                  <p>Receipt reference: {receipt.id}</p>
+                  <p>Submitted: {receipt.submittedAt}</p>
+                  <p>
+                    This is a browser-local simulation. No application, document
+                    or message was sent to an organisation.
+                  </p>
+                </CardContent>
+              </Card>
             ) : (
               <form className="flex flex-col gap-6" onSubmit={save}>
                 <Card>
@@ -538,7 +606,13 @@ export default function ScholarshipPortal() {
                     <Save aria-hidden="true" />
                     Save application draft
                   </Button>
-                  <Dialog>
+                  <Dialog
+                    open={reviewOpen}
+                    onOpenChange={(value) => {
+                      setReviewOpen(value);
+                      setSubmissionError("");
+                    }}
+                  >
                     <DialogTrigger asChild>
                       <Button type="button" variant="outline">
                         Review application
@@ -548,8 +622,8 @@ export default function ScholarshipPortal() {
                       <DialogHeader>
                         <DialogTitle>Application review</DialogTitle>
                         <DialogDescription>
-                          A preparation summary only. This demo does not submit
-                          applications.
+                          Northstar Opportunity Award final review. Submission
+                          creates a fictional receipt in this browser only.
                         </DialogDescription>
                       </DialogHeader>
                       <dl className="grid gap-3">
@@ -574,12 +648,16 @@ export default function ScholarshipPortal() {
                       {dirty && (
                         <p>Save your draft to keep your latest changes.</p>
                       )}
+                      {submissionError && <p role="alert">{submissionError}</p>}
                       <DialogFooter>
                         <DialogClose asChild>
                           <Button type="button" variant="outline">
                             Back to draft
                           </Button>
                         </DialogClose>
+                        <Button type="button" onClick={submitFictional}>
+                          Submit fictional application
+                        </Button>
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
@@ -587,6 +665,7 @@ export default function ScholarshipPortal() {
               </form>
             )}
           </section>
+
           <aside
             className="flex min-w-0 flex-col gap-6"
             aria-label="Preparation checklist"
@@ -618,7 +697,7 @@ export default function ScholarshipPortal() {
                 <Separator />
                 <CardDescription>
                   Application progress belongs to this portal. ReEntry records
-                  only the progress you explicitly confirm.
+                  observed progress when you enable its automatic companion.
                 </CardDescription>
               </CardContent>
             </Card>

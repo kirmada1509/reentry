@@ -153,4 +153,4 @@ Public test sites are supplementary manual smoke checks, not CI dependencies. Or
 
 Each phase includes its visible UI, tests and evidence. Commit a verified slice before the next phase; do not postpone all design until the end. Preserve legacy manual data, server-only credentials, the stable production launcher and existing accessibility functionality. Add dependencies only when their working slice needs them.
 
-**Phases 1–2 implemented:** real observation, separate model/site-session agreement, automatic task/finish-condition proposals and corrections. Setup and limits: [AGENT_INFERENCE.md](AGENT_INFERENCE.md). **Next: Phase 3**, to track evidenced intermediate checkpoints and verify task-matched completion. Reminders remain Phase 4.
+**Phases 1–3 implemented:** real observation, separate model/site-session agreement, automatic tasks, evidence-linked progress, corrections, fresh confirmation checks and deletion. [Setup](AGENT_INFERENCE.md) and [completion rules/limits](AGENT_PROGRESS.md). **Next: Phase 4**, interruption handling and local reminders. Native/manual accessibility gates remain open.

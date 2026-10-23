@@ -8,5 +8,19 @@
   "cart": {
     "title": "Swag Labs \u00b7 ReEntry simulated shop",
     "content": "[0]<button type=button>Open Menu />\nSwag Labs\n[1]<a role=button aria-label=Cart, 1 items>1 />\nYour Cart\nQTY\nDescription\n1\n[2]<a role=button aria-label=View details for Sau... />\n\t[3]<div >Sauce Labs Backpack />\ncarry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection.\n$\n29.99\n[4]<button >Remove />\n[5]<button >Continue Shopping />\n\t[6]<img  />\n[7]<button >Checkout />\n[8]<a >X />\n[9]<a >Facebook />\n[10]<a >LinkedIn />\n\u00a9\n2026\nSauce Labs. All Rights Reserved. Terms of Service | Privacy Policy"
+  },
+  "review": {
+    "origin": "http://127.0.0.1:4177",
+    "title": "Swag Labs \u00b7 ReEntry simulated shop",
+    "content": "[0]<button type=button>Open Menu />\nSwag Labs\n[1]<a role=button aria-label=Cart, 1 items>1 />\nCheckout: Overview\nQTY\nDescription\n1\n[2]<a role=button aria-label=View details for Sau... />\n\t[3]<div >Sauce Labs Backpack />\ncarry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection.\n$\n29.99\nPayment Information:\nSauceCard #31337\nShipping Information:\nFree Pony Express Delivery!\nPrice Total\nItem total: $\n29.99\nTax: $\n2.40\nTotal: $\n32.39\n[4]<button >Cancel />\n\t[5]<img  />\n[6]<button >Finish />\n[7]<a >X />\n[8]<a >Facebook />\n[9]<a >LinkedIn />\n\u00a9\n2026\nSauce Labs. All Rights Reserved. Terms of Service | Privacy Policy",
+    "pageKey": "39032bef71705e665c48c4089412e94f68ec9159477f2c76305539a26c314e18",
+    "fields": []
+  },
+  "receipt": {
+    "origin": "http://127.0.0.1:4177",
+    "title": "Swag Labs \u00b7 ReEntry simulated shop",
+    "content": "[0]<button type=button>Open Menu />\nSwag Labs\n[1]<a role=button aria-label=Cart, empty />\nCheckout: Complete!\nThank you for your order!\nYour order has been dispatched, and will arrive just as fast as the pony can get there!\n[2]<button >Back Home />\n[3]<button >Generate PDF order />\n[4]<a >X />\n[5]<a >Facebook />\n[6]<a >LinkedIn />\n\u00a9\n2026\nSauce Labs. All Rights Reserved. Terms of Service | Privacy Policy",
+    "pageKey": "5ffd43f8ffd82b63f3bc5a1ff79561df6cdf2dba84375f55eeec5043190ffcf8",
+    "fields": []
   }
 }

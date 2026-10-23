@@ -6,7 +6,7 @@ An accessible recovery card for unfinished work: preserve the goal, confirmed pr
 
 ReEntry works with local Ollama or NVIDIA-hosted models behind one provider-independent harness. NVIDIA processing needs explicit agreement and a server-only key; no credentials are shipped in the extension. Formal Learn documents are retrospective drafts with unperformed human reviews clearly recorded.
 
-**Automatic-agent iteration:** Phase 2 infers tasks and proposed finish conditions while you browse enabled sites. Open [browser setup](http://127.0.0.1:3000/observe), pair the extension, enable a site, then separately agree to automatic processing by the named model. The app and companion show tentative research, ongoing work, evidence and concise corrections. [Setup and limits](docs/AGENT_INFERENCE.md). Completion verification and reminders remain later phases. The existing manual release and [labelled design preview](http://127.0.0.1:3000/preview) remain available.
+**Automatic-agent iteration:** Phase 3 infers tasks, tracks evidenced progress and recognizes fresh matching completion while you browse enabled sites. Open [browser setup](http://127.0.0.1:3000/observe), pair the extension, enable a site, then separately agree to automatic processing by the named model. The app and companion show tentative research, ongoing work, evidence and concise corrections. [Setup](docs/AGENT_INFERENCE.md) and [progress/completion rules](docs/AGENT_PROGRESS.md). Reminders remain Phase 4. The existing manual release and [labelled design preview](http://127.0.0.1:3000/preview) remain available.
 
 ## Working demo
 

@@ -44,6 +44,7 @@ export const eventSchema = z.strictObject({
   eventId: z.uuid(),
   sessionId: z.uuid(),
   deviceId: z.uuid(),
+  streamId: z.uuid().optional(),
   observedAt: z.iso.datetime(),
   reason: z.enum([
     "navigation",

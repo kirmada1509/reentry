@@ -31,6 +31,11 @@ export const emptyDraft: ApplicationDraft = {
   refereeTwo: "",
 };
 export const DRAFT_KEY = "reentry-fictional-scholarship-draft-v1";
+export const RECEIPT_KEY = "reentry-fictional-scholarship-receipt-v1";
+export const receiptSchema = z.strictObject({
+  id: z.uuid(),
+  submittedAt: z.iso.datetime(),
+});
 export function completion(draft: ApplicationDraft, version: Version) {
   return [
     {

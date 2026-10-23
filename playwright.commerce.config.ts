@@ -52,6 +52,7 @@ export default defineConfig({
     {
       command: `pnpm extension:build && pnpm build && pnpm exec next start --hostname 127.0.0.1 --port ${new URL(appOrigin).port}`,
       url: appOrigin,
+      stdout: "pipe",
       reuseExistingServer: false,
       timeout: 240_000,
       env: {

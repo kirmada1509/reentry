@@ -39,7 +39,21 @@ The Phase 1 gate above is observation-only. Phase 2 below adds separately consen
 - [x] Pass final workspace checks (111 tests/seventeen files), production regression (57 passed/two intentional skips), commerce (two passed/one live skip), actual NVIDIA upstream-shop journey, default-origin builds and HTTP smoke. Publication/CI results are recorded at handoff.
 - [ ] Native VoiceOver, side-panel placement and actual browser zoom acceptance remain manual gates.
 
-Task discovery is available; automatic completion and reminders are not. Same-site grouping and prototype limits are documented in [AGENT_INFERENCE.md](AGENT_INFERENCE.md).
+Task discovery was the Phase 2 boundary; Phase 3 completion is tracked below and reminders remain Phase 4. Same-site grouping and prototype limits are documented in [AGENT_INFERENCE.md](AGENT_INFERENCE.md).
+
+## Automatic-agent Phase 3 — Progress and observed completion
+
+- [x] Store twelve evidence-linked progress points and preserve earlier observations across requirement changes/restart.
+- [x] Add a bounded complete-task tool with host checks for freshness, subject, final-review anchor, same tab/session and known receipt replay.
+- [x] Observe portal dialogs; retain browser-owned stream identity across navigation/worker suspension.
+- [x] Distinguish drafts, attempted submission, validation/payment failure, cancellation and observed success; preserve corrections.
+- [x] Add explicit human finish, reopen and revision-aware deletion with minimal recreation markers and context cleanup.
+- [x] Extend the existing Northstar with fictional validation/final review/saved receipts; reuse the existing shop checkout.
+- [x] Pass the deterministic Northstar changed-requirement/validation/receipt/restart/axe journey and failed-receipt-storage case.
+- [x] Pass 133 workspace tests/project guards, all four affected production journeys, commerce, actual live NVIDIA purchase completion/restart, default-origin builds and HTTP smoke; retain the separate reader timeout and successful explicit replay. The complete local run passed 58 cases with two intentional skips and one subsequently fixed model-fixture issue; hosted CI reruns the full set and is reported at handoff.
+- [ ] Native VoiceOver, side-panel placement and actual browser zoom acceptance remain manual gates.
+
+[Progress and completion setup/bounds](AGENT_PROGRESS.md). Reminders remain Phase 4.
 
 Tool assignments and deferred alternatives are in the [selected stack](BUILD_PLAN.md#selected-tools-and-exactly-how-we-use-them). The historical manual-release checklist follows.
 

@@ -10,7 +10,7 @@ test("@agent-live real NVIDIA groups upstream product research and cart with app
     process.env.REENTRY_TEST_LIVE !== "1",
     "Explicit NVIDIA evaluation, outside CI.",
   );
-  test.setTimeout(300000);
+  test.setTimeout(420000);
   const { context } = extension;
   const { app, companion } = await pair(context);
   const page = await context.newPage();
@@ -41,8 +41,10 @@ test("@agent-live real NVIDIA groups upstream product research and cart with app
   ).toBeVisible();
   await app.close();
   await companion.close();
+  let reader = page;
+  let explicitRetries = 0;
   const read = async () => {
-    const response = await page.request.get(`${appUrl}/api/agent/tasks`, {
+    const response = await reader.request.get(`${appUrl}/api/agent/tasks`, {
       headers: { "x-reentry-web": "1", origin: appUrl },
     });
     return response.json();
@@ -51,8 +53,9 @@ test("@agent-live real NVIDIA groups upstream product research and cart with app
     const snapshot = {
       synthetic: true,
       stage,
+      explicitOperatorRetries: explicitRetries,
       tasks: await read(),
-      observations: await dashboard(page),
+      observations: await dashboard(reader),
     };
     const filename = test.info().outputPath(`agent-${stage}.json`);
     await writeFile(filename, JSON.stringify(snapshot, null, 2));
@@ -60,6 +63,35 @@ test("@agent-live real NVIDIA groups upstream product research and cart with app
       path: filename,
       contentType: "application/json",
     });
+  }
+  async function checkpoint(expected: string, completed = false) {
+    await expect
+      .poll(
+        async () => {
+          const state = await read();
+          if (state.status === "unavailable" && explicitRetries < 1) {
+            await record(`before-explicit-retry-${expected}`);
+            const response = await reader.request.post(
+              `${appUrl}/api/agent/tasks`,
+              {
+                headers: { "x-reentry-web": "1", origin: appUrl },
+                data: { action: "retry" },
+              },
+            );
+            expect(response.status()).toBe(200);
+            explicitRetries++;
+            await test.info().attach("explicit-operator-retry", {
+              body: `One explicit Retry AI update action while waiting for ${expected}; application auto-retry remains disabled.`,
+              contentType: "text/plain",
+            });
+          }
+          return completed
+            ? state.tasks[0]?.stage
+            : state.tasks[0]?.progress.at(-1)?.kind;
+        },
+        { timeout: 150000 },
+      )
+      .toBe(expected);
   }
   try {
     await expect
@@ -95,15 +127,45 @@ test("@agent-live real NVIDIA groups upstream product research and cart with app
     expect(before.tasks).toHaveLength(1);
     expect(before.tasks[0].finishCondition).toMatch(/order|confirm|receipt/i);
     await record("cart");
+    await page.getByTestId("checkout").click();
+    await page.getByTestId("continue").click();
+    await expect(page.getByText("Error: First Name is required")).toBeVisible();
+    await checkpoint("blocked");
+    expect((await read()).tasks[0].stage).not.toBe("completed");
+    await record("validation");
+    await page.getByTestId("firstName").fill("Fictional");
+    await page.getByTestId("lastName").fill("Tester");
+    await page.getByTestId("postalCode").fill("00000");
+    await page.getByTestId("continue").click();
+    await checkpoint("review_ready");
+    await record("review");
+    await page.getByTestId("finish").click();
+    await expect(
+      page.getByRole("heading", {
+        name: "Thank you for your order!",
+        exact: true,
+      }),
+    ).toBeVisible();
+    await checkpoint("completed", true);
+    expect((await read()).tasks).toHaveLength(1);
+    expect(
+      (await read()).tasks[0].progress.some(
+        (p: { kind: string }) => p.kind === "review_ready",
+      ),
+    ).toBe(true);
+    await record("confirmed");
+    const completedRevision = (await read()).tasks[0].revision;
     const restarted = await extension.restart();
     const returned = await restarted.context.newPage();
+    reader = returned;
     await returned.goto(`${appUrl}/observe`);
     const response = await returned.request.get(`${appUrl}/api/agent/tasks`, {
       headers: { "x-reentry-web": "1", origin: appUrl },
     });
     const after = await response.json();
     expect(after.tasks.map((t: { id: string }) => t.id)).toEqual([id]);
-    expect(after.tasks[0].revision).toBe(before.tasks[0].revision);
+    expect(after.tasks[0].revision).toBe(completedRevision);
+    await record("after-restart");
     await test.info().attach("synthetic-agent-after-restart", {
       body: JSON.stringify(after, null, 2),
       contentType: "application/json",

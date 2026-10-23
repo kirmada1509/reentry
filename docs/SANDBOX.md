@@ -20,7 +20,11 @@ Open the **Northstar demo portal** address printed in that terminal. The default
 
 Keep this terminal running. Ctrl+C stops only the portal; `./stop.sh` stops ReEntry separately. Starting the portal builds its static assets and resets requirements to V1; the saved browser draft is kept. Continue to use the same portal address and Chrome profile because both source comparison and browser draft storage depend on them.
 
-## A complete demonstration
+## Automatic companion demonstration
+
+Phase 3 adds a fictional final review, validation failures and browser-local submission receipt. Follow [the automatic progress journey](AGENT_PROGRESS.md#try-the-application-journey) to use it without selection or a checkpoint form. Nothing is submitted externally; reset removes the local receipt as well as the draft. The manual demonstration below remains available.
+
+## A complete manual demonstration
 
 1. Choose **Start application draft**. A fictional applicant profile is provided. Enter a short personal statement and choose **Attach sample transcript**. This changes a local demo flag; it does not read or upload a real PDF.
 2. Choose **Save application draft**. Wait for the saved message. The preparation checklist reflects the current fields; changes remain unsaved until this action succeeds.

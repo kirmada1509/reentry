@@ -171,6 +171,22 @@ export function TaskFeed({
   const quiet = (action: AgentAction) => {
     void act(action).catch(() => undefined);
   };
+  const [deleting, setDeleting] = useState<{
+    id: string;
+    revision: number;
+  } | null>(null);
+  const [confirmationError, setConfirmationError] = useState("");
+  const confirm = async (action: AgentAction) => {
+    try {
+      await act(action);
+    } catch (error) {
+      setConfirmationError(
+        error instanceof Error
+          ? error.message
+          : "Could not save. Close and review before retrying.",
+      );
+    }
+  };
   const [agreement, setAgreement] = useState<string | null>(null);
   const agreementKey = (data?.processing.consentId ?? "") + (sessionId ?? "");
   const agreed = agreement === agreementKey;
@@ -281,10 +297,11 @@ export function TaskFeed({
               </p>
               <p>
                 Research is a possibility, not an obligation. Progress is an AI
-                interpretation; completion is not automatically verified in this
-                phase. Task summaries and short evidence excerpts stay locally
-                until cleared. Changing the site session requires agreement
-                again.
+                interpretation. Fresh matching confirmations can finish
+                uncorrected purchase/application tasks after a final review in
+                the same tab. Corrected goals require your review. Task
+                summaries and short evidence excerpts stay locally until
+                cleared. Changing the site session requires agreement again.
               </p>
               <p>
                 {data.callsRemaining} model calls remain in the current hourly
@@ -312,7 +329,13 @@ export function TaskFeed({
                   ? "Possible task"
                   : task.stage === "uncertain"
                     ? "Needs clarity"
-                    : "In progress"}
+                    : task.stage === "completed"
+                      ? task.completedBy === "user"
+                        ? "Marked finished by you"
+                        : "Confirmation observed"
+                      : task.stage === "cancelled"
+                        ? "Cancelled"
+                        : "In progress"}
               </Badge>
               {task.corrected && (
                 <Badge variant="outline">Your correction</Badge>
@@ -329,6 +352,9 @@ export function TaskFeed({
           <CardContent className="flex flex-col gap-3">
             <p>Finished would mean: {task.finishCondition}</p>
             <p>Next: {task.nextAction}</p>
+            {task.progress.length > 0 && (
+              <p>Last observed: {task.progress.at(-1)!.summary}</p>
+            )}
             <Collapsible>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost">Why this task?</Button>
@@ -338,13 +364,88 @@ export function TaskFeed({
                   <p key={i}>“{e.quote}”</p>
                 ))}
                 <p>
-                  Quoted page evidence supports a suggestion, not confirmed
-                  completion.
+                  These are observations interpreted by AI, not user-confirmed
+                  facts or independent verification by the website’s server.
                 </p>
+                <ol className="flex flex-col gap-3">
+                  {task.progress.map((point, index) => (
+                    <li key={`${point.eventId}-${index}`}>
+                      <p>
+                        {point.kind.replaceAll("_", " ")} ·{" "}
+                        {new Date(point.observedAt).toLocaleString()}
+                      </p>
+                      <p>{point.summary}</p>
+                      {point.evidence.map((e, i) => (
+                        <p key={i}>“{e.quote}”</p>
+                      ))}
+                    </li>
+                  ))}
+                </ol>
               </CollapsibleContent>
             </Collapsible>
             <div className="flex flex-wrap gap-2">
               <TaskCorrection task={task} act={act} busy={busy} />
+              {!["completed", "cancelled"].includes(task.stage) && (
+                <Dialog
+                  onOpenChange={(open) => {
+                    if (open) {
+                      setDeleting({ id: task.id, revision: task.revision });
+                      setConfirmationError("");
+                    }
+                  }}
+                >
+                  <DialogTrigger asChild>
+                    <Button variant="outline">Mark finished</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Is this task finished?</DialogTitle>
+                      <DialogDescription>
+                        This records your confirmation. It does not verify a
+                        website receipt or submit anything.
+                      </DialogDescription>
+                    </DialogHeader>
+                    {confirmationError && (
+                      <p role="alert">{confirmationError}</p>
+                    )}
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button variant="outline">Keep in progress</Button>
+                      </DialogClose>
+                      <Button
+                        disabled={busy}
+                        onClick={() =>
+                          void confirm({
+                            action: "finish",
+                            id: task.id,
+                            expectedRevision:
+                              deleting?.id === task.id
+                                ? deleting.revision
+                                : task.revision,
+                          })
+                        }
+                      >
+                        Yes, mark finished
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              )}
+              {["completed", "cancelled"].includes(task.stage) && (
+                <Button
+                  variant="outline"
+                  disabled={busy}
+                  onClick={() =>
+                    quiet({
+                      action: "reopen",
+                      id: task.id,
+                      expectedRevision: task.revision,
+                    })
+                  }
+                >
+                  Reopen task
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 disabled={busy}
@@ -358,6 +459,49 @@ export function TaskFeed({
               >
                 Dismiss on these pages
               </Button>
+              <Dialog
+                onOpenChange={(open) => {
+                  if (open) {
+                    setDeleting({ id: task.id, revision: task.revision });
+                    setConfirmationError("");
+                  }
+                }}
+              >
+                <DialogTrigger asChild>
+                  <Button variant="ghost">Delete task</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Delete this automatic task?</DialogTitle>
+                    <DialogDescription>
+                      Remove its progress and history. Minimal page markers
+                      prevent delayed observations from bringing it back. Clear
+                      browser-agent data to reset these markers.
+                    </DialogDescription>
+                  </DialogHeader>
+                  {confirmationError && <p role="alert">{confirmationError}</p>}
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline">Keep task</Button>
+                    </DialogClose>
+                    <Button
+                      disabled={busy}
+                      onClick={() =>
+                        void confirm({
+                          action: "delete",
+                          id: task.id,
+                          expectedRevision:
+                            deleting?.id === task.id
+                              ? deleting.revision
+                              : task.revision,
+                        })
+                      }
+                    >
+                      Delete task and history
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardContent>
         </Card>

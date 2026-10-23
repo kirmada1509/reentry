@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw/http";
+import { sourceSpans } from "../../src/features/agent/prompt";
 import type { DecisionContext } from "../../src/features/agent/prompt";
 import { delay } from "msw";
 export const MOCK_MODEL = "reentry-test";
@@ -14,7 +15,9 @@ export const modelHandlers = [
     };
     const agentContext = JSON.parse(
       body.messages[1]!.content,
-    ) as DecisionContext;
+    ) as DecisionContext & {
+      completionAnchors?: Array<{ taskId: string; eventId: string }>;
+    };
     if (agentContext.current) {
       const c = agentContext.current;
       if (c.page.content.includes("fake-unavailable"))
@@ -31,38 +34,97 @@ export const modelHandlers = [
           : purchase
             ? "Buy the Cedar backpack"
             : "Compare the Cedar backpack";
-        decision = c.page.content.includes("Unrelated notes")
-          ? { tool: "ignore" }
-          : {
-              tool: "upsert_task",
-              taskId:
-                agentContext.tasks.find((t) =>
-                  application
-                    ? /application|scholarship/i.test(t.goal)
-                    : t.goal.includes("Cedar") ||
-                      t.evidence.some((e) => e.quote.includes("Cedar")),
-                )?.id ?? null,
-              goal,
-              intent: application
-                ? "application"
-                : purchase
-                  ? "purchase"
-                  : "research",
-              stage: application || purchase ? "ongoing" : "candidate",
-              finishCondition: application
-                ? "A matching application submission receipt is visible"
-                : purchase
-                  ? "An order confirmation matching this backpack is visible"
-                  : "Decide whether the backpack belongs on my shortlist",
-              nextAction: application
-                ? "Review the remaining application sections"
-                : "Compare the backpack details",
-              evidenceRefs: [
-                c.page.content.includes("fake-invalid")
-                  ? "current:999"
-                  : "current:0",
-              ],
-            };
+        const subject = c.page.content.includes("Northstar Opportunity Award")
+          ? "Northstar Opportunity Award"
+          : undefined;
+        const review =
+          /final review/i.test(c.page.content) &&
+          !/Still to do/.test(c.page.content);
+        const receipt = /Application successfully submitted/i.test(
+          c.page.content,
+        );
+        const blocked = /Validation error:/i.test(c.page.content);
+        const changed = /Supply two referees|requires two referees/i.test(
+          c.page.content,
+        );
+        const saved = /Draft saved in this browser|Saved in this browser/i.test(
+          c.page.content,
+        );
+        const task = agentContext.tasks.find((t) =>
+          application
+            ? (t.subject === subject && Boolean(subject)) ||
+              /application|scholarship/i.test(t.goal)
+            : t.goal.includes("Cedar") ||
+              t.evidence.some((e) => e.quote.includes("Cedar")),
+        );
+        const anchor = agentContext.completionAnchors?.find(
+          (point) => point.taskId === task?.id,
+        );
+        const receiptRef = sourceSpans(agentContext).find(
+          (s) =>
+            s.eventId === c.eventId &&
+            /Application successfully submitted/i.test(s.quote),
+        );
+        decision =
+          receipt && task && anchor && receiptRef
+            ? {
+                tool: "complete_task",
+                taskId: task.id,
+                anchorEventId: anchor.eventId,
+                receiptSubject: subject ?? null,
+                evidenceRefs: [receiptRef.id],
+              }
+            : c.page.content.includes("Unrelated notes")
+              ? { tool: "ignore" }
+              : {
+                  tool: "upsert_task",
+                  taskId: task?.id ?? null,
+                  goal,
+                  intent: application
+                    ? "application"
+                    : purchase
+                      ? "purchase"
+                      : "research",
+                  stage: application || purchase ? "ongoing" : "candidate",
+                  finishCondition: application
+                    ? "A matching application submission receipt is visible"
+                    : purchase
+                      ? "An order confirmation matching this backpack is visible"
+                      : "Decide whether the backpack belongs on my shortlist",
+                  nextAction: application
+                    ? "Review the remaining application sections"
+                    : "Compare the backpack details",
+                  ...(application
+                    ? {
+                        checkpoint: {
+                          kind: blocked
+                            ? "blocked"
+                            : review
+                              ? "review_ready"
+                              : changed
+                                ? "requirements_changed"
+                                : saved
+                                  ? "draft_saved"
+                                  : "editing",
+                          summary: blocked
+                            ? "Validation needs attention; application not submitted"
+                            : review
+                              ? "Application ready for final review"
+                              : changed
+                                ? "Two referees now required; preserve transcript progress"
+                                : saved
+                                  ? "Application draft saved; transcript progress retained"
+                                  : "Application editing in progress",
+                        },
+                        ...(subject ? { subject } : {}),
+                      }
+                    : {}),
+                  evidenceRefs: [
+                    c.page.content.includes("fake-invalid")
+                      ? "current:999"
+                      : "current:0",
+                  ],
+                };
       }
       return HttpResponse.json({
         model: body.model,

@@ -49,6 +49,7 @@
     "ui:theme": "node scripts/ui-theme.mjs",
     "test:commerce": "playwright test --config playwright.commerce.config.ts",
     "test:agent:live": "tsx scripts/test-agent-live.ts",
+    "test:agent:progress": "node --conditions=react-server --import tsx scripts/evaluate-agent-progress.ts",
     "test:agent:model": "node --conditions=react-server --import tsx scripts/evaluate-agent.ts"
   },
   "dependencies": {

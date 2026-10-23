@@ -161,7 +161,17 @@ export default defineUnlistedScript(() => {
             !target.closest(
               '[data-reentry],[data-page-agent],[aria-live="off"],script,style,time,[role="timer"],[role="marquee"]',
             ) &&
-            (Boolean(target.closest('main,article,form,[role="main"]')) ||
+            (Boolean(
+              target.closest(
+                'main,article,form,[role="main"],[role="dialog"],[role="alertdialog"],[role="alert"]',
+              ),
+            ) ||
+              [...m.addedNodes, ...m.removedNodes].some(
+                (node) =>
+                  node instanceof Element &&
+                  (node.matches('[role="dialog"],[role="alertdialog"]') ||
+                    node.querySelector('[role="dialog"],[role="alertdialog"]')),
+              ) ||
               (!document.querySelector('main,article,[role="main"]') &&
                 Boolean(target.closest("#root,#app,body"))))
           );
