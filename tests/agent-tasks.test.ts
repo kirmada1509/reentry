@@ -1108,3 +1108,192 @@ it("validates every reference in a real over-citing portal response before retai
     ),
   ).toThrow("Unknown source reference");
 });
+
+function longCart(context: DecisionContext) {
+  return {
+    ...proposal(context.current),
+    intent: "purchase",
+    stage: "ongoing",
+    subject: "Cedar backpack",
+    checkpoint: {
+      kind: "cart",
+      summary: "The fictional cart contains the Cedar backpack. ".repeat(8),
+    },
+  };
+}
+function repairModel(
+  first: (context: DecisionContext) => unknown,
+  repair: () => unknown,
+): StructuredModel {
+  return {
+    generate: vi.fn(async (request) => ({
+      candidate:
+        request.name === "reentry_concise_summary_v1"
+          ? repair()
+          : first(JSON.parse(request.messages[1]!.content)),
+      provider: "fake",
+      model: "test",
+      modelDigest: null,
+      settings: {},
+    })),
+  };
+}
+it("shortens only an overlong progress description, counts the second call and persists one revision", async () => {
+  const s = setup();
+  s.enable();
+  s.add(
+    s.event("Your cart contains Cedar backpack quantity 1. Checkout button."),
+  );
+  const fake = repairModel(longCart, () => ({
+    summary: "The Cedar backpack is in the cart; checkout remains unfinished.",
+  }));
+  const result = await createTaskHarness(
+    s.db.agent,
+    () => fake,
+    () => processing,
+    1000,
+  ).tick();
+  expect(result?.state).toBe("accepted");
+  expect(fake.generate).toHaveBeenCalledTimes(2);
+  expect(s.db.agent.tasks()).toMatchObject([
+    {
+      revision: 1,
+      intent: "purchase",
+      progress: [
+        {
+          kind: "cart",
+          summary:
+            "The Cedar backpack is in the cart; checkout remains unfinished.",
+        },
+      ],
+    },
+  ]);
+});
+it("rejects unsafe citations before attempting prose repair", async () => {
+  const s = setup();
+  s.enable();
+  s.add(s.event());
+  const fake = repairModel(
+    (c) => ({ ...longCart(c), evidenceRefs: ["current:1", "current:999"] }),
+    () => ({ summary: "A short description." }),
+  );
+  expect(
+    (
+      await createTaskHarness(
+        s.db.agent,
+        () => fake,
+        () => processing,
+        1000,
+      ).tick()
+    )?.state,
+  ).toBe("failed");
+  expect(fake.generate).toHaveBeenCalledTimes(1);
+  expect(s.db.agent.tasks()).toEqual([]);
+});
+it("a prose repair cannot add tool fields or change the original task operation", async () => {
+  const s = setup();
+  s.enable();
+  s.add(s.event());
+  const fake = repairModel(longCart, () => ({
+    summary: "A short description.",
+    tool: "complete_task",
+    taskId: randomUUID(),
+  }));
+  expect(
+    (
+      await createTaskHarness(
+        s.db.agent,
+        () => fake,
+        () => processing,
+        1000,
+      ).tick()
+    )?.state,
+  ).toBe("failed");
+  expect(fake.generate).toHaveBeenCalledTimes(2);
+  expect(s.db.agent.tasks()).toEqual([]);
+});
+it("prose repair cannot exceed the durable three-call budget after read tools", async () => {
+  const s = setup();
+  s.enable();
+  s.add(s.event());
+  let calls = 0;
+  const fake = repairModel(
+    (c) => (++calls < 3 ? { tool: "inspect_history" } : longCart(c)),
+    () => ({ summary: "A short description." }),
+  );
+  expect(
+    (
+      await createTaskHarness(
+        s.db.agent,
+        () => fake,
+        () => processing,
+        1000,
+      ).tick()
+    )?.state,
+  ).toBe("failed");
+  expect(fake.generate).toHaveBeenCalledTimes(3);
+  expect(s.db.agent.tasks()).toEqual([]);
+});
+it("revoking consent blocks a second request and changed source during repair cannot commit", async () => {
+  const s = setup();
+  s.enable();
+  s.add(s.event());
+  const paused = repairModel(
+    (c) => {
+      s.db.agent.stop();
+      return longCart(c);
+    },
+    () => ({ summary: "A short description." }),
+  );
+  expect(
+    (
+      await createTaskHarness(
+        s.db.agent,
+        () => paused,
+        () => processing,
+        1000,
+      ).tick()
+    )?.state,
+  ).toBe("stale");
+  expect(paused.generate).toHaveBeenCalledTimes(1);
+  s.enable();
+  s.advance();
+  s.add(s.event("Your cart contains Cedar backpack."));
+  const changed = repairModel(longCart, () => {
+    s.advance();
+    s.add(s.event("The Cedar backpack cart has changed."));
+    return { summary: "The Cedar backpack is in the cart." };
+  });
+  expect(
+    (
+      await createTaskHarness(
+        s.db.agent,
+        () => changed,
+        () => processing,
+        1000,
+      ).tick()
+    )?.state,
+  ).toBe("stale");
+  expect(changed.generate).toHaveBeenCalledTimes(2);
+  expect(s.db.agent.tasks()).toEqual([]);
+});
+it("provider failure during prose repair fails visibly without a third request", async () => {
+  const s = setup();
+  s.enable();
+  s.add(s.event());
+  const fake = repairModel(longCart, () => {
+    throw new Error("Synthetic provider failure");
+  });
+  expect(
+    (
+      await createTaskHarness(
+        s.db.agent,
+        () => fake,
+        () => processing,
+        1000,
+      ).tick()
+    )?.state,
+  ).toBe("failed");
+  expect(fake.generate).toHaveBeenCalledTimes(2);
+  expect(s.db.agent.tasks()).toEqual([]);
+});

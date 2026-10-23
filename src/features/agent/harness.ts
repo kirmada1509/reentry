@@ -3,6 +3,7 @@ import { Annotation, END, START, StateGraph } from "@langchain/langgraph";
 import { SqliteSaver } from "@langchain/langgraph-checkpoint-sqlite";
 import type { StructuredModel } from "@/lib/ai/model";
 import { agentRequest, validateDecision } from "./prompt";
+import { summaryRepair } from "./summary-repair";
 import { AppError } from "@/lib/http/errors";
 import { decisionSchema } from "./schema";
 import type { AgentView } from "./schema";
@@ -23,23 +24,45 @@ export function createTaskHarness(
     .addNode("reason", async ({ jobId }) => {
       store.charge(jobId, processing().consentId);
       const context = store.context(jobId);
-      const signal = AbortSignal.timeout(timeoutMs);
-      let cancel: (() => void) | undefined;
-      let output: Awaited<ReturnType<StructuredModel["generate"]>>;
-      try {
-        const deadline = new Promise<never>((_, reject) => {
-          cancel = () => reject(new Error("Inference deadline reached."));
-          signal.addEventListener("abort", cancel, { once: true });
-        });
-        output = await Promise.race([
-          model().generate(agentRequest(context), signal),
-          deadline,
-        ]);
-      } finally {
-        if (cancel) signal.removeEventListener("abort", cancel);
+      async function generate(
+        request: Parameters<StructuredModel["generate"]>[0],
+      ) {
+        const signal = AbortSignal.timeout(timeoutMs);
+        let cancel: (() => void) | undefined;
+        let output: Awaited<ReturnType<StructuredModel["generate"]>>;
+        try {
+          const deadline = new Promise<never>((_, reject) => {
+            cancel = () => reject(new Error("Inference deadline reached."));
+            signal.addEventListener("abort", cancel, { once: true });
+          });
+          output = await Promise.race([
+            model().generate(request, signal),
+            deadline,
+          ]);
+        } finally {
+          if (cancel) signal.removeEventListener("abort", cancel);
+        }
+        signal.throwIfAborted();
+        return output;
       }
-      signal.throwIfAborted();
-      store.propose(jobId, validateDecision(output.candidate, context));
+      const output = await generate(agentRequest(context));
+      try {
+        store.propose(jobId, validateDecision(output.candidate, context));
+      } catch (error) {
+        const repair = summaryRepair(output.candidate, context);
+        if (!repair) throw error;
+        // Same durable three-call budget, consent and timeout as every other call.
+        // No provider retry; a failed or unsafe response still fails the job.
+        store.charge(jobId, processing().consentId);
+        const concise = await generate(repair.request);
+        store.propose(
+          jobId,
+          validateDecision(
+            repair.apply(concise.candidate),
+            store.context(jobId),
+          ),
+        );
+      }
       return {};
     })
     .addNode("read", ({ jobId }) => {
