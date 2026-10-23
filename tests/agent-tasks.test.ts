@@ -8,6 +8,7 @@ import { ObservationStore } from "@/features/observation/store";
 import type { ObservationEvent } from "@/features/observation/protocol";
 import { createTaskHarness } from "@/features/agent/harness";
 import readerProgress from "./fixtures/agent-progress-reader.json";
+import portalCitations from "./fixtures/agent-portal-citations.json";
 import { validateDecision } from "@/features/agent/prompt";
 import type { DecisionContext } from "@/features/agent/prompt";
 import type { AgentModelDecision } from "@/features/agent/schema";
@@ -915,11 +916,11 @@ it("accepts all ten actual-reader citations while retaining three, but never ign
     validateDecision(
       {
         ...readerProgress.candidate,
-        evidenceRefs: Array(24).fill("current:0"),
+        evidenceRefs: Array(81).fill("current:0"),
       },
       context,
     ),
-  ).toThrow(/16/);
+  ).toThrow(/80/);
   expect(() =>
     validateDecision(
       {
@@ -1087,4 +1088,23 @@ it("a full task library rejects another inferred task without evicting saved wor
   expect(s.db.agent.tasks()[0]!.goal).toBe(
     "My existing task still accepts a correction",
   );
+});
+
+it("validates every reference in a real over-citing portal response before retaining three", () => {
+  const context = portalCitations.context as DecisionContext;
+  const accepted = validateDecision(portalCitations.candidate, context);
+  expect(accepted.tool).toBe("upsert_task");
+  expect(accepted.tool === "upsert_task" && accepted.evidence).toHaveLength(3);
+  expect(() =>
+    validateDecision(
+      {
+        ...portalCitations.candidate,
+        evidenceRefs: [
+          ...portalCitations.candidate.evidenceRefs,
+          "current:999",
+        ],
+      },
+      context,
+    ),
+  ).toThrow("Unknown source reference");
 });

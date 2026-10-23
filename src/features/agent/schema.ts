@@ -99,16 +99,17 @@ export const decisionSchema = z.discriminatedUnion("tool", [
   }),
 ]);
 export type AgentDecision = z.infer<typeof decisionSchema>;
-// Model citations are references; the host, not the model, copies source text.
+// Model citations are references; the host copies source text. Verbose providers
+// may return up to 80 references. Validate every one before retaining three.
 export const modelDecisionSchema = z.discriminatedUnion("tool", [
   decisionSchema.options[0],
   decisionSchema.options[1],
   decisionSchema.options[2],
   decisionSchema.options[3].omit({ evidence: true }).extend({
-    evidenceRefs: z.array(z.string().min(3).max(80)).min(1).max(16),
+    evidenceRefs: z.array(z.string().min(3).max(80)).min(1).max(80),
   }),
   decisionSchema.options[4].omit({ evidence: true }).extend({
-    evidenceRefs: z.array(z.string().min(3).max(80)).min(1).max(16),
+    evidenceRefs: z.array(z.string().min(3).max(80)).min(1).max(80),
   }),
 ]);
 export type AgentModelDecision = z.infer<typeof modelDecisionSchema>;

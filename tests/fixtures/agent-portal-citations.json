@@ -1,0 +1,82 @@
+{
+  "synthetic": true,
+  "description": "Actual patched-reader context from fictional Northstar and a real NVIDIA diagnostic response. Twenty-four source references caused the old cardinality rejection; none may be silently ignored.",
+  "context": {
+    "current": {
+      "version": 1,
+      "eventId": "02066ead-da69-4732-9b45-54e346bf1681",
+      "sessionId": "2187d675-159c-4648-b4f8-4ffae6af0c5e",
+      "deviceId": "d8a877d3-0ab6-4abd-b908-036202b497de",
+      "streamId": "8e8e89c2-3548-4faa-ad55-c1169a0a07ff",
+      "observedAt": "2026-10-23T22:01:07.036Z",
+      "reason": "submit-attempt",
+      "page": {
+        "origin": "http://127.0.0.1:51420",
+        "title": "Your application \u00b7 Fictional Northstar demo",
+        "content": "Northstar Foundation\nOpportunity programme \u00b7 Applicant portal\nFictional demo\n2026 / 27\nA demonstration you can safely explore\nFictional award, applicant and requirements. Nothing is submitted and no real documents are uploaded. Use sample information only.\nEducation opens the next door.\nYour Northstar Opportunity Award application\nMake a little progress, save your draft, and come back when you\u2019re ready.\nStudy grant\n\u20b950,000\nOne academic year \u00b7 fictional award\nApplication closes\n31 October 2026\n17:00 IST \u00b7 demonstration deadline\nYour draft\n4 of 4 sections ready\nSaved in this browser\n[0]<button >View award requirements />\nNo account needed for this demo.\n1. Applicant details\nA fictional profile is provided to get you started.\n[1]<label >Full name />\n[2]<input  />\n[3]<label >Email address />\n[4]<input type=email />\n[5]<label >School or college />\n[6]<input  />\n2. Personal statement\nWhat would you like to study, and why does it matter to you?\n[7]<label >Your statement />\n7\nwords \u00b7 drafts can be incomplete\n3. Supporting document\nSample attachment only; no file leaves your computer.\nSample-transcript.pdf\nDemo attachment added \u00b7 save the draft to keep it\n[8]<button type=button>Remove sample transcript />\n4. Referees\nCurrent guidance requires one referee.\nNo invitations are sent.\n[9]<label >First referee />\n[10]<input  />\n[11]<button type=submit>Save application draft />\n[12]<button type=button aria-expanded=false>Review application />\nYour preparation checklist\nReflects the fields in this draft.\nApplicant details\nReady\nPersonal statement\nReady\nAcademic transcript\nReady\nOne referee\nReady\nApplication progress belongs to this portal. ReEntry records observed progress when you enable its automatic companion.\nTake it one step at a time\nYour draft stays in this browser after you save it. Return using the same browser profile and address.\nNeed a place to pause? Save your draft, then capture the award requirements with ReEntry.\nDraft saved in this browser. You can close this page and return later.\nNorthstar is a fictional portal built for the ReEntry demonstration. This site runs separately from ReEntry.\n[13]<button type=button aria-expanded=false>Demo setup and reset />",
+        "pageKey": "1c93d658a71306a124dd879bf3ee2c2fb78542686b3a0b8226746de6b69631e2",
+        "fields": [
+          {
+            "label": "Full name",
+            "present": true
+          },
+          {
+            "label": "School or college",
+            "present": true
+          },
+          {
+            "label": "Your statement",
+            "present": true
+          },
+          {
+            "label": "First referee",
+            "present": true
+          }
+        ]
+      }
+    },
+    "tasks": [],
+    "history": [],
+    "toolResults": []
+  },
+  "candidate": {
+    "tool": "upsert_task",
+    "taskId": null,
+    "goal": "Complete and submit the Northstar Opportunity Award application (Study grant, \u20b950,000)",
+    "finishCondition": "Submission confirmation receipt showing the Northstar Opportunity Award application has been successfully submitted",
+    "intent": "application",
+    "stage": "ongoing",
+    "nextAction": "Click 'Review application' to verify all sections, then submit the final application",
+    "checkpoint": {
+      "kind": "editing",
+      "summary": "All 4 application sections are complete and ready (Applicant details, Personal statement, Academic transcript, One referee). Draft is saved in browser. User is on the application form page with 'Review application' button available."
+    },
+    "subject": "Northstar Opportunity Award",
+    "evidenceRefs": [
+      "current:8",
+      "current:10",
+      "current:11",
+      "current:12",
+      "current:13",
+      "current:14",
+      "current:15",
+      "current:16",
+      "current:17",
+      "current:18",
+      "current:21",
+      "current:29",
+      "current:33",
+      "current:38",
+      "current:44",
+      "current:45",
+      "current:47",
+      "current:48",
+      "current:49",
+      "current:50",
+      "current:51",
+      "current:52",
+      "current:53",
+      "current:54"
+    ]
+  }
+}

@@ -10,7 +10,7 @@ export type DecisionContext = {
   history: ObservationEvent[];
   toolResults: Array<{ tool: string; result: unknown }>;
 };
-export const AGENT_PROMPT_VERSION = "agent-3.1";
+export const AGENT_PROMPT_VERSION = "agent-3.2";
 export function sourceSpans(context: DecisionContext) {
   const spans: Array<{ id: string; eventId: string; quote: string }> = [];
   function add(prefix: string, eventId: string, texts: string[], limit = 80) {
