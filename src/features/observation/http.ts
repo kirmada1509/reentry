@@ -3,17 +3,10 @@ import { getEnvironment } from "@/lib/env";
 import { AppError } from "@/lib/http/errors";
 import { readJson } from "@/lib/http/read-json";
 import { deviceRequestSchema, webActionSchema } from "./protocol";
-import { ObservationStore } from "./store";
+import { observationStore as store } from "./repository";
+import { agentProcessing } from "../agent/processing";
+import { agentActionSchema } from "../agent/schema";
 
-let current: { filename: string; store: ObservationStore } | undefined;
-function store() {
-  const filename = getEnvironment().REENTRY_AGENT_DB;
-  if (current?.filename !== filename) {
-    current?.store.close();
-    current = { filename, store: new ObservationStore(filename) };
-  }
-  return current.store;
-}
 function checkHost(request: Request) {
   const expected = new URL(getEnvironment().REENTRY_APP_ORIGIN);
   // Next reconstructs Request.url using its internal listener address. The
@@ -76,7 +69,7 @@ export function deviceOptions(request: Request) {
     },
   });
 }
-export async function devicePost(request: Request) {
+export async function devicePost(request: Request, requestId?: string) {
   checkExtension(request);
   const input = await readJson(request, deviceRequestSchema, 48 * 1024);
   const db = store();
@@ -85,7 +78,19 @@ export async function devicePost(request: Request) {
     result = db.pair(input.challenge, getEnvironment().REENTRY_EXTENSION_ID);
   else {
     const id = db.authenticate(request);
-    if (input.action === "status") result = db.deviceStatus(id);
+    if (input.action === "task_change") {
+      const change = agentActionSchema.safeParse(input.change);
+      if (!change.success)
+        throw new AppError(
+          "VALIDATION_ERROR",
+          "Review this task action and retry.",
+          400,
+        );
+      db.agent.action(change.data, agentProcessing(), requestId);
+      result = db.agent.view(agentProcessing());
+    } else if (input.action === "tasks")
+      result = db.agent.view(agentProcessing());
+    else if (input.action === "status") result = db.deviceStatus(id);
     else if (input.action === "session")
       result = db.setSession(
         id,
@@ -94,7 +99,12 @@ export async function devicePost(request: Request) {
         getEnvironment().REENTRY_APP_ORIGIN,
       );
     else
-      result = db.accept(id, input.event, getEnvironment().REENTRY_APP_ORIGIN);
+      result = db.accept(
+        id,
+        input.event,
+        getEnvironment().REENTRY_APP_ORIGIN,
+        requestId,
+      );
   }
   return Response.json(result, {
     headers: {
@@ -116,4 +126,16 @@ export async function webPost(request: Request) {
   if (input.action === "pause") db.pause();
   else db.clear();
   return Response.json(db.dashboard());
+}
+
+export function taskGet(request: Request) {
+  checkWeb(request);
+  return Response.json(store().agent.view(agentProcessing()));
+}
+export async function taskPost(request: Request, requestId?: string) {
+  checkWeb(request);
+  const input = await readJson(request, agentActionSchema, 4096);
+  const processing = agentProcessing();
+  store().agent.action(input, processing, requestId);
+  return Response.json(store().agent.view(processing));
 }

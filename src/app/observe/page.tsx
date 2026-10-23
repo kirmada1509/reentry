@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { agentWeb } from "@/features/agent/client";
+import { TaskFeed } from "@/features/agent/task-feed";
+import type { AgentAction, AgentView } from "@/features/agent/schema";
 import { cloneElement, useCallback, useEffect, useState } from "react";
 import TypographyH1 from "@/components/typography-h1";
 import TypographyLead from "@/components/typography-lead";
@@ -38,6 +41,7 @@ import {
 import type { ObservationDashboard } from "@/features/observation/protocol";
 
 export default function ObservePage() {
+  const [tasks, setTasks] = useState<AgentView | null>(null);
   const [data, setData] = useState<ObservationDashboard | null>(null);
   const [error, setError] = useState("");
   const [connectionError, setConnectionError] = useState("");
@@ -49,6 +53,7 @@ export default function ObservePage() {
     try {
       const loaded = await loadObservationDashboard();
       setData(loaded);
+      setTasks(await agentWeb());
       setConnectionError("");
       setRecent(
         Boolean(
@@ -77,6 +82,19 @@ export default function ObservePage() {
       await refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not save. Try again.");
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function taskAction(action: AgentAction) {
+    setBusy(true);
+    setError("");
+    try {
+      setTasks(await agentWeb(action));
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Could not save.";
+      setError(message);
+      throw e;
     } finally {
       setBusy(false);
     }
@@ -114,7 +132,7 @@ export default function ObservePage() {
         </div>
       </header>
       {(error || connectionError) && (
-        <Alert variant="destructive" role="alert">
+        <Alert role="alert">
           <AlertTitle>Needs attention</AlertTitle>
           <AlertDescription>{error || connectionError}</AlertDescription>
         </Alert>
@@ -129,16 +147,16 @@ export default function ObservePage() {
         <CardHeader>
           <CardTitle>Browser companion</CardTitle>
           <CardDescription>
-            Automatic page observation is ready to try. Understanding tasks and
-            choosing completion checkpoints comes in the next phase.
+            Choose which sites ReEntry can read, then optionally enable AI task
+            understanding below.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           <p>
             Only enabled sites are read. Page text and whether ordinary form
             fields are filled stay on this computer for up to 24 hours, with a
-            maximum of 1,000 updates. No model receives these observations in
-            this phase.
+            maximum of 1,000 updates. AI processing requires the separate
+            agreement below.
           </p>
           <div className="flex flex-wrap gap-2">
             <Button
@@ -218,6 +236,13 @@ export default function ObservePage() {
           </Collapsible>
         </CardContent>
       </Card>
+      <TaskFeed
+        sessionId={data?.session?.id ?? null}
+        data={tasks}
+        act={taskAction}
+        busy={busy}
+        canEnable={Boolean(data?.session && !data.session.paused)}
+      />
       <section className="flex flex-col gap-4" aria-label="Recent observations">
         <Card>
           <CardHeader>
@@ -295,8 +320,9 @@ export default function ObservePage() {
             <DialogTitle>Disconnect this browser?</DialogTitle>
             <DialogDescription>
               This stops delivery and removes observed page text from the local
-              app. Saved manual checkpoints stay available. Queued events from
-              the revoked connection cannot recreate this data.
+              app, along with inferred tasks and AI job history. Saved manual
+              checkpoints stay available. Queued events from the revoked
+              connection cannot recreate this data.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

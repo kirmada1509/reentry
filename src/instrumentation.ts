@@ -13,6 +13,8 @@ export async function register() {
       instrumentations: [],
     });
   }
+  const { startTaskRuntime } = await import("@/features/agent/runtime");
+  startTaskRuntime();
   const { getLogger } = await import("@/lib/observability/logger");
   const log = getLogger();
   log.info("app.started", {

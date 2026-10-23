@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -9,11 +10,137 @@ vi.mock("next/server", () => ({
 vi.mock("next/navigation", () => ({ unstable_rethrow: () => {} }));
 import { GET, POST } from "@/app/api/agent/web/route";
 import { POST as DEVICE, OPTIONS } from "@/app/api/agent/device/route";
+import { GET as TASKS, POST as CHANGE } from "@/app/api/agent/tasks/route";
+import { ObservationStore } from "@/features/observation/store";
 const dir = mkdtempSync(path.join(tmpdir(), "reentry-agent-http-"));
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 afterEach(async () => {
   await Promise.all(callbacks.splice(0).map((fn) => fn()));
   vi.unstubAllEnvs();
+});
+it("guards automatic processing consent and task controls independently of observation", async () => {
+  const filename = path.join(dir, "tasks.sqlite");
+  vi.stubEnv("REENTRY_AGENT_DB", filename);
+  vi.stubEnv("REENTRY_APP_ORIGIN", "http://127.0.0.1:3000");
+  vi.stubEnv("REENTRY_AI_PROVIDER", "ollama");
+  vi.stubEnv("REENTRY_AI_MODEL", "fixture-model");
+  const app = "http://127.0.0.1:3000";
+  const request = (body?: unknown, origin = app) =>
+    new Request(app + "/api/agent/tasks", {
+      method: body ? "POST" : "GET",
+      headers: {
+        host: "127.0.0.1:3000",
+        origin,
+        "x-reentry-web": "1",
+        "content-type": "application/json",
+      },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    });
+  expect(
+    (await TASKS(request(undefined, "https://untrusted.example"))).status,
+  ).toBe(403);
+  const config = await (await TASKS(request())).json();
+  expect(config.enabled).toBe(false);
+  expect(
+    (
+      await CHANGE(
+        request({
+          action: "enable",
+          consentId: config.processing.consentId,
+          sessionId: randomUUID(),
+        }),
+      )
+    ).status,
+  ).toBe(409);
+  const local = new ObservationStore(filename);
+  try {
+    const paired = local.pair(
+      local.challenge(),
+      "nabinfdlobegbkgehppcipkhbddjbdka",
+    );
+    const reviewed = local.setSession(
+      paired.deviceId,
+      {
+        allSites: false,
+        origins: ["https://example.com"],
+        policy: "local-observation-v1",
+      },
+      false,
+      app,
+    );
+    expect(
+      (
+        await CHANGE(
+          request({
+            action: "enable",
+            consentId: "d".repeat(64),
+            sessionId: reviewed.session.id,
+          }),
+        )
+      ).status,
+    ).toBe(409);
+    const enabled = await CHANGE(
+      request({
+        action: "enable",
+        consentId: config.processing.consentId,
+        sessionId: reviewed.session.id,
+      }),
+    );
+    expect(enabled.status).toBe(200);
+    expect(enabled.headers.get("x-request-id")).toBeTruthy();
+    expect((await enabled.json()).enabled).toBe(true);
+    const replacement = local.setSession(
+      paired.deviceId,
+      {
+        allSites: false,
+        origins: ["https://another.example"],
+        policy: "local-observation-v1",
+      },
+      false,
+      app,
+    );
+    const stale = await CHANGE(
+      request({
+        action: "enable",
+        consentId: config.processing.consentId,
+        sessionId: reviewed.session.id,
+      }),
+    );
+    expect(stale.status).toBe(409);
+    expect(local.agent.settings().enabled).toBe(0);
+    expect(
+      (
+        await CHANGE(
+          request({
+            action: "enable",
+            consentId: config.processing.consentId,
+            sessionId: replacement.session.id,
+          }),
+        )
+      ).status,
+    ).toBe(200);
+    const malformed = await CHANGE(
+      request({ action: "correct", id: "bad", expectedRevision: 0 }),
+    );
+    expect(malformed.status).toBe(400);
+    vi.stubEnv("REENTRY_AI_MODEL", "different-fixture-model");
+    const changed = await (await TASKS(request())).json();
+    expect(changed.enabled).toBe(false);
+    expect(changed.status).toBe("needs-consent");
+    expect(
+      (
+        await CHANGE(
+          request({
+            action: "enable",
+            consentId: config.processing.consentId,
+            sessionId: replacement.session.id,
+          }),
+        )
+      ).status,
+    ).toBe(409);
+  } finally {
+    local.close();
+  }
 });
 it("enforces exact web/extension origin and preserves request IDs for rejections", async () => {
   vi.stubEnv("REENTRY_AGENT_DB", path.join(dir, "agent.sqlite"));

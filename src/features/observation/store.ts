@@ -3,6 +3,7 @@ import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { mkdirSync, chmodSync } from "node:fs";
 import path from "node:path";
 import Database from "better-sqlite3";
+import { TaskStore } from "../agent/store";
 import { AppError } from "@/lib/http/errors";
 import { authorizeAgentRequest } from "@/features/agent/connection";
 import { scopeAllows, sessionSchema } from "./protocol";
@@ -27,6 +28,7 @@ type Device = {
 /** One local authority. Transactions commit before any delivery acknowledgement. */
 export class ObservationStore {
   readonly db: Database.Database;
+  readonly agent: TaskStore;
   constructor(
     filename: string,
     private readonly now = () => Date.now(),
@@ -45,6 +47,7 @@ export class ObservationStore {
       CREATE TABLE IF NOT EXISTS observation_receipts (id TEXT PRIMARY KEY, digest TEXT NOT NULL, received INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS observations (id TEXT PRIMARY KEY, body TEXT NOT NULL, received INTEGER NOT NULL);
     `);
+    this.agent = new TaskStore(this.db, this.now);
   }
   challenge() {
     const challenge = randomBytes(32).toString("hex");
@@ -65,6 +68,7 @@ export class ObservationStore {
         .run(hash(challenge), this.now());
       if (!consumed.changes) throw denied();
       // A new explicit pairing replaces the previous browser profile.
+      this.agent.stop();
       this.db
         .prepare("UPDATE observation_devices SET revoked = 1, session = NULL")
         .run();
@@ -128,6 +132,7 @@ export class ObservationStore {
     const session: ObservationSession = { id: randomUUID(), scope, paused };
     this.db.transaction(() => {
       this.device(id);
+      this.agent.stop();
       this.db
         .prepare(
           "UPDATE observation_devices SET session = ?, last_seen = ? WHERE id = ?",
@@ -136,7 +141,12 @@ export class ObservationStore {
     })();
     return { session };
   }
-  accept(id: string, event: ObservationEvent, appOrigin: string) {
+  accept(
+    id: string,
+    event: ObservationEvent,
+    appOrigin: string,
+    requestId?: string,
+  ) {
     return this.db.transaction(() => {
       const row = this.device(id);
       const session = row.session
@@ -192,6 +202,7 @@ export class ObservationStore {
         // Capture time keeps offline delivery from extending text retention.
         .run(event.eventId, body, Date.parse(event.observedAt));
       this.prune();
+      this.agent.enqueue(event, requestId);
       return { accepted: event.eventId, duplicate: false };
     })();
   }
@@ -229,6 +240,7 @@ export class ObservationStore {
   }
   pause() {
     this.db.transaction(() => {
+      this.agent.stop();
       for (const row of this.db
         .prepare("SELECT * FROM observation_devices WHERE revoked = 0")
         .all() as Device[]) {
@@ -243,6 +255,7 @@ export class ObservationStore {
   }
   clear() {
     this.db.transaction(() => {
+      this.agent.clear();
       this.db
         .prepare("UPDATE observation_devices SET revoked = 1, session = NULL")
         .run();

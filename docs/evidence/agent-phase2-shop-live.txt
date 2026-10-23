@@ -1,0 +1,6 @@
+Final production app + extension + configured NVIDIA evaluation, October 23, 2026 (IST).
+Fictional pinned Sauce Labs shop; no order placed. App/companion tabs closed during inference, followed by browser restart.
+Latest-evidence memory projection and exact reviewed-session consent binding are included. Structured snapshots: agent-phase2-shop-live.json.
+
+  ✓  1 tests/commerce/agent-live.spec.ts:6:1 › @agent-live real NVIDIA groups upstream product research and cart with app tabs closed, then survives browser restart (25.7s)
+  1 passed (35.2s)

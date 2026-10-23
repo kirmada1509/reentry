@@ -76,6 +76,8 @@ export const deviceRequestSchema = z.discriminatedUnion("action", [
     paused: z.boolean(),
   }),
   z.strictObject({ action: z.literal("status") }),
+  z.strictObject({ action: z.literal("tasks") }),
+  z.strictObject({ action: z.literal("task_change"), change: z.unknown() }),
   z.strictObject({ action: z.literal("event"), event: eventSchema }),
 ]);
 export const webActionSchema = z.discriminatedUnion("action", [

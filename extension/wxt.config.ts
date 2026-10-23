@@ -15,7 +15,9 @@ export default defineConfig({
   imports: false,
   alias: {
     "@reentry": fileURLToPath(new URL("../src", import.meta.url)),
-    "@": fileURLToPath(new URL("../src", import.meta.url)),
+    "@/components": fileURLToPath(
+      new URL("../src/components", import.meta.url),
+    ),
   },
   vite: () => ({
     plugins: [tailwindcss()],

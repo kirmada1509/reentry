@@ -1,6 +1,6 @@
 # ReEntry browser agent — build plan
 
-Updated October 23, 2026. This is the current roadmap for the automatic browser agent and its calm interface, using the selected open-source tools below. Phase 0 is implemented and locally verified; [foundation setup, evidence and limits](AGENT_FOUNDATION.md). Automatic observation, live agent inference and reminders remain subsequent work. The existing manual release remains working; its earlier plan is preserved in [BUILD_PLAN_MANUAL.md](BUILD_PLAN_MANUAL.md), with actual results in [TEST_RESULTS.md](TEST_RESULTS.md).
+Updated October 23, 2026. This is the current roadmap for the automatic browser agent and its calm interface, using the selected open-source tools below. Phases 0–2 are implemented; [foundation setup, evidence and limits](AGENT_FOUNDATION.md). Automatic observation and task inference are available; completion verification and reminders remain subsequent work. The existing manual release remains working; its earlier plan is preserved in [BUILD_PLAN_MANUAL.md](BUILD_PLAN_MANUAL.md), with actual results in [TEST_RESULTS.md](TEST_RESULTS.md).
 
 ## The product we are building
 
@@ -83,6 +83,8 @@ Bring up a pinned local Sauce Labs shop at this stage so later phases have a rea
 
 ## Phase 2 — Infer tasks and finish conditions
 
+**Status:** implemented. See [setup, architecture and limits](AGENT_INFERENCE.md) and [actual verification](TEST_RESULTS.md). Same-site grouping is supported; cross-site grouping is deferred. Native accessibility remains a manual gate.
+
 **What you can try:** browsing an application or progressing toward checkout creates a task automatically. Its short description and intended finish condition appear in the companion and home screen.
 
 **Build:** a provider-independent agent decision contract, LangGraph orchestration using the Phase 0-tested file-backed SQLite checkpointer, stable task IDs and cross-tab grouping. Let the model choose among bounded observation/history/task tools. Persist accepted decisions and graph progress with version checks and idempotent effect records. The browser reader supplies context; the graph owns orchestration; the model transport remains replaceable. Distinguish candidate intent, ongoing work and completion uncertainty; honor user corrections over later guesses.
@@ -151,4 +153,4 @@ Public test sites are supplementary manual smoke checks, not CI dependencies. Or
 
 Each phase includes its visible UI, tests and evidence. Commit a verified slice before the next phase; do not postpone all design until the end. Preserve legacy manual data, server-only credentials, the stable production launcher and existing accessibility functionality. Add dependencies only when their working slice needs them.
 
-**Phase 1 implemented:** real setup at `/observe`, extension companion/site consent, automatic passive observations and authenticated durable delivery. Setup, data limits and manual gates: [AGENT_OBSERVATION.md](AGENT_OBSERVATION.md). **Next: Phase 2**, where a task and finish condition appear automatically during ordinary browsing. Phase 3 makes progress/completion judgment trustworthy.
+**Phases 1–2 implemented:** real observation, separate model/site-session agreement, automatic task/finish-condition proposals and corrections. Setup and limits: [AGENT_INFERENCE.md](AGENT_INFERENCE.md). **Next: Phase 3**, to track evidenced intermediate checkpoints and verify task-matched completion. Reminders remain Phase 4.

@@ -1,5 +1,7 @@
 # Automatic-agent Phase 1: observe chosen sites
 
+Phase 1 historical record, October 23, 2026 (IST). Phase 2 now adds separately consented automatic inference; use [the current setup](AGENT_INFERENCE.md). The observation-only statements below describe Phase 1 without AI enabled.
+
 Implemented October 23, 2026 (IST). This is the real observation connection, separate from the fictional `/preview` and the released manual checkpoint journey. Task discovery, model reasoning and automatic completion are Phase 2 onward. No observations are sent to NVIDIA or Ollama in this phase.
 
 ## Try it

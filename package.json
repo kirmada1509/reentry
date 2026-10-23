@@ -47,7 +47,9 @@
     "sandbox:commerce:setup": "node scripts/sandbox-commerce.mjs setup",
     "agent:spike": "tsx scripts/agent-spike.ts",
     "ui:theme": "node scripts/ui-theme.mjs",
-    "test:commerce": "playwright test --config playwright.commerce.config.ts"
+    "test:commerce": "playwright test --config playwright.commerce.config.ts",
+    "test:agent:live": "tsx scripts/test-agent-live.ts",
+    "test:agent:model": "node --conditions=react-server --import tsx scripts/evaluate-agent.ts"
   },
   "dependencies": {
     "@axiomhq/js": "1.8.0",

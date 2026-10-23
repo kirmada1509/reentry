@@ -3,7 +3,7 @@ import { z } from "zod";
 import { AppError } from "@/lib/http/errors";
 import { readJson } from "@/lib/http/read-json";
 import { outputFormat, recoveryMessages } from "@/features/recovery/prompt";
-import type { RecoveryModel } from "./model";
+import type { RecoveryModel, StructuredModel } from "./model";
 
 // Keep the credential destination fixed; task text cannot choose an endpoint.
 export const NVIDIA_CHAT_URL =
@@ -31,14 +31,17 @@ export interface NvidiaConfiguration {
   outputMode: "text" | "json_object" | "json_schema";
   thinking: "omit" | "on" | "off";
 }
-export function nvidiaModel(
+export function nvidiaStructuredModel(
   config: NvidiaConfiguration,
   transport: typeof fetch = (input, init) => fetch(input, init),
-): RecoveryModel {
+): StructuredModel {
   return {
     async generate(input, signal) {
-      const messages = recoveryMessages(input);
-      if (new TextEncoder().encode(JSON.stringify(messages)).length > 12000)
+      const { messages } = input;
+      if (
+        new TextEncoder().encode(JSON.stringify(messages)).length >
+        input.maxInputBytes
+      )
         throw new AppError(
           "MODEL_INPUT_TOO_LARGE",
           "These instructions exceed the recovery input budget. Use shorter sections or recover manually; your captures are saved.",
@@ -70,9 +73,9 @@ export function nvidiaModel(
                       : {
                           type: "json_schema",
                           json_schema: {
-                            name: "reentry_recovery",
+                            name: input.name,
                             strict: true,
-                            schema: outputFormat,
+                            schema: input.schema,
                           },
                         },
                 }),
@@ -150,5 +153,24 @@ export function nvidiaModel(
         );
       }
     },
+  };
+}
+
+export function nvidiaModel(
+  config: NvidiaConfiguration,
+  transport?: typeof fetch,
+): RecoveryModel {
+  const adapter = nvidiaStructuredModel(config, transport);
+  return {
+    generate: (input, signal) =>
+      adapter.generate(
+        {
+          messages: recoveryMessages(input),
+          schema: outputFormat,
+          name: "reentry_recovery",
+          maxInputBytes: 12000,
+        },
+        signal,
+      ),
   };
 }

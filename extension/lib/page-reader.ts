@@ -42,7 +42,11 @@ export async function readObservedPage() {
     return {
       origin: location.origin,
       title: redact(state.title).slice(0, 240),
-      content: redact(state.content).slice(0, 8000),
+      // The controller's transient '*' before an element index is reader
+      // bookkeeping, not a page change. Keep repeated passive reads stable.
+      content: redact(
+        state.content.replace(/(^|\n)([ \t]*)\*(?=\[\d+\])/g, "$1$2"),
+      ).slice(0, 8000),
     };
   } finally {
     controller.dispose();

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cedar backpack comparison</title>
+  </head>
+  <body>
+    <main>
+      <h1>Cedar backpack</h1>
+      <p>
+        Compare a lightweight 22 litre backpack with a padded laptop sleeve.
+      </p>
+      <p id="stage">Researching the product; no purchase decision made.</p>
+      <button
+        onclick="
+          document.querySelector('#stage').textContent =
+            'Cart ready: Cedar backpack, one item'
+        "
+      >
+        Add to fictional cart
+      </button>
+      <button
+        onclick="
+          document.querySelector('#stage').textContent =
+            'Checkout started for Cedar backpack'
+        "
+      >
+        Start fictional checkout
+      </button>
+    </main>
+  </body>
+</html>

@@ -68,6 +68,12 @@ const schema = z
       .min(250)
       .max(30000)
       .default(30000),
+    REENTRY_AGENT_TIMEOUT_MS: z.coerce
+      .number()
+      .int()
+      .min(250)
+      .max(60000)
+      .default(45000),
     NVIDIA_API_KEY: z.preprocess(
       (value) => (value === "" ? undefined : value),
       z

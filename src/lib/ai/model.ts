@@ -13,3 +13,17 @@ export interface RecoveryModel {
     settings: Record<string, string | number | boolean>;
   }>;
 }
+
+/** Provider-neutral structured generation, shared by recovery and the task graph. */
+export interface StructuredRequest {
+  messages: Array<{ role: string; content: string }>;
+  schema: Record<string, unknown>;
+  name: string;
+  maxInputBytes: number;
+}
+export interface StructuredModel {
+  generate(
+    request: StructuredRequest,
+    signal: AbortSignal,
+  ): ReturnType<RecoveryModel["generate"]>;
+}

@@ -1,6 +1,6 @@
 # ReEntry browser agent: requested next iteration
 
-Requested October 22, 2026. This is the next product direction, not a claim that automatic tracking is implemented. Keep the current repository and preserve the working manual release. The author wants automatic task discovery, inferred completion checkpoints, progress tracking and reminders without selecting text or filling a checkpoint form.
+Requested October 22, 2026. Phases 0–2 of this direction are now implemented: chosen-site observation and separately consented task inference. Completion verification and reminders below remain planned. Keep the current repository and preserve the working manual release. The author wants automatic task discovery, inferred completion checkpoints, progress tracking and reminders without selecting text or filling a checkpoint form.
 
 ## Intended experience
 
@@ -75,4 +75,4 @@ Success is demonstrated on two task families and unfamiliar variants. “Any tas
 
 ## Next concrete implementation task
 
-Phases 0–1 are implemented. [Foundation evidence](AGENT_FOUNDATION.md) records the reader and graph restart checks; [observation setup](AGENT_OBSERVATION.md) describes the real paired connection, site controls and durable local stream. The companion now has live extension bindings and native side-panel configuration, with native placement/shortcut and accessibility manual gates still open. Next is Phase 2 of [BUILD_PLAN.md](BUILD_PLAN.md): task/finish-condition inference through the provider-independent model boundary, with graph persistence, user correction and stale-effect protection. No live agent inference or reminder delivery is claimed from observation alone.
+Phases 0–2 are implemented. [Foundation evidence](AGENT_FOUNDATION.md), [browser setup](AGENT_OBSERVATION.md) and [inference setup](AGENT_INFERENCE.md) record the actual boundaries. LangGraph now consumes accepted observations through the provider-independent structured interface; SQLite owns jobs, task revisions and idempotent effects. The app and companion show inferred tasks with separate processing consent and corrections. Native accessibility remains open. Next is Phase 3 of [BUILD_PLAN.md](BUILD_PLAN.md): meaningful intermediate checkpoints and fresh task-matched completion verification. No reminder delivery or universal browser understanding is claimed.

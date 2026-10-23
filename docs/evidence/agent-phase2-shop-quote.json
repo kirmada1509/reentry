@@ -1,0 +1,39 @@
+{
+  "synthetic": true,
+  "scope": "Historical diagnostic replay against the real NVIDIA model, before source-reference citations. The quotation joined a separately rendered currency sign and numeric node; the old exact-quote contract rejected it. The final contract avoids reconstructing quotations and uses host-owned references instead.",
+  "context": {
+    "current": {
+      "version": 1,
+      "eventId": "787b820d-cfd4-4e5b-b306-44e10a6a8808",
+      "sessionId": "157a88f3-97e2-47f9-95ca-273c936158bb",
+      "deviceId": "5b364445-aada-4830-b388-09d4be141839",
+      "observedAt": "2026-10-23T10:10:17.178Z",
+      "reason": "submit-attempt",
+      "page": {
+        "origin": "http://127.0.0.1:4177",
+        "title": "Swag Labs \u00b7 ReEntry simulated shop",
+        "content": "[0]<button type=button>Open Menu />\nSwag Labs\n[1]<a role=button aria-label=Cart, empty />\n[2]<button >Back to products />\n\t[3]<img  />\nSauce Labs Backpack\ncarry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection.\n$\n29.99\n[4]<button >Add to cart />\n[5]<a >X />\n[6]<a >Facebook />\n[7]<a >LinkedIn />\n\u00a9\n2026\nSauce Labs. All Rights Reserved. Terms of Service | Privacy Policy",
+        "pageKey": "0a413b78af77812f7e8ab41150e7369392958fba02ca4b84e388653a2cd5ac5a",
+        "fields": []
+      }
+    },
+    "tasks": [],
+    "history": [],
+    "toolResults": []
+  },
+  "candidate": {
+    "tool": "upsert_task",
+    "taskId": null,
+    "goal": "Research Sauce Labs Backpack product details and pricing",
+    "finishCondition": "User compares backpack features and decides whether to purchase or continue browsing",
+    "intent": "research",
+    "stage": "candidate",
+    "nextAction": "Review product description and price, then decide to add to cart or continue shopping",
+    "evidence": [
+      {
+        "eventId": "787b820d-cfd4-4e5b-b306-44e10a6a8808",
+        "quote": "Sauce Labs Backpack carry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection. $29.99"
+      }
+    ]
+  }
+}

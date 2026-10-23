@@ -245,6 +245,22 @@ test("@observation queue survives actual offline delivery and a full browser res
       exact: true,
     }),
   ).toBeVisible();
+  // Recover the same mounted companion, without clearing action errors or
+  // relying on a tab reload to remove an outdated connection warning.
+  await restarted.context.setOffline(true);
+  await companionAgain
+    .getByRole("button", { name: "Retry connection", exact: true })
+    .click();
+  await expect(
+    companionAgain.getByText(/Could not refresh ReEntry/),
+  ).toBeVisible();
+  await restarted.context.setOffline(false);
+  await companionAgain
+    .getByRole("button", { name: "Retry connection", exact: true })
+    .click();
+  await expect(
+    companionAgain.getByText(/Could not refresh ReEntry/),
+  ).toHaveCount(0);
   const sourceAgain = await restarted.context.newPage();
   await sourceAgain.goto(fixture);
   await sourceAgain.evaluate(() => {

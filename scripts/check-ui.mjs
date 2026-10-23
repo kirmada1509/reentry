@@ -69,7 +69,7 @@ export function checkUi(directory = root) {
     if (
       name === "extension/entrypoints/entry.css" &&
       readFileSync(file, "utf8").trim() ===
-        '@import "../../src/app/globals.css";\n@source "../../src/components";'
+        '@import "../../src/app/globals.css";\n@source "../../src/components";\n@source "../../src/features/agent";'
     )
       continue;
     // The standalone portal needs to scan registry components outside its Vite
@@ -102,7 +102,12 @@ export function checkUi(directory = root) {
         ts.isJsxSelfClosingElement(node) ||
         ts.isJsxFragment(node)
       ) {
-        if (!frameworkEntry.test(name)) {
+        // This shared business view composes the same registry controls for
+        // web and extension. All tag/layout restrictions below still apply.
+        if (
+          !frameworkEntry.test(name) &&
+          name !== "src/features/agent/task-feed.tsx"
+        ) {
           issues.push(
             name +
               ": compose UI in framework entries; install reusable components from the registry",

@@ -1,0 +1,42 @@
+{
+  "synthetic": true,
+  "scope": "Diagnostic replay of the captured fictional browser page against the actual configured NVIDIA model after two failed live attempts. The replay reproduced unsupported evidence caused by normalized line breaks; its actual candidate is retained here. This is not the raw response from those earlier attempts.",
+  "context": {
+    "current": {
+      "version": 1,
+      "eventId": "c7ea53ef-9e9e-4ea1-9681-84280d809809",
+      "sessionId": "bade2cf5-1765-455b-85d1-329766e5fbf4",
+      "deviceId": "cdad7c68-33c9-4a7f-9314-d6a5e569f497",
+      "observedAt": "2026-10-23T09:55:43.806Z",
+      "reason": "navigation",
+      "page": {
+        "origin": "http://127.0.0.1:60666",
+        "title": "Cedar backpack comparison",
+        "content": "Cedar backpack\nCompare a lightweight 22 litre backpack with a padded laptop sleeve.\nResearching the product; no purchase decision made.\n[0]<button >Add to fictional cart />\n[1]<button >Start fictional checkout />",
+        "pageKey": "77e1f5475a1208df42c17a51931d5756273dd8fbd06b7c8b71d0a8d52fb46a8c",
+        "fields": []
+      }
+    },
+    "tasks": [],
+    "history": [],
+    "toolResults": []
+  },
+  "candidate": {
+    "tool": "upsert_task",
+    "taskId": null,
+    "goal": "Compare Cedar 22L lightweight backpack with padded laptop sleeve",
+    "finishCondition": "User selects a preferred backpack option or decides not to purchase after comparison",
+    "intent": "research",
+    "stage": "candidate",
+    "nextAction": "Review product specifications, features, and comparison details on the page",
+    "evidence": [
+      {
+        "eventId": "c7ea53ef-9e9e-4ea1-9681-84280d809809",
+        "quote": "Cedar backpack Compare a lightweight 22 litre backpack with a padded laptop sleeve"
+      }
+    ]
+  },
+  "failure": "Unsupported evidence: model joined a heading and sentence across a source line break.",
+  "fix": "An intermediate whitespace-only validator re-anchored this candidate. The final v2 contract instead requires model-selected source references; the host copies the original source span and accepts no model-written quotation.",
+  "readerNoise": "A transient Page Controller new-element asterisk also produced a duplicate snapshot. New snapshots now remove that bookkeeping flag before redaction/persistence."
+}

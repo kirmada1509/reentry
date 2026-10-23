@@ -1,0 +1,45 @@
+# Automatic-agent Phase 2: tasks without a checkpoint form
+
+Implemented October 23, 2026 (IST). This phase connects the real observation stream to the configured model through LangGraph. Shopping research, buying intent and application work can create a task with a proposed finish condition. These are inspectable AI interpretations. Successful completion and reminders remain Phases 3–4.
+
+## Try it
+
+1. Start with `./start.sh`, reload ReEntry in Chrome extensions, and open http://127.0.0.1:3000/observe. Follow [browser pairing and site access](AGENT_OBSERVATION.md) if not connected.
+2. In the app or companion, review the named provider/model and processing notice. Check the separate automatic-processing agreement and choose **Enable task understanding**. Local observation agreement and the old manual-recovery agreement do not authorize this stream. Enabling includes the latest observation from the current site session and future observations.
+3. Browse normally on an enabled site. Use the Northstar application (`pnpm sandbox:sites`) or the pinned local shop (`pnpm sandbox:commerce`) for fictional work. A task should appear without selecting text or entering a goal. Model latency and unavailable/invalid responses can delay it.
+4. Read the proposed goal, finish condition and next action. **Why this task?** exposes short page quotes. Research is tentative interest, with no purchase obligation. Actual cart/checkout context can advance an uncorrected task to buying intent. Draft saved, submission attempted and a submission receipt are different evidence; this phase never marks a task completed.
+5. **Correct this task** changes only the goal, intent and finish condition. Those fields take priority over later model guesses. A conflicting save keeps the input in its dialog for review. Site-session changes reset agreement without remounting an open correction form. **Dismiss on these pages** hides that suggestion and suppresses new suggestions on its associated observed page paths; it does not delete manual work. This conservative path-based suppression may also suppress another task using the same path.
+6. **Pause AI understanding** stops future reasoning while local observation continues. Pausing observation, replacing a browser/site session, or disconnecting also stops AI understanding; agreement is required again after a site-session change. A model configuration change invalidates the old agreement. Enable requests carry the exact reviewed site-session ID; a stale setup screen cannot authorize a newer site session. **Disconnect and clear** removes observations, inferred tasks/history, pending jobs and graph state; manual checkpoints stay independent.
+
+The app and companion tabs may close. Keep the local Node server running. There is no cloud worker, account or browser-exit notification promise. A local browser pause or permission loss stops sensing immediately; its AI-disable request is reconciled with the server on connection. Already-sent model requests cannot be recalled. Once the server has processed a pause/revocation, their results cannot change tasks.
+
+## What is reused
+
+- Existing WXT/Page Controller observation and authenticated device delivery remain the browser boundary.
+- The existing NVIDIA and Ollama transports now expose a shared structured-request interface. Manual recovery keeps its previous prompt, schema and 12 KB input limit. No LangChain model wrappers or additional providers are needed. The live automatic evaluation is NVIDIA; the automatic Ollama path has deterministic transport/browser coverage, not a new real-Ollama evaluation.
+- LangGraph runs a persisted `reason → read → reason → accept` loop, using the official `SqliteSaver` on the same local SQLite authority. The model can choose `inspect_history`, `read_task`, `upsert_task` or `ignore`. It has no website action, URL-fetch, shell, file, purchase, form-submit or reminder tool.
+- Installed official registry components compose the same task feed in web and extension surfaces. The shared file contains product data/actions, with the same tag/layout restrictions as framework pages; it introduces no visual primitives or vendor changes.
+
+## Durability and bounds
+
+Observation acceptance and job enqueue commit together. Jobs have stable event IDs; accepted task changes and effect receipts commit transactionally. Graph checkpoints retain opaque job IDs and framework metadata rather than copies of page bodies. Resuming a leased job continues the persisted graph; an already accepted effect is not applied twice after process death. The lease expires after 210 seconds, so a crashed server may take that long to reclaim a running job.
+
+There is one active job across local workers. Pending events coalesce by site; the model can request up to three recent same-site observations and five stored task revisions. Inference sees at most eight recent same-site tasks. Grouping is semantic across related tabs on the same site; cross-site grouping and universal website support are not claimed. An unrelated application/product should remain separate. Shared page paths alone do not force an active-task merge.
+
+Prior AI records are identity/evidence hints; their inferred intent, stage, next action and finish condition are omitted from model memory. Only user-corrected records retain those constraints. Current page evidence is presented last and takes priority over earlier AI guesses. This prevents an old research label from freezing a task after real cart activity.
+
+Each job allows at most three model calls, with an eight-second cooldown between jobs and 30 automatic calls per rolling hour across the local authority. Failures do not automatically retry. **Retry AI update** explicitly retries the latest failed job; stale/expired input still cannot commit. A restart may repeat a model call interrupted before its result checkpoint, and that repeat is charged against the budget. NVIDIA has no automatic fallback. Background calls have a separate validated `REENTRY_AGENT_TIMEOUT_MS` (default 45 seconds, maximum 60); manual recovery retains its own limit. Input is capped at 32 KB; history text is shortened to 1,500 characters per observation. Oversized/invalid requests fail visibly rather than silently inventing evidence.
+
+The model chooses 1–8 evidence-reference IDs from a host-generated source ledger. The host checks every ID, requires current-observation evidence, and retains up to three exact spans, including a current one. It never asks the model to reconstruct quoted text or accepts model-written quotations. The ledger contains at most 80 current-page spans and 24 per recent history item, with spans limited to 160 characters. References can also cite retained task evidence or the scoped history tool. Page-supplied instructions cannot create valid new IDs.
+
+Source changes (including equal-time observations from another tab), any intervening task correction, session changes, revoked consent and cleared jobs prevent stale application. Expected revisions protect edits. Corrected descriptions are host-preserved even if the model proposes something else; incompatible intent changes retain the corrected next-action state.
+
+Raw observations keep Phase 1's 24-hour/1,000-body bounds. Agent job contexts/proposals expire after 24 hours on access or worker reconciliation. Short task summaries/evidence remain until clear, with at most 100 tasks including dismissed records and ten revisions per task. Minimal effect receipts last 48 hours; call timestamps remain for one hour even after clear so clearing cannot reset the call budget. Graph cleanup removes expired/orphaned job threads. This is logical local deletion, not secure erasure or encrypted storage.
+
+## Verification
+
+`pnpm check` covers common transport regressions, consent/origin/Host guards, real graph tool branching, scoped evidence, task grouping, corrections/conflicts, equal-time stale evidence, failed transaction rollback, dismissal, budgets, timeout and deletion. Subprocess tests terminate during a read-tool graph and after an accepted effect, then reopen the file in another process.
+
+`REENTRY_TEST_PRODUCTION=1 pnpm test:e2e` includes synthetic-model automatic task journeys using the actual production app and extension. These verify research → purchase grouping, correction persistence, inference with the app tab closed, submission uncertainty, axe and narrow reflow. The existing observation, manual checkpoint/recovery and shopping regressions remain required. The actual-provider browser gate uses the reused upstream shop’s product and real cart UI, not an invented cart-status label.
+
+`pnpm test:agent:model <output.json>` explicitly evaluates eight fictional contexts, including captured upstream reader output against the configured real model. `pnpm test:agent:live` explicitly runs the real extension → local backend → NVIDIA journey, including app-tab closure and browser restart. These commands incur real provider requests; CI uses fakes instead. Results, retained failed trials and manual accessibility gates are in [TEST_RESULTS.md](TEST_RESULTS.md).

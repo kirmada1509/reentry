@@ -31,6 +31,9 @@ import type {
   CompanionStatus,
   ObservationScope,
 } from "@reentry/features/observation/protocol";
+import { TaskFeed } from "@reentry/features/agent/task-feed";
+import { agentViewSchema } from "@reentry/features/agent/schema";
+import type { AgentView, AgentAction } from "@reentry/features/agent/schema";
 import { sendMessage } from "../../lib/messages";
 
 const problems = {
@@ -48,23 +51,29 @@ const problems = {
     "A page could not be read safely. Large pages, embedded frames and some layouts are unsupported.",
 };
 export default function CompanionPage() {
+  const [tasks, setTasks] = useState<AgentView | null>(null);
   const [status, setStatus] = useState<CompanionStatus | null>(null);
   const [origin, setOrigin] = useState("");
   const [allSites, setAllSites] = useState(false);
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState("");
+  const [connectionError, setConnectionError] = useState("");
   const [busy, setBusy] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const refresh = useCallback(async () => {
     try {
-      setStatus(
-        companionStatusSchema.parse(
-          await sendMessage("agentStatus", undefined),
-        ),
+      const status = companionStatusSchema.parse(
+        await sendMessage("agentStatus", undefined),
       );
+      setStatus(status);
+      if (status.paired)
+        setTasks(
+          agentViewSchema.parse(await sendMessage("agentTasks", undefined)),
+        );
+      setConnectionError("");
     } catch {
-      setError(
-        "Could not reach the companion. Reload the extension and try again.",
+      setConnectionError(
+        "Could not refresh ReEntry. Check the local app and extension, then retry. Last shown tasks may be out of date.",
       );
     }
   }, []);
@@ -85,6 +94,22 @@ export default function CompanionPage() {
     }, 5000);
     return () => clearInterval(interval);
   }, [refresh]);
+  async function taskAction(action: AgentAction) {
+    setBusy(true);
+    setError("");
+    try {
+      setTasks(
+        agentViewSchema.parse(await sendMessage("agentTaskChange", action)),
+      );
+    } catch (e) {
+      setError(
+        "Could not save. The task or session may have changed; your input is still here. Refresh and review.",
+      );
+      throw e;
+    } finally {
+      setBusy(false);
+    }
+  }
   async function connect() {
     setBusy(true);
     setError("");
@@ -179,11 +204,11 @@ export default function CompanionPage() {
             <Badge variant="secondary">{label}</Badge>
           </div>
         </header>
-        {(error || (status && problems[status.problem])) && (
-          <Alert variant="destructive" role="alert">
+        {(error || connectionError || (status && problems[status.problem])) && (
+          <Alert role="alert">
             <AlertTitle>Needs attention</AlertTitle>
             <AlertDescription>
-              {error || (status && problems[status.problem])}
+              {error || connectionError || (status && problems[status.problem])}
             </AlertDescription>
           </Alert>
         )}
@@ -303,7 +328,8 @@ export default function CompanionPage() {
                       />
                       <Label htmlFor="local-consent">
                         Allow local observation on these sites. No AI provider
-                        receives this data in this phase.
+                        receives observations until you separately enable AI
+                        processing.
                       </Label>
                     </div>
                     <Button
@@ -323,12 +349,19 @@ export default function CompanionPage() {
                 </Collapsible>
               </CardContent>
             </Card>
+            <TaskFeed
+              sessionId={status.session?.id ?? null}
+              data={tasks}
+              act={taskAction}
+              busy={busy}
+              canEnable={Boolean(status.session && !status.session.paused)}
+            />
             <Card>
               <CardHeader>
                 <CardTitle>Quietly keeping your place</CardTitle>
                 <CardDescription>
-                  Task understanding and smart completion checkpoints arrive in
-                  the next phase.
+                  Observed updates stay queued through local connection
+                  interruptions.
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-3">

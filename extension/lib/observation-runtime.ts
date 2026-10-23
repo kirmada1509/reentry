@@ -15,6 +15,10 @@ import type {
   ObservationScope,
 } from "../../src/features/observation/protocol";
 
+import {
+  agentActionSchema,
+  agentViewSchema,
+} from "../../src/features/agent/schema";
 const ALARM = "reentry-observation-delivery";
 const SCRIPT = "reentry-observer-v1";
 const hostPattern = (origin: string) =>
@@ -209,6 +213,12 @@ export function startObservationRuntime(appOrigin: string) {
     if (!state.pairing) return;
     const attemptedDevice = state.pairing.deviceId;
     try {
+      // Reconcile a local pause/permission loss before any further hosted work.
+      if (state.halted || localHalt)
+        await post(
+          { action: "task_change", change: { action: "disable" } },
+          state.pairing,
+        );
       const remote = z
         .strictObject({ session: sessionSchema.nullable() })
         .parse(await post({ action: "status" }, state.pairing));
@@ -305,6 +315,25 @@ export function startObservationRuntime(appOrigin: string) {
       ),
     };
   }
+  onMessage("agentTasks", async ({ sender }) => {
+    companion(sender);
+    const state = await readAgent();
+    if (!state.pairing) throw new Error("Connect the browser first.");
+    return agentViewSchema.parse(
+      await post({ action: "tasks" }, state.pairing),
+    );
+  });
+  onMessage("agentTaskChange", async ({ sender, data }) => {
+    companion(sender);
+    const state = await readAgent();
+    if (!state.pairing) throw new Error("Connect the browser first.");
+    return agentViewSchema.parse(
+      await post(
+        { action: "task_change", change: agentActionSchema.parse(data) },
+        state.pairing,
+      ),
+    );
+  });
   onMessage("agentStatus", async ({ sender }) => {
     companion(sender);
     await flush();
@@ -471,7 +500,9 @@ export function startObservationRuntime(appOrigin: string) {
     if (alarm.name === ALARM) void flush().catch(() => undefined);
   });
   browser.permissions.onRemoved.addListener(() => {
-    void reconcileScripts().catch(() => undefined);
+    void reconcileScripts()
+      .then(flush)
+      .catch(() => undefined);
   });
   browser.commands.onCommand.addListener((command, tab) => {
     if (command === "open-companion")

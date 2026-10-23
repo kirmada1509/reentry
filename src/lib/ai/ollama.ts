@@ -3,7 +3,7 @@ import { z } from "zod";
 import { AppError } from "@/lib/http/errors";
 import { readJson } from "@/lib/http/read-json";
 import { outputFormat, recoveryMessages } from "@/features/recovery/prompt";
-import type { RecoveryModel } from "./model";
+import type { RecoveryModel, StructuredModel } from "./model";
 
 const envelope = z.object({
   model: z.string(),
@@ -18,16 +18,19 @@ const envelope = z.object({
 const tags = z.object({
   models: z.array(z.object({ name: z.string(), digest: z.string() })).max(200),
 });
-export function ollamaModel(
+export function ollamaStructuredModel(
   config: { model: string; endpoint: string; think: boolean },
   transport: typeof fetch = (input, init) => fetch(input, init),
-): RecoveryModel {
+): StructuredModel {
   return {
     async generate(input, signal) {
-      const messages = recoveryMessages(input);
+      const { messages } = input;
       // Conservative byte budget leaves room in the 16K context for the JSON
       // schema, chat framing and bounded output; never silently truncate evidence.
-      if (new TextEncoder().encode(JSON.stringify(messages)).length > 12000)
+      if (
+        new TextEncoder().encode(JSON.stringify(messages)).length >
+        input.maxInputBytes
+      )
         throw new AppError(
           "MODEL_INPUT_TOO_LARGE",
           "These instructions exceed the local model's input budget. Use shorter sections or recover manually; the full captures are still saved.",
@@ -52,7 +55,7 @@ export function ollamaModel(
             model: config.model,
             messages,
             stream: false,
-            format: outputFormat,
+            format: input.schema,
             think: config.think,
             options: { temperature: 0, num_predict: 2000, num_ctx: 16384 },
           }),
@@ -83,5 +86,24 @@ export function ollamaModel(
         );
       }
     },
+  };
+}
+
+export function ollamaModel(
+  config: { model: string; endpoint: string; think: boolean },
+  transport?: typeof fetch,
+): RecoveryModel {
+  const adapter = ollamaStructuredModel(config, transport);
+  return {
+    generate: (input, signal) =>
+      adapter.generate(
+        {
+          messages: recoveryMessages(input),
+          schema: outputFormat,
+          name: "reentry_recovery",
+          maxInputBytes: 12000,
+        },
+        signal,
+      ),
   };
 }

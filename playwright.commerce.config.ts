@@ -19,6 +19,7 @@ async function availableOrigin() {
   );
   return origin;
 }
+const live = process.env.REENTRY_TEST_LIVE === "1";
 const appOrigin =
   process.env.REENTRY_TEST_APP_ORIGIN ?? (await availableOrigin());
 if (!process.env.REENTRY_TEST_FIXTURE_DIR) {
@@ -56,8 +57,10 @@ export default defineConfig({
       env: {
         REENTRY_APP_ORIGIN: appOrigin,
         REENTRY_AGENT_DB: path.join(directory, "agent.sqlite"),
-        REENTRY_AI_PROVIDER: "disabled",
-        REENTRY_AI_MODEL: "",
+        REENTRY_AI_PROVIDER: live
+          ? (process.env.REENTRY_AI_PROVIDER ?? "nvidia")
+          : "disabled",
+        REENTRY_AI_MODEL: live ? (process.env.REENTRY_AI_MODEL ?? "") : "",
         AXIOM_TOKEN: "",
         AXIOM_DATASET: "",
         OTEL_EXPORTER_OTLP_ENDPOINT: "",

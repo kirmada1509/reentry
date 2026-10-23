@@ -11,7 +11,7 @@ This checklist tracks the automatic-agent foundation first and preserves the man
 - [x] Pin and run the existing Sauce Labs shop separately; retain attribution, disable reporting/remote fonts and verify checkout/reset with synthetic data.
 - [x] Record dependency/fixture versions and actual acceptance evidence in [AGENT_FOUNDATION.md](AGENT_FOUNDATION.md).
 
-**Local gate passed October 23:** 88 unit/integration tests, 48 production browser cases with two intentional live/demo skips, and separate commerce acceptance. Phase 1 observation is now implemented below; Phase 2 inference remains next. Native accessibility/zoom acceptance is still open.
+**Local gate passed October 23:** 88 unit/integration tests, 48 production browser cases with two intentional live/demo skips, and separate commerce acceptance. Phases 1–2 are now implemented below; completion verification remains next. Native accessibility/zoom acceptance is still open.
 
 ## Automatic-agent Phase 1 — Chosen-site observation
 
@@ -25,7 +25,21 @@ This checklist tracks the automatic-agent foundation first and preserves the man
 - [x] Complete production regression (55 passed, two intentional skips), affected observation rerun (seven passed), commerce (two passed), workspace checks (99 tests/sixteen files), default-origin builds and HTTP smoke.
 - [ ] Native side-panel placement/shortcut, external-host permission prompt and VoiceOver/real-zoom acceptance (manual gates).
 
-Phase 2 is the first task-inference milestone. Observation remains local-only; no model/task/completion/reminder claim is made here. See [AGENT_OBSERVATION.md](AGENT_OBSERVATION.md).
+The Phase 1 gate above is observation-only. Phase 2 below adds separately consented inference; completion and reminders remain later work. See [AGENT_OBSERVATION.md](AGENT_OBSERVATION.md).
+
+## Automatic-agent Phase 2 — Inferred tasks and finish conditions
+
+- [x] Extend existing NVIDIA/Ollama transports with a provider-independent structured request, preserving manual recovery.
+- [x] Add separate current-model/site-session processing agreement and revoke it on site-session/configuration changes.
+- [x] Connect the real observation authority to bounded LangGraph read/task tools and the official SQLite checkpointer.
+- [x] Persist stable tasks, ten-revision history, durable jobs and idempotent effects; protect corrections and reject stale source/session/version results.
+- [x] Compose the shared real task feed and concise correction dialog from installed registry controls in app and companion.
+- [x] Verify subprocess restart/effect replay, failed writes, exact evidence, correction conflicts, budgets, deadlines and deletion.
+- [x] Pass the eight-case real-NVIDIA corpus, including captured product/cart reader output and current-evidence priority over tentative AI memory; retain failed trials and timeouts.
+- [x] Pass final workspace checks (111 tests/seventeen files), production regression (57 passed/two intentional skips), commerce (two passed/one live skip), actual NVIDIA upstream-shop journey, default-origin builds and HTTP smoke. Publication/CI results are recorded at handoff.
+- [ ] Native VoiceOver, side-panel placement and actual browser zoom acceptance remain manual gates.
+
+Task discovery is available; automatic completion and reminders are not. Same-site grouping and prototype limits are documented in [AGENT_INFERENCE.md](AGENT_INFERENCE.md).
 
 Tool assignments and deferred alternatives are in the [selected stack](BUILD_PLAN.md#selected-tools-and-exactly-how-we-use-them). The historical manual-release checklist follows.
 
