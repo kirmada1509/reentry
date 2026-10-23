@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect } from "@playwright/test";
 import { test, appUrl, sourceUrl } from "./extension";
-import { pair } from "./observation-journey";
+import { pair, openDisclosure } from "./observation-journey";
 
 test("automatic tasks distinguish research and purchase, group tabs, persist corrections and need separate consent", async ({
   extension,
@@ -68,6 +68,7 @@ test("automatic tasks distinguish research and purchase, group tabs, persist cor
   const tasks = (await updated.json()).tasks;
   expect(tasks).toHaveLength(1);
   expect(tasks[0].id).toBe(id);
+  await openDisclosure(app, "Task options");
   await app
     .getByRole("button", { name: "Correct this task", exact: true })
     .click();
@@ -97,6 +98,7 @@ test("automatic tasks distinguish research and purchase, group tabs, persist cor
   await expect(
     app.getByText("Only compare a bag for next month", { exact: true }),
   ).toBeVisible();
+  await openDisclosure(app, "Task options");
   await app
     .getByRole("button", { name: "Correct this task", exact: true })
     .click();
@@ -140,9 +142,13 @@ test("automatic tasks distinguish research and purchase, group tabs, persist cor
     "My unsaved correction",
   );
   await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+  await app
+    .getByRole("button", { name: "Browser settings", exact: true })
+    .focus();
   await expect(
     app.getByText("Saved from another tab", { exact: true }),
   ).toBeVisible();
+  await openDisclosure(app, "Task options");
   await app.getByRole("button", { name: "Mark finished", exact: true }).click();
   await app
     .getByRole("button", { name: "Yes, mark finished", exact: true })
@@ -150,8 +156,10 @@ test("automatic tasks distinguish research and purchase, group tabs, persist cor
   await expect(
     app.getByText("Marked finished by you", { exact: true }),
   ).toBeVisible();
+  await openDisclosure(app, "Task options");
   await app.getByRole("button", { name: "Reopen task", exact: true }).click();
   await expect(app.getByText("Needs clarity", { exact: true })).toBeVisible();
+  await openDisclosure(app, "Task options");
   await app.getByRole("button", { name: "Delete task", exact: true }).click();
   const beforeDelete = (
     await (
@@ -179,6 +187,9 @@ test("automatic tasks distinguish research and purchase, group tabs, persist cor
     "changed",
   );
   await app.getByRole("button", { name: "Keep task", exact: true }).click();
+  await app
+    .getByRole("button", { name: "Browser settings", exact: true })
+    .focus();
   await expect(
     app.getByText("Changed before deletion", { exact: true }),
   ).toBeVisible();
@@ -231,6 +242,7 @@ test("application intent appears without a task form and stays unverified after 
   await source
     .getByRole("button", { name: "Submit fictional application" })
     .click();
+  await openDisclosure(app, "Recent observations");
   await expect(
     app.getByText("Submission attempted; success is unverified", {
       exact: false,

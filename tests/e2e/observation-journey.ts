@@ -57,3 +57,9 @@ export async function dashboard(page: Page) {
     }>;
   }>;
 }
+
+export async function openDisclosure(page: Page, name: string) {
+  const trigger = page.getByRole("button", { name, exact: true });
+  if ((await trigger.getAttribute("aria-expanded")) === "false")
+    await trigger.click();
+}

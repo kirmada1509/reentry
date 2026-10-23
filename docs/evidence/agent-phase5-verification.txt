@@ -1,0 +1,43 @@
+ReEntry automatic-agent Phase 5 — selected local evidence
+October 24, 2026 (IST)
+Fictional fixtures only; inference contracts unchanged.
+
+pnpm check
+ Test Files  20 passed (20)
+      Tests  167 passed (167)
+UI policy passed: registry assets intact; no custom visual components found.
+Secret-pattern check passed. This is a focused guard, not a complete secret detector.
+Always-loaded project policy: 449 words (~815 tokens, heuristic only).
+
+Complete production regression (before headless focus-fixture correction)
+  1 failed
+  2 skipped
+  64 passed (5.1m)
+
+Fresh production affected journeys after fixture correction
+  ✓  1 tests/e2e/agent-calm.spec.ts:111:1 › task cards stay in place and keep keyboard focus during background changes; explicit review releases saved updates (11.9s)
+  ✓  2 tests/e2e/agent-calm.spec.ts:220:1 › late polling cannot overwrite a saved correction; keyboard dialogs preserve drafts, inspect history and restore focus (9.5s)
+  ✓  3 tests/e2e/agent-calm.spec.ts:303:1 › real task and companion screens reflow with long content, 200-percent text, 400-percent viewport and reduced motion (8.1s)
+  ✓  4 tests/e2e/agent-calm.spec.ts:396:1 › failed clear remains visibly unsaved in its dialog and a successful clear cannot be repopulated by an old read (7.2s)
+  ✓  5 tests/e2e/agent-tasks.spec.ts:6:1 › automatic tasks distinguish research and purchase, group tabs, persist corrections and need separate consent (44.2s)
+  ✓  6 tests/e2e/agent-tasks.spec.ts:207:1 › application intent appears without a task form and stays unverified after submit attempt (8.7s)
+  6 passed (1.6m)
+
+pnpm test:commerce
+  ✓  2 tests/commerce/checkout.spec.ts:3:1 › upstream shop retains an interrupted cart, validates checkout, completes and resets without remote requests (1.6s)
+  ✓  3 tests/commerce/observation.spec.ts:5:1 › automatic companion notices the upstream React shop through cart and receipt without capturing entered details (6.2s)
+  1 skipped
+  2 passed (15.3s)
+
+pnpm local:start — default origin restored
+✓ Compiled successfully in 481ms
+Ready at http://127.0.0.1:3000. Stop with pnpm dev:stop.
+
+pnpm smoke
+HTTP smoke passed: ReEntry page, liveness, readiness, correlation IDs, and missing route.
+
+The initial background assertion failed because Playwright emulates document focus in every headless tab. The corrected fixture disables that emulation only for its background assertion; it requires focus for the foreground assertions. All four new calm cases and both existing task journeys passed afterward.
+
+Native Chrome attachment timed out. VoiceOver speech/navigation, native side-panel placement, actual browser zoom/text preferences, optional permission dialogs and visible desktop banners remain manual gates. Headless viewport/font emulation is not claimed as native acceptance.
+
+Publication and exact-head hosted CI are reported separately at handoff.

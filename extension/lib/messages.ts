@@ -6,9 +6,17 @@ import type {
   ObservationScope,
 } from "../../src/features/observation/protocol";
 
-import type { AgentAction, AgentView } from "../../src/features/agent/schema";
+import type {
+  AgentAction,
+  AgentView,
+  AgentHistory,
+} from "../../src/features/agent/schema";
 interface Protocol {
   agentTasks(): AgentView;
+  agentTaskHistory(data: {
+    id: string;
+    expectedRevision: number;
+  }): AgentHistory;
   agentTaskChange(data: AgentAction): AgentView;
   pending(): PendingCapture[];
   confirm(data: { id: string }): void;

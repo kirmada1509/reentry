@@ -5,7 +5,7 @@ import { readJson } from "@/lib/http/read-json";
 import { deviceRequestSchema, webActionSchema } from "./protocol";
 import { observationStore as store } from "./repository";
 import { agentProcessing } from "../agent/processing";
-import { agentActionSchema } from "../agent/schema";
+import { agentActionSchema, historyRequestSchema } from "../agent/schema";
 
 function checkHost(request: Request) {
   const expected = new URL(getEnvironment().REENTRY_APP_ORIGIN);
@@ -106,6 +106,15 @@ export async function devicePost(request: Request, requestId?: string) {
         );
       db.agent.action(change.data, agentProcessing(), requestId);
       result = db.agent.view(agentProcessing());
+    } else if (input.action === "task_history") {
+      const parsed = historyRequestSchema.safeParse(input.request);
+      if (!parsed.success)
+        throw new AppError(
+          "VALIDATION_ERROR",
+          "Review this history request.",
+          400,
+        );
+      result = db.agent.history(parsed.data.id, parsed.data.expectedRevision);
     } else if (input.action === "tasks")
       result = db.agent.view(agentProcessing());
     else if (input.action === "status") result = db.deviceStatus(id);
@@ -148,6 +157,27 @@ export async function webPost(request: Request) {
 
 export function taskGet(request: Request) {
   checkWeb(request);
+  const params = new URL(request.url).searchParams;
+  if (params.size) {
+    const parsed = historyRequestSchema.safeParse({
+      id: params.get("id"),
+      expectedRevision: Number(params.get("revision")),
+    });
+    if (
+      !parsed.success ||
+      params.size !== 2 ||
+      params.getAll("id").length !== 1 ||
+      params.getAll("revision").length !== 1
+    )
+      throw new AppError(
+        "VALIDATION_ERROR",
+        "Review this history request.",
+        400,
+      );
+    return Response.json(
+      store().agent.history(parsed.data.id, parsed.data.expectedRevision),
+    );
+  }
   return Response.json(store().agent.view(agentProcessing()));
 }
 export async function taskPost(request: Request, requestId?: string) {

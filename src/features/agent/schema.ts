@@ -55,6 +55,27 @@ export const taskSchema = taskDescriptionSchema.extend({
   completedBy: z.enum(["observation", "user"]).optional(),
 });
 export type AgentTask = z.infer<typeof taskSchema>;
+export const historyRequestSchema = z.strictObject({
+  id: z.uuid(),
+  expectedRevision: z.number().int().positive(),
+});
+export const agentHistorySchema = z
+  .strictObject({
+    taskId: z.uuid(),
+    currentRevision: z.number().int().positive(),
+    revisions: z.array(taskSchema).min(1).max(10),
+  })
+  .refine(
+    (v) =>
+      v.revisions[0]?.revision === v.currentRevision &&
+      v.revisions.every(
+        (t, i) =>
+          t.id === v.taskId &&
+          (i === 0 || t.revision < v.revisions[i - 1]!.revision),
+      ),
+    "History does not match this task revision.",
+  );
+export type AgentHistory = z.infer<typeof agentHistorySchema>;
 export const decisionSchema = z.discriminatedUnion("tool", [
   z.strictObject({ tool: z.literal("inspect_history") }),
   z.strictObject({ tool: z.literal("read_task"), taskId: z.uuid() }),

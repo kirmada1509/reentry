@@ -3,7 +3,7 @@ import path from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { expect } from "@playwright/test";
 import { test, appUrl, sourceUrl } from "./extension";
-import { pair } from "./observation-journey";
+import { pair, openDisclosure } from "./observation-journey";
 import type { AgentView } from "../../src/features/agent/schema";
 
 const origin = new URL(sourceUrl).origin;
@@ -128,6 +128,7 @@ test("@progress Northstar draft, changed instructions, validation, final review 
   await expect(
     home.getByText("Confirmation observed", { exact: true }),
   ).toBeVisible();
+  await openDisclosure(home, "Task options");
   await home.getByRole("button", { name: "Delete task", exact: true }).click();
   await home
     .getByRole("button", { name: "Delete task and history", exact: true })

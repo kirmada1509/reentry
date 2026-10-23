@@ -68,6 +68,19 @@ Task discovery was the Phase 2 boundary; Phase 3 completion is tracked below and
 
 [Return/reminder setup and delivery boundaries](AGENT_REMINDERS.md). Deadline scheduling is intentionally absent; unknown website deadlines remain unknown. Next: automatic-agent Phase 5.
 
+## Automatic-agent Phase 5 — Calm screens and reliability
+
+- [x] Bind the live web home and companion to production task/recovery data; keep the fictional preview labelled and secondary.
+- [x] Put tasks/next actions first; place settings, source quotes, history, delivery details and observations behind accessible disclosures. Keep pause reachable.
+- [x] Coalesce polls, reject pre-mutation reads, clear cached deleted data, and defer task content/order while a visible task/dialog has focus. Keep hidden apps updating; provide explicit review without toasts or automatic focus/scroll.
+- [x] Expose ten actual immutable revisions through existing authorized, revision-aware boundaries; keep history read-only and correction/delete failures inside their dialogs.
+- [x] Preserve input and focus; provide inline validation, dialog focus return, a successor focus after finish/delete, long-link wrapping and scrollable short-screen dialogs.
+- [x] Apply documented standard reduced-motion descendant utilities to the web/extension document bodies without custom CSS or changed registry hashes.
+- [x] Pass 167 workspace tests/project guards, all six affected production task/calm journeys, commerce (two passed, one live skip), default-origin builds and HTTP smoke. The full local run passed 64 cases with two skips and one focus-fixture issue fixed in the affected rerun; publication/CI are reported at handoff.
+- [ ] Native VoiceOver, side-panel placement, actual browser zoom/text preferences, permission prompts and OS banners remain manual gates.
+
+[Phase 5 behavior, screenshots and verification bounds](AGENT_CALM.md). Next: automatic-agent Phase 6, complete-agent evaluation and demonstration.
+
 Tool assignments and deferred alternatives are in the [selected stack](BUILD_PLAN.md#selected-tools-and-exactly-how-we-use-them). The historical manual-release checklist follows.
 
 Project execution tracker, started October 21, 2026. Phases 1–4 and automated accessibility/release work implemented October 22. Native accessibility and genuine learner/submission gates remain explicit below. Details and test gates: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md); actual evidence: [TEST_RESULTS.md](TEST_RESULTS.md).

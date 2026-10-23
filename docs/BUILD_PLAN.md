@@ -1,6 +1,6 @@
 # ReEntry browser agent — build plan
 
-Updated October 23, 2026. This is the current roadmap for the automatic browser agent and its calm interface, using the selected open-source tools below. Phases 0–4 are implemented: observation, task inference, evidenced progress/completion, interruption recovery and optional local reminders. [Foundation evidence](AGENT_FOUNDATION.md), [completion rules](AGENT_PROGRESS.md) and [reminder bounds](AGENT_REMINDERS.md) record the actual behavior. Phase 5 is next; native accessibility/permission/desktop-banner acceptance remains open. The existing manual release remains working; its earlier plan is preserved in [BUILD_PLAN_MANUAL.md](BUILD_PLAN_MANUAL.md), with actual results in [TEST_RESULTS.md](TEST_RESULTS.md).
+Updated October 24, 2026. This is the current roadmap for the automatic browser agent and its calm interface, using the selected open-source tools below. Phases 0–5 are implemented: observation, task inference, evidenced progress/completion, interruption recovery, optional local reminders and calm production task screens. [Foundation evidence](AGENT_FOUNDATION.md), [completion rules](AGENT_PROGRESS.md) and [reminder bounds](AGENT_REMINDERS.md) record the actual behavior. [Calmness and reliability](AGENT_CALM.md) records Phase 5 behavior; Phase 6 evaluation/demo is next. Native accessibility/permission/desktop-banner acceptance remains open. The existing manual release remains working; its earlier plan is preserved in [BUILD_PLAN_MANUAL.md](BUILD_PLAN_MANUAL.md), with actual results in [TEST_RESULTS.md](TEST_RESULTS.md).
 
 ## The product we are building
 
@@ -125,6 +125,8 @@ Extend Northstar only with missing fictional validation/submission/receipt state
 
 **Pass when:** the main journey has no required large form; each screen has one clear primary action; background events do not steal focus or repeatedly reshuffle the list; minor updates do not create toasts; keyboard/axe, narrow side panels, 200% text, 400% reflow and reduced motion are covered. Record actual manual Chrome/VoiceOver results or keep unavailable gates explicitly open. On-screen explanations distinguish observed facts, agent inference and user corrections.
 
+**Implementation (October 24):** [Live task screens, revision history, refresh/focus safety, reduced motion and verification limits](AGENT_CALM.md). Both surfaces use production records and existing registry components. Native VoiceOver, side-panel and actual zoom gates remain open.
+
 **Result:** a calm, coherent daily-use experience rather than a debug interface.
 
 ## Phase 6 — Evaluate and prepare the demonstration
@@ -155,4 +157,4 @@ Public test sites are supplementary manual smoke checks, not CI dependencies. Or
 
 Each phase includes its visible UI, tests and evidence. Commit a verified slice before the next phase; do not postpone all design until the end. Preserve legacy manual data, server-only credentials, the stable production launcher and existing accessibility functionality. Add dependencies only when their working slice needs them.
 
-**Phases 1–3 implemented:** real observation, separate model/site-session agreement, automatic tasks, evidence-linked progress, corrections, fresh confirmation checks and deletion. [Setup](AGENT_INFERENCE.md) and [completion rules/limits](AGENT_PROGRESS.md). **Next: Phase 4**, interruption handling and local reminders. Native/manual accessibility gates remain open.
+**Phases 1–5 implemented:** real observation, separate model/site-session agreement, automatic tasks, evidence-linked progress, corrections, fresh confirmation checks, interruption recovery, optional reminders and calm production screens. [Setup](AGENT_INFERENCE.md), [completion rules](AGENT_PROGRESS.md), [reminders](AGENT_REMINDERS.md) and [calmness/reliability](AGENT_CALM.md). **Next: Phase 6**, complete-agent evaluation and demonstration. Native/manual accessibility gates remain open.

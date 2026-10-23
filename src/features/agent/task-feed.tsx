@@ -36,7 +36,7 @@ import {
   SelectValue,
 } from "../../components/ui/select";
 import { taskDescriptionSchema } from "./schema";
-import type { AgentAction, AgentTask, AgentView } from "./schema";
+import type { AgentAction, AgentTask, AgentView, AgentHistory } from "./schema";
 
 import { reminderPolicySchema } from "./recovery-schema";
 import type { RecoveryView } from "./recovery-schema";
@@ -57,6 +57,7 @@ function TaskCorrection({
   const [intent, setIntent] = useState(task.intent);
   const [revision, setRevision] = useState(task.revision);
   const [error, setError] = useState("");
+  const [invalid, setInvalid] = useState<string[]>([]);
   async function save() {
     const value = taskDescriptionSchema.safeParse({
       goal,
@@ -64,11 +65,19 @@ function TaskCorrection({
       intent,
     });
     if (!value.success) {
+      const fields = value.error.issues.map((issue) => String(issue.path[0]));
+      setInvalid(fields);
+      document
+        .getElementById(
+          `${fields[0] === "finishCondition" ? "finish" : "goal"}-${task.id}`,
+        )
+        ?.focus();
       setError(
         "Use a goal of 3–160 characters and a finish condition of 3–240 characters.",
       );
       return;
     }
+    setInvalid([]);
     try {
       await act({
         action: "correct",
@@ -96,13 +105,17 @@ function TaskCorrection({
           setIntent(task.intent);
           setRevision(task.revision);
           setError("");
+          setInvalid([]);
         }
       }}
     >
       <DialogTrigger asChild>
         <Button variant="outline">Correct this task</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        data-task-owner={task.id}
+        className="max-h-[70vh] overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle>Keep it true to your intent</DialogTitle>
           <DialogDescription>
@@ -114,19 +127,27 @@ function TaskCorrection({
           <Label htmlFor={`goal-${task.id}`}>Goal</Label>
           <Input
             id={`goal-${task.id}`}
+            disabled={busy}
+            aria-invalid={invalid.includes("goal")}
+            aria-describedby={
+              invalid.includes("goal")
+                ? `correction-error-${task.id}`
+                : undefined
+            }
             value={goal}
             maxLength={160}
             onChange={(e) => setGoal(e.target.value)}
           />
           <Label htmlFor={`intent-${task.id}`}>Intent</Label>
           <Select
+            disabled={busy}
             value={intent}
             onValueChange={(value) => setIntent(value as AgentTask["intent"])}
           >
             <SelectTrigger id={`intent-${task.id}`}>
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent data-task-owner={task.id}>
               <SelectItem value="research">Research or compare</SelectItem>
               <SelectItem value="purchase">Buy something</SelectItem>
               <SelectItem value="application">
@@ -139,11 +160,22 @@ function TaskCorrection({
           </Label>
           <Input
             id={`finish-${task.id}`}
+            disabled={busy}
+            aria-invalid={invalid.includes("finishCondition")}
+            aria-describedby={
+              invalid.includes("finishCondition")
+                ? `correction-error-${task.id}`
+                : undefined
+            }
             value={finish}
             maxLength={240}
             onChange={(e) => setFinish(e.target.value)}
           />
-          {error && <p role="alert">{error}</p>}
+          {error && (
+            <p role="alert" id={`correction-error-${task.id}`}>
+              {error}
+            </p>
+          )}
         </div>
         <DialogFooter>
           <DialogClose asChild>
@@ -152,6 +184,98 @@ function TaskCorrection({
           <Button disabled={busy} onClick={() => void save()}>
             Save correction
           </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function TaskHistory({
+  task,
+  load,
+}: {
+  task: AgentTask;
+  load: (id: string, revision: number) => Promise<AgentHistory>;
+}) {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState<AgentHistory | null>(null);
+  const [error, setError] = useState("");
+  const request = useRef(0);
+  async function show(next: boolean) {
+    const ticket = ++request.current;
+    setOpen(next);
+    setError("");
+    setValue(null);
+    if (!next) return;
+    try {
+      const value = await load(task.id, task.revision);
+      if (request.current === ticket) setValue(value);
+    } catch (e) {
+      if (request.current === ticket)
+        setError(
+          e instanceof Error
+            ? e.message
+            : "History is unavailable. Close and try again when connected.",
+        );
+    }
+  }
+  return (
+    <Dialog open={open} onOpenChange={(next) => void show(next)}>
+      <DialogTrigger asChild>
+        <Button variant="outline">Revision history</Button>
+      </DialogTrigger>
+      <DialogContent
+        data-task-owner={task.id}
+        className="max-h-[70vh] overflow-y-auto"
+      >
+        <DialogHeader>
+          <DialogTitle>Your task’s history</DialogTitle>
+          <DialogDescription>
+            Up to ten saved revisions, newest first. These are past
+            interpretations and corrections, not new evidence. History is
+            read-only.
+          </DialogDescription>
+        </DialogHeader>
+        {!value && !error && <p role="status">Loading saved revisions…</p>}
+        {error && <p role="alert">{error}</p>}
+        {value && (
+          <ol className="flex flex-col gap-4">
+            {value.revisions.map((revision) => (
+              <li key={revision.revision}>
+                <p>
+                  Revision {revision.revision} ·{" "}
+                  {new Date(revision.updatedAt).toLocaleString()}
+                </p>
+                <Badge variant="outline">
+                  {revision.corrected
+                    ? "Your correction"
+                    : revision.completedBy === "user"
+                      ? "Your finish confirmation"
+                      : "AI interpretation"}
+                </Badge>
+                <p>{revision.goal}</p>
+                <p>Finished when: {revision.finishCondition}</p>
+                <p>Next: {revision.nextAction}</p>
+                <Collapsible>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost">
+                      Evidence for revision {revision.revision}
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    {revision.evidence.map((e, i) => (
+                      <p key={i}>“{e.quote}”</p>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              </li>
+            ))}
+          </ol>
+        )}
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">Close history</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -372,8 +496,14 @@ export function TaskFeed({
   sessionId,
   allowReminders,
   remindersReady,
+  pending = false,
+  release,
+  history,
 }: {
   data: AgentView | null;
+  pending?: boolean;
+  release?: () => void;
+  history?: (id: string, revision: number) => Promise<AgentHistory>;
   act: Action;
   busy: boolean;
   canEnable: boolean;
@@ -392,6 +522,19 @@ export function TaskFeed({
   const confirm = async (action: AgentAction) => {
     try {
       await act(action);
+      if (action.action === "finish" || action.action === "delete")
+        requestAnimationFrame(() => {
+          if (document.activeElement !== document.body) return;
+          const destination =
+            action.action === "finish"
+              ? document.querySelector<HTMLElement>(
+                  `[data-task-card="${action.id}"] [data-focus-after-finish]`,
+                )
+              : document.querySelector<HTMLElement>(
+                  "[aria-label='Automatic tasks']",
+                );
+          destination?.focus({ preventScroll: true });
+        });
     } catch (error) {
       setConfirmationError(
         error instanceof Error
@@ -400,6 +543,7 @@ export function TaskFeed({
       );
     }
   };
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [agreement, setAgreement] = useState<string | null>(null);
   const agreementKey = (data?.processing.consentId ?? "") + (sessionId ?? "");
   const agreed = agreement === agreementKey;
@@ -415,134 +559,161 @@ export function TaskFeed({
     "needs-consent":
       "The model configuration changed. Review the current processing notice to continue.",
   };
-  return (
-    <section className="flex flex-col gap-4" aria-label="Automatic tasks">
-      <Card>
-        <CardHeader>
-          <CardTitle>A place for what’s in progress</CardTitle>
-          <CardDescription>
-            Tasks and finish conditions inferred from the sites you enable. You
-            can correct them at any time.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <p role="status" aria-live="polite">
-            {notices[data.status]}
-          </p>
-          {!data.enabled ? (
-            <>
-              <p>
-                {data.processing.available
-                  ? `${data.processing.provider} · ${data.processing.model}`
-                  : "No AI provider is configured on the local server."}
-              </p>
-              <p>
-                {data.processing.hosted
-                  ? "NVIDIA receives bounded page text, site origins, field labels/statuses and task context from your enabled sites, including the latest observation. This runs automatically while the local server is on, even with this tab closed. The reader reduces sensitive data but cannot remove every personal detail."
-                  : "The local model receives bounded observations and task context from your enabled sites, including the latest observation. Processing runs automatically while the local server is on."}
-              </p>
-              <div className="flex items-start gap-3">
-                <Checkbox
-                  id="agent-agreement"
-                  checked={agreed}
-                  onCheckedChange={(v) =>
-                    setAgreement(v === true ? agreementKey : null)
-                  }
-                />
-                <Label htmlFor="agent-agreement">
+  const settings = (
+    <Collapsible
+      key="agent-settings"
+      open={!data.enabled || settingsOpen}
+      onOpenChange={setSettingsOpen}
+    >
+      <CollapsibleTrigger asChild>
+        <Button variant="outline">AI and reminder settings</Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="pt-3">
+        <Card key="agent-settings">
+          <CardHeader>
+            <CardTitle>AI and reminders</CardTitle>
+            <CardDescription>
+              Tasks and finish conditions inferred from the sites you enable.
+              You can correct them at any time.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <p>{notices[data.status]}</p>
+            {!data.enabled ? (
+              <>
+                <p>
+                  {data.processing.available
+                    ? `${data.processing.provider} · ${data.processing.model}`
+                    : "No AI provider is configured on the local server."}
+                </p>
+                <p>
                   {data.processing.hosted
-                    ? "Allow automatic NVIDIA processing for this site session"
-                    : "Allow automatic local AI processing for this site session"}
-                </Label>
-              </div>
-              <Button
-                disabled={
-                  busy ||
-                  !agreed ||
-                  !canEnable ||
-                  !sessionId ||
-                  !data.processing.available
-                }
-                onClick={() => {
-                  if (sessionId)
-                    quiet({
-                      action: "enable",
-                      consentId: data.processing.consentId,
-                      sessionId,
-                    });
-                }}
-              >
-                Enable task understanding
-              </Button>
-              {!canEnable && (
-                <p>Connect the browser and enable site observation first.</p>
-              )}
-            </>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant="outline"
-                disabled={busy}
-                onClick={() => quiet({ action: "disable" })}
-              >
-                Pause AI understanding
-              </Button>
-              {data.status === "unavailable" && (
+                    ? "NVIDIA receives bounded page text, site origins, field labels/statuses and task context from your enabled sites, including the latest observation. This runs automatically while the local server is on, even with this tab closed. The reader reduces sensitive data but cannot remove every personal detail."
+                    : "The local model receives bounded observations and task context from your enabled sites, including the latest observation. Processing runs automatically while the local server is on."}
+                </p>
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="agent-agreement"
+                    checked={agreed}
+                    onCheckedChange={(v) =>
+                      setAgreement(v === true ? agreementKey : null)
+                    }
+                  />
+                  <Label htmlFor="agent-agreement">
+                    {data.processing.hosted
+                      ? "Allow automatic NVIDIA processing for this site session"
+                      : "Allow automatic local AI processing for this site session"}
+                  </Label>
+                </div>
                 <Button
-                  disabled={busy}
-                  onClick={() => quiet({ action: "retry" })}
+                  disabled={
+                    busy ||
+                    !agreed ||
+                    !canEnable ||
+                    !sessionId ||
+                    !data.processing.available
+                  }
+                  onClick={() => {
+                    if (sessionId)
+                      quiet({
+                        action: "enable",
+                        consentId: data.processing.consentId,
+                        sessionId,
+                      });
+                  }}
                 >
-                  Retry AI update
+                  Enable task understanding
                 </Button>
-              )}
-            </div>
-          )}
-          <p>
-            {data.recovery.policy.enabled
-              ? `Gentle reminders are enabled after ${data.recovery.policy.awayMinutes} minutes away.`
-              : "Gentle reminders are off."}
-          </p>
-          <ReminderSettings
-            recovery={data.recovery}
-            act={act}
-            busy={busy}
-            allowReminders={allowReminders}
-            remindersReady={remindersReady}
-          />
-          {data.recovery.deliveryFailed && (
-            <p role="status">
-              A local notification could not be delivered. Your task is safe;
-              check Chrome and system notification settings. It will not be
-              resent today.
+                {!canEnable && (
+                  <p>Connect the browser and enable site observation first.</p>
+                )}
+              </>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="outline"
+                  disabled={busy}
+                  onClick={() => quiet({ action: "disable" })}
+                >
+                  Pause AI understanding
+                </Button>
+              </div>
+            )}
+            <p>
+              {data.recovery.policy.enabled
+                ? `Gentle reminders are enabled after ${data.recovery.policy.awayMinutes} minutes away.`
+                : "Gentle reminders are off."}
             </p>
+            <ReminderSettings
+              recovery={data.recovery}
+              act={act}
+              busy={busy}
+              allowReminders={allowReminders}
+              remindersReady={remindersReady}
+            />
+            {data.recovery.deliveryFailed && (
+              <p role="status">
+                A local notification could not be delivered. Your task is safe;
+                check Chrome and system notification settings. It will not be
+                resent today.
+              </p>
+            )}
+            <Collapsible>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost">
+                  How ReEntry reaches a conclusion
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="flex flex-col gap-3 pt-3">
+                <p>
+                  Up to three model calls per decision and 30 per hour. ReEntry
+                  can read recent evidence and task history, then propose a
+                  task. It cannot act on websites, place orders, submit
+                  applications or schedule reminders. Local reminders use your
+                  separate policy.
+                </p>
+                <p>
+                  Research is a possibility, not an obligation. Progress is an
+                  AI interpretation. Fresh matching confirmations can finish
+                  uncorrected purchase/application tasks after a final review in
+                  the same tab. Corrected goals require your review. Task
+                  summaries and short evidence excerpts stay locally until
+                  cleared. Changing the site session requires agreement again.
+                </p>
+                <p>
+                  {data.callsRemaining} model calls remain in the current hourly
+                  window.
+                </p>
+              </CollapsibleContent>
+            </Collapsible>
+          </CardContent>
+        </Card>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+  return (
+    <section
+      className="flex flex-col gap-4"
+      aria-label="Automatic tasks"
+      tabIndex={-1}
+      onBlurCapture={release}
+    >
+      {!data.tasks.length && settings}
+      {data.enabled && ["unavailable", "budget"].includes(data.status) && (
+        <Alert role="status">
+          <AlertTitle>Your last place is safe</AlertTitle>
+          <AlertDescription>{notices[data.status]}</AlertDescription>
+          {data.status === "unavailable" && (
+            <Button
+              variant="outline"
+              disabled={busy}
+              onClick={() => quiet({ action: "retry" })}
+            >
+              Retry AI update
+            </Button>
           )}
-          <Collapsible>
-            <CollapsibleTrigger asChild>
-              <Button variant="ghost">How ReEntry reaches a conclusion</Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="flex flex-col gap-3 pt-3">
-              <p>
-                Up to three model calls per decision and 30 per hour. ReEntry
-                can read recent evidence and task history, then propose a task.
-                It cannot act on websites, place orders, submit applications or
-                schedule reminders. Local reminders use your separate policy.
-              </p>
-              <p>
-                Research is a possibility, not an obligation. Progress is an AI
-                interpretation. Fresh matching confirmations can finish
-                uncorrected purchase/application tasks after a final review in
-                the same tab. Corrected goals require your review. Task
-                summaries and short evidence excerpts stay locally until
-                cleared. Changing the site session requires agreement again.
-              </p>
-              <p>
-                {data.callsRemaining} model calls remain in the current hourly
-                window.
-              </p>
-            </CollapsibleContent>
-          </Collapsible>
-        </CardContent>
-      </Card>
+        </Alert>
+      )}
       {!data.tasks.length && data.enabled && (
         <Alert>
           <AlertTitle>Nothing to carry yet</AlertTitle>
@@ -556,7 +727,13 @@ export function TaskFeed({
         const recovery = data.recovery.items.find((r) => r.taskId === task.id);
         const unfinished = !["completed", "cancelled"].includes(task.stage);
         return (
-          <Card key={task.id} id={`task-${task.id}`}>
+          <Card
+            key={task.id}
+            id={`task-${task.id}`}
+            data-task-card={task.id}
+            role="article"
+            aria-label={task.goal}
+          >
             <CardHeader>
               <div className="flex flex-wrap gap-2">
                 <Badge variant="secondary">
@@ -576,7 +753,13 @@ export function TaskFeed({
                   <Badge variant="outline">Your correction</Badge>
                 )}
               </div>
-              <CardTitle>{task.goal}</CardTitle>
+              <CardTitle
+                role="heading"
+                aria-level={2}
+                id={`task-title-${task.id}`}
+              >
+                {task.goal}
+              </CardTitle>
               <CardDescription>
                 {task.origin} ·{" "}
                 {task.intent === "research"
@@ -598,9 +781,13 @@ export function TaskFeed({
                           : "Your place is saved."}
                 </p>
               )}
-              <p>Finished would mean: {task.finishCondition}</p>
+              <p>
+                Finished when
+                {task.corrected ? " (your correction)" : " (inferred)"}:{" "}
+                {task.finishCondition}
+              </p>
               {task.progress.length > 0 && (
-                <p>Last observed: {task.progress.at(-1)!.summary}</p>
+                <p>Progress interpretation: {task.progress.at(-1)!.summary}</p>
               )}
               <p>Next: {task.nextAction}</p>
               {unfinished && recovery?.url && (
@@ -716,132 +903,162 @@ export function TaskFeed({
                   </ol>
                 </CollapsibleContent>
               </Collapsible>
-              <div className="flex flex-wrap gap-2">
-                <TaskCorrection task={task} act={act} busy={busy} />
-                {!["completed", "cancelled"].includes(task.stage) && (
-                  <Dialog
-                    onOpenChange={(open) => {
-                      if (open) {
-                        setDeleting({ id: task.id, revision: task.revision });
-                        setConfirmationError("");
-                      }
-                    }}
-                  >
-                    <DialogTrigger asChild>
-                      <Button variant="outline">Mark finished</Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Is this task finished?</DialogTitle>
-                        <DialogDescription>
-                          This records your confirmation. It does not verify a
-                          website receipt or submit anything.
-                        </DialogDescription>
-                      </DialogHeader>
-                      {confirmationError && (
-                        <p role="alert">{confirmationError}</p>
-                      )}
-                      <DialogFooter>
-                        <DialogClose asChild>
-                          <Button variant="outline">Keep in progress</Button>
-                        </DialogClose>
-                        <Button
-                          disabled={busy}
-                          onClick={() =>
-                            void confirm({
-                              action: "finish",
+              <Collapsible>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline">Task options</Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="flex flex-col gap-3 pt-3">
+                  {history && <TaskHistory task={task} load={history} />}
+                  <div className="flex flex-wrap gap-2">
+                    <TaskCorrection task={task} act={act} busy={busy} />
+                    {!["completed", "cancelled"].includes(task.stage) && (
+                      <Dialog
+                        onOpenChange={(open) => {
+                          if (open) {
+                            setDeleting({
                               id: task.id,
-                              expectedRevision:
-                                deleting?.id === task.id
-                                  ? deleting.revision
-                                  : task.revision,
-                            })
+                              revision: task.revision,
+                            });
+                            setConfirmationError("");
                           }
+                        }}
+                      >
+                        <DialogTrigger asChild>
+                          <Button variant="outline">Mark finished</Button>
+                        </DialogTrigger>
+                        <DialogContent
+                          data-task-owner={task.id}
+                          className="max-h-[70vh] overflow-y-auto"
                         >
-                          Yes, mark finished
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                )}
-                {["completed", "cancelled"].includes(task.stage) && (
-                  <Button
-                    variant="outline"
-                    disabled={busy}
-                    onClick={() =>
-                      quiet({
-                        action: "reopen",
-                        id: task.id,
-                        expectedRevision: task.revision,
-                      })
-                    }
-                  >
-                    Reopen task
-                  </Button>
-                )}
-                <Button
-                  variant="ghost"
-                  disabled={busy}
-                  onClick={() =>
-                    quiet({
-                      action: "dismiss",
-                      id: task.id,
-                      expectedRevision: task.revision,
-                    })
-                  }
-                >
-                  Dismiss on these pages
-                </Button>
-                <Dialog
-                  onOpenChange={(open) => {
-                    if (open) {
-                      setDeleting({ id: task.id, revision: task.revision });
-                      setConfirmationError("");
-                    }
-                  }}
-                >
-                  <DialogTrigger asChild>
-                    <Button variant="ghost">Delete task</Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Delete this automatic task?</DialogTitle>
-                      <DialogDescription>
-                        Remove its progress and history. Minimal page markers
-                        prevent delayed observations from bringing it back.
-                        Clear browser-agent data to reset these markers.
-                      </DialogDescription>
-                    </DialogHeader>
-                    {confirmationError && (
-                      <p role="alert">{confirmationError}</p>
+                          <DialogHeader>
+                            <DialogTitle>Is this task finished?</DialogTitle>
+                            <DialogDescription>
+                              This records your confirmation. It does not verify
+                              a website receipt or submit anything.
+                            </DialogDescription>
+                          </DialogHeader>
+                          {confirmationError && (
+                            <p role="alert">{confirmationError}</p>
+                          )}
+                          <DialogFooter>
+                            <DialogClose asChild>
+                              <Button variant="outline">
+                                Keep in progress
+                              </Button>
+                            </DialogClose>
+                            <Button
+                              disabled={busy}
+                              onClick={() =>
+                                void confirm({
+                                  action: "finish",
+                                  id: task.id,
+                                  expectedRevision:
+                                    deleting?.id === task.id
+                                      ? deleting.revision
+                                      : task.revision,
+                                })
+                              }
+                            >
+                              Yes, mark finished
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     )}
-                    <DialogFooter>
-                      <DialogClose asChild>
-                        <Button variant="outline">Keep task</Button>
-                      </DialogClose>
+                    {["completed", "cancelled"].includes(task.stage) && (
                       <Button
+                        data-focus-after-finish
+                        variant="outline"
                         disabled={busy}
                         onClick={() =>
-                          void confirm({
-                            action: "delete",
+                          quiet({
+                            action: "reopen",
                             id: task.id,
-                            expectedRevision:
-                              deleting?.id === task.id
-                                ? deleting.revision
-                                : task.revision,
+                            expectedRevision: task.revision,
                           })
                         }
                       >
-                        Delete task and history
+                        Reopen task
                       </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </div>
+                    )}
+                    <Button
+                      variant="ghost"
+                      disabled={busy}
+                      onClick={() =>
+                        quiet({
+                          action: "dismiss",
+                          id: task.id,
+                          expectedRevision: task.revision,
+                        })
+                      }
+                    >
+                      Dismiss on these pages
+                    </Button>
+                    <Dialog
+                      onOpenChange={(open) => {
+                        if (open) {
+                          setDeleting({ id: task.id, revision: task.revision });
+                          setConfirmationError("");
+                        }
+                      }}
+                    >
+                      <DialogTrigger asChild>
+                        <Button variant="ghost">Delete task</Button>
+                      </DialogTrigger>
+                      <DialogContent
+                        data-task-owner={task.id}
+                        className="max-h-[70vh] overflow-y-auto"
+                      >
+                        <DialogHeader>
+                          <DialogTitle>Delete this automatic task?</DialogTitle>
+                          <DialogDescription>
+                            Remove its progress and history. Minimal page
+                            markers prevent delayed observations from bringing
+                            it back. Clear browser-agent data to reset these
+                            markers.
+                          </DialogDescription>
+                        </DialogHeader>
+                        {confirmationError && (
+                          <p role="alert">{confirmationError}</p>
+                        )}
+                        <DialogFooter>
+                          <DialogClose asChild>
+                            <Button variant="outline">Keep task</Button>
+                          </DialogClose>
+                          <Button
+                            disabled={busy}
+                            onClick={() =>
+                              void confirm({
+                                action: "delete",
+                                id: task.id,
+                                expectedRevision:
+                                  deleting?.id === task.id
+                                    ? deleting.revision
+                                    : task.revision,
+                              })
+                            }
+                          >
+                            Delete task and history
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
             </CardContent>
           </Card>
         );
       })}
+      {pending && (
+        <div className="flex flex-col gap-2">
+          <p>New updates are saved. They’ll appear when you leave this task.</p>
+          <Button variant="outline" onClick={release}>
+            Review saved updates
+          </Button>
+        </div>
+      )}
+      {data.tasks.length > 0 && settings}
     </section>
   );
 }

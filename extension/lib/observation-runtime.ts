@@ -17,6 +17,8 @@ import type {
 
 import {
   agentActionSchema,
+  agentHistorySchema,
+  historyRequestSchema,
   agentViewSchema,
 } from "../../src/features/agent/schema";
 import { startRecoveryRuntime } from "./recovery-runtime";
@@ -332,6 +334,17 @@ export function startObservationRuntime(appOrigin: string) {
     if (!state.pairing) throw new Error("Connect the browser first.");
     return agentViewSchema.parse(
       await post({ action: "tasks" }, state.pairing),
+    );
+  });
+  onMessage("agentTaskHistory", async ({ sender, data }) => {
+    companion(sender);
+    const state = await readAgent();
+    if (!state.pairing) throw new Error("Connect the browser first.");
+    return agentHistorySchema.parse(
+      await post(
+        { action: "task_history", request: historyRequestSchema.parse(data) },
+        state.pairing,
+      ),
     );
   });
   onMessage("agentTaskChange", async ({ sender, data }) => {

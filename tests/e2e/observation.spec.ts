@@ -3,7 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { test, appUrl, sourceUrl } from "./extension";
 import { DEFAULT_EXTENSION_ID } from "../../src/features/capture/config";
 import { createServer } from "node:http";
-import { pair, dashboard } from "./observation-journey";
+import { pair, dashboard, openDisclosure } from "./observation-journey";
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 const site = new URL(sourceUrl).origin;
@@ -72,6 +72,7 @@ test("@observation a full durable queue refuses extra updates and reports the lo
     ),
   ).toBe(100);
   await extension.context.setOffline(false);
+  await openDisclosure(companion, "Delivery details");
   await companion.getByRole("button", { name: "Retry connection" }).click();
   await expect(
     companion.getByText("0 updates waiting for the local app.", {
@@ -186,7 +187,9 @@ test("@observation real pairing, automatic private-field-safe updates, quiet deb
   });
   await expect
     .poll(async () => {
+      await openDisclosure(companion, "Delivery details");
       await companion.getByRole("button", { name: "Retry connection" }).click();
+      await openDisclosure(companion, "Delivery details");
       return companion.getByText(/Last delivered/).textContent();
     })
     .toContain("Last delivered");
@@ -240,6 +243,7 @@ test("@observation queue survives actual offline delivery and a full browser res
     .toBe(1);
   const companionAgain = await restarted.context.newPage();
   await companionAgain.goto(companionUrl);
+  await openDisclosure(companionAgain, "Delivery details");
   await expect(
     companionAgain.getByText("0 updates waiting for the local app.", {
       exact: true,
@@ -248,6 +252,7 @@ test("@observation queue survives actual offline delivery and a full browser res
   // Recover the same mounted companion, without clearing action errors or
   // relying on a tab reload to remove an outdated connection warning.
   await restarted.context.setOffline(true);
+  await openDisclosure(companionAgain, "Delivery details");
   await companionAgain
     .getByRole("button", { name: "Retry connection", exact: true })
     .click();
@@ -255,6 +260,7 @@ test("@observation queue survives actual offline delivery and a full browser res
     companionAgain.getByText(/Could not refresh ReEntry/),
   ).toBeVisible();
   await restarted.context.setOffline(false);
+  await openDisclosure(companionAgain, "Delivery details");
   await companionAgain
     .getByRole("button", { name: "Retry connection", exact: true })
     .click();
@@ -340,6 +346,7 @@ test("@observation pause, port scope, accessible companion and revocation preven
   });
   await source.waitForTimeout(2500);
   expect((await dashboard(app)).observations).toEqual([]);
+  await openDisclosure(companion, "Delivery details");
   await companion.getByRole("button", { name: "Retry connection" }).click();
   await expect(
     companion.getByRole("button", {
@@ -431,6 +438,7 @@ test("@observation failed extension writes do not acknowledge unsaved changes an
       "This update could not be saved.";
   });
   await source.waitForTimeout(2500);
+  await openDisclosure(companion, "Delivery details");
   await companion.getByRole("button", { name: "Retry connection" }).click();
   await expect(companion.getByRole("alert")).toContainText(
     "Browser storage failed",

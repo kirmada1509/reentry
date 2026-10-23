@@ -296,7 +296,7 @@ export default function Home() {
         </Badge>
         <div>
           <Button asChild>
-            <Link href="/observe">Try automatic observation</Link>
+            <Link href="/observe">Automatic tasks</Link>
           </Button>
           <Button variant="outline" asChild>
             <Link href="/preview">

@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 import type { Page, Worker } from "@playwright/test";
 import { expect } from "@playwright/test";
 import { test, appUrl, sourceUrl } from "./extension";
-import { pair } from "./observation-journey";
+import { pair, openDisclosure } from "./observation-journey";
 const headers = { "x-reentry-web": "1", origin: appUrl };
 async function tasks(page: Page) {
   return (
@@ -43,6 +43,7 @@ async function settle(page: Page) {
   });
 }
 async function settings(page: Page) {
+  await openDisclosure(page, "AI and reminder settings");
   await page
     .getByRole("button", { name: "Reminder settings", exact: true })
     .click();
@@ -359,6 +360,7 @@ test.describe("pregranted reminder API fixture", () => {
     expect(Object.keys(ledger as Record<string, number>)).toEqual(
       notificationIds,
     );
+    await openDisclosure(app, "Task options");
     await app
       .getByRole("button", { name: "Mark finished", exact: true })
       .click();

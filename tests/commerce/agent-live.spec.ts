@@ -1,7 +1,7 @@
 import { writeFile } from "node:fs/promises";
 import { expect } from "@playwright/test";
 import { test, appUrl } from "../e2e/extension";
-import { pair, dashboard } from "../e2e/observation-journey";
+import { pair, dashboard, openDisclosure } from "../e2e/observation-journey";
 
 test("@agent-live real NVIDIA groups upstream product research and cart with app tabs closed, then survives browser restart", async ({
   extension,
@@ -33,6 +33,7 @@ test("@agent-live real NVIDIA groups upstream product research and cart with app
   await companion
     .getByRole("button", { name: "Enable task understanding", exact: true })
     .click();
+  await openDisclosure(companion, "AI and reminder settings");
   await expect(
     companion.getByRole("button", {
       name: "Pause AI understanding",

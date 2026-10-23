@@ -14,7 +14,7 @@ import type {
   AgentTask,
   AgentView,
 } from "./schema";
-import { taskSchema } from "./schema";
+import { taskSchema, agentHistorySchema } from "./schema";
 import { sourceSpans } from "./prompt";
 import type { DecisionContext } from "./prompt";
 import {
@@ -77,6 +77,35 @@ export class TaskStore {
         body: string;
       }[]
     ).map((r) => taskSchema.parse(JSON.parse(r.body)));
+  }
+  history(id: string, expectedRevision: number) {
+    return this.db.transaction(() => {
+      const task = this.tasks().find((t) => t.id === id && !t.dismissed);
+      if (!task)
+        throw new AppError(
+          "TASK_UNAVAILABLE",
+          "This task is no longer available.",
+          404,
+        );
+      if (task.revision !== expectedRevision)
+        throw new AppError(
+          "TASK_CONFLICT",
+          "This task changed. Close history and review the latest task before opening it again.",
+          409,
+        );
+      const rows = this.db
+        .prepare(
+          "SELECT body FROM agent_task_history WHERE task_id=? ORDER BY revision DESC LIMIT 10",
+        )
+        .all(id) as { body: string }[];
+      return agentHistorySchema.parse({
+        taskId: id,
+        currentRevision: task.revision,
+        revisions: rows.length
+          ? rows.map((r) => taskSchema.parse(JSON.parse(r.body)))
+          : [task],
+      });
+    })();
   }
   event(id: string) {
     const row = this.db

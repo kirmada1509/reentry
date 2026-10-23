@@ -987,3 +987,95 @@ it("resumes a Phase 2 in-flight snapshot without losing its existing task after 
   expect(outcome?.state).toBe("accepted");
   expect(s.db.agent.tasks()).toMatchObject([{ id, revision: 2, progress: [] }]);
 });
+
+it("exposes ten actual immutable task revisions, rejects stale history and removes access after dismissal/deletion", async () => {
+  const s = setup();
+  s.enable();
+  const event = s.event();
+  s.add(event);
+  await createTaskHarness(
+    s.db.agent,
+    () => model(() => proposal(event)),
+    () => processing,
+    1000,
+  ).tick();
+  const id = s.db.agent.tasks()[0]!.id;
+  for (let n = 0; n < 12; n++) {
+    const task = s.db.agent.tasks()[0]!;
+    s.db.agent.action(
+      {
+        action: "correct",
+        id,
+        expectedRevision: task.revision,
+        goal: `My correction number ${n + 1}`,
+        finishCondition: task.finishCondition,
+        intent: "research",
+      },
+      processing,
+    );
+  }
+  const current = s.db.agent.tasks()[0]!;
+  const history = s.db.agent.history(id, current.revision);
+  expect(history.revisions.map((r) => r.revision)).toEqual([
+    13, 12, 11, 10, 9, 8, 7, 6, 5, 4,
+  ]);
+  expect(history.revisions[0]!.goal).toBe("My correction number 12");
+  expect(history.revisions[1]!.goal).toBe("My correction number 11");
+  expect(() => s.db.agent.history(id, 1)).toThrow("task changed");
+  s.db.agent.action(
+    { action: "dismiss", id, expectedRevision: current.revision },
+    processing,
+  );
+  expect(() => s.db.agent.history(id, current.revision + 1)).toThrow(
+    "no longer available",
+  );
+  s.db.agent.action(
+    { action: "delete", id, expectedRevision: current.revision + 1 },
+    processing,
+  );
+  expect(() => s.db.agent.history(id, current.revision + 2)).toThrow(
+    "no longer available",
+  );
+  expect(
+    s.db.db.prepare("SELECT * FROM agent_task_history WHERE task_id=?").all(id),
+  ).toEqual([]);
+});
+
+it("a full task library rejects another inferred task without evicting saved work, while correction remains usable", async () => {
+  const s = setup();
+  s.enable();
+  s.add(s.event());
+  const harness = createTaskHarness(
+    s.db.agent,
+    () => model((c) => proposal(c.current)),
+    () => processing,
+    1000,
+  );
+  await harness.tick();
+  const first = s.db.agent.tasks()[0]!;
+  const insert = s.db.db.prepare("INSERT INTO agent_tasks VALUES(?,?)");
+  for (let n = 1; n < 100; n++) {
+    const task = { ...first, id: randomUUID(), goal: `Saved task ${n}` };
+    insert.run(task.id, JSON.stringify(task));
+  }
+  const ids = s.db.agent.tasks().map((t) => t.id);
+  s.advance();
+  s.add(s.event("A different backpack to compare", "b".repeat(64)));
+  expect((await harness.tick())?.state).toBe("failed");
+  expect(s.db.agent.tasks().map((t) => t.id)).toEqual(ids);
+  s.db.agent.action(
+    {
+      action: "correct",
+      id: first.id,
+      expectedRevision: first.revision,
+      goal: "My existing task still accepts a correction",
+      intent: first.intent,
+      finishCondition: first.finishCondition,
+    },
+    processing,
+  );
+  expect(s.db.agent.tasks()).toHaveLength(100);
+  expect(s.db.agent.tasks()[0]!.goal).toBe(
+    "My existing task still accepts a correction",
+  );
+});

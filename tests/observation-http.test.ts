@@ -320,3 +320,77 @@ it("authenticates reminder delivery and validates local-only work links/settings
     local.close();
   }
 });
+
+it("keeps task history behind the existing origin/device boundary and rejects stale or malformed requests", async () => {
+  const filename = path.join(dir, "history.sqlite"),
+    app = "http://127.0.0.1:3000",
+    extension = "nabinfdlobegbkgehppcipkhbddjbdka";
+  vi.stubEnv("REENTRY_AGENT_DB", filename);
+  vi.stubEnv("REENTRY_APP_ORIGIN", app);
+  const local = new ObservationStore(filename);
+  try {
+    const pair = local.pair(local.challenge(), extension);
+    const id = randomUUID();
+    const task = {
+      id,
+      revision: 1,
+      origin: "https://example.com",
+      goal: "Finish the fictional application",
+      finishCondition: "Matching application receipt",
+      intent: "application",
+      stage: "ongoing",
+      nextAction: "Add the remaining referee",
+      evidence: [{ eventId: randomUUID(), quote: "Draft saved" }],
+      corrected: false,
+      dismissed: false,
+      updatedAt: new Date().toISOString(),
+      progress: [],
+    };
+    local.db
+      .prepare("INSERT INTO agent_tasks VALUES(?,?)")
+      .run(id, JSON.stringify(task));
+    local.db
+      .prepare("INSERT INTO agent_task_history VALUES(?,?,?)")
+      .run(id, 1, JSON.stringify(task));
+    const web = (query: string, origin = app) =>
+      new Request(app + "/api/agent/tasks" + query, {
+        headers: { host: "127.0.0.1:3000", origin, "x-reentry-web": "1" },
+      });
+    expect(
+      (await TASKS(web(`?id=${id}&revision=1`, "https://outside.example")))
+        .status,
+    ).toBe(403);
+    const response = await TASKS(web(`?id=${id}&revision=1`));
+    expect(response.status).toBe(200);
+    expect(response.headers.get("x-request-id")).toBeTruthy();
+    expect((await response.json()).revisions[0].goal).toBe(task.goal);
+    expect((await TASKS(web(`?id=${id}&revision=2`))).status).toBe(409);
+    expect((await TASKS(web(`?id=${id}&revision=1&id=${id}`))).status).toBe(
+      400,
+    );
+    expect((await TASKS(web(`?id=${id}&revision=1&extra=yes`))).status).toBe(
+      400,
+    );
+    const device = (token: string) =>
+      new Request(app + "/api/agent/device", {
+        method: "POST",
+        headers: {
+          host: "127.0.0.1:3000",
+          "content-type": "application/json",
+          "x-reentry-extension": extension,
+          "x-reentry-device": pair.deviceId,
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          action: "task_history",
+          request: { id, expectedRevision: 1 },
+        }),
+      });
+    expect((await DEVICE(device("f".repeat(64)))).status).toBe(401);
+    expect((await DEVICE(device(pair.token))).status).toBe(200);
+    local.db.prepare("DELETE FROM agent_tasks WHERE id=?").run(id);
+    expect((await TASKS(web(`?id=${id}&revision=1`))).status).toBe(404);
+  } finally {
+    local.close();
+  }
+});

@@ -34,7 +34,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         geist.variable,
       )}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col motion-reduce:**:animate-none! motion-reduce:**:transition-none!">
+        {children}
+      </body>
     </html>
   );
 }

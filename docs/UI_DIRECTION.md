@@ -1,8 +1,8 @@
 # ReEntry — calm visual and interaction direction
 
-Proposed October 22, 2026. Design brief for the automatic browser agent. This describes the intended next UI, not a redesign already implemented. Build order and gates: [BUILD_PLAN.md](BUILD_PLAN.md).
+Proposed October 22, 2026. Design brief for the automatic browser agent. This records the direction for the implemented automatic-agent interface and its remaining manual acceptance gates. Build order and gates: [BUILD_PLAN.md](BUILD_PLAN.md).
 
-October 23 update: the labelled Phase 0 [fictional preview](AGENT_FOUNDATION.md#try-the-interface) implements the home, companion and detail baseline with sourced Stone/Emerald tokens. Live agent bindings and the native companion remain later phases. This brief continues to define their intended behavior.
+October 23 update: the labelled Phase 0 [fictional preview](AGENT_FOUNDATION.md#try-the-interface) implements the home, companion and detail baseline with sourced Stone/Emerald tokens. Phases 1–5 now connect live records to the home and extension companion. [Phase 5 behavior and verification bounds](AGENT_CALM.md) describes the task-first hierarchy, disclosures, stable focused cards and reduced motion. This brief continues to define the interaction direction.
 
 ## Design intent
 
