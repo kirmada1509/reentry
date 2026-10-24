@@ -26,6 +26,7 @@ import { Label } from "@reentry/components/ui/label";
 import {
   companionStatusSchema,
   scopeSchema,
+  originSchema,
 } from "@reentry/features/observation/protocol";
 import type {
   CompanionStatus,
@@ -61,7 +62,14 @@ export default function CompanionPage() {
     pending,
   } = useAgentSurface();
   const [status, setStatus] = useState<CompanionStatus | null>(null);
-  const [origin, setOrigin] = useState("");
+  const [origin, setOrigin] = useState(() => {
+    const parsed = originSchema.safeParse(
+      new URL(location.href).searchParams.get("site"),
+    );
+    return parsed.success && parsed.data !== __REENTRY_APP_ORIGIN__
+      ? parsed.data
+      : "";
+  });
   const [allSites, setAllSites] = useState(false);
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState("");
@@ -382,8 +390,9 @@ export default function CompanionPage() {
                           excluded by the reader; ordinary page text may still
                           contain personal information. Only enable sites you
                           are comfortable recording. Return links also keep the
-                          page path locally, excluding query strings and
-                          fragments; paths can contain personal information.
+                          page path locally, plus the numeric assignment ID for
+                          Moodle assignments. Other query strings and fragments
+                          are excluded; paths can contain personal information.
                         </p>
                         <div className="flex items-start gap-2">
                           <Checkbox
@@ -467,6 +476,58 @@ export default function CompanionPage() {
             </Collapsible>
           </>
         )}
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost">Manual tools</Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="flex flex-col gap-3 pt-3">
+            <p>
+              Optional tools for selected excerpts and existing manual
+              checkpoints. Automatic tracking needs no selection or checkpoint
+              form.
+            </p>
+            <Button
+              variant="outline"
+              onClick={() => {
+                const value = new URL(location.href).searchParams.get("tab");
+                const tabId = Number(value);
+                if (!value || !Number.isSafeInteger(tabId) || tabId < 0) {
+                  setError(
+                    "Open ReEntry from the source page’s toolbar to capture a selected excerpt manually.",
+                  );
+                  return;
+                }
+                void sendMessage("startManualCapture", { tabId }).catch(() =>
+                  setError(
+                    "Could not open manual capture. Revisit the source page and try again.",
+                  ),
+                );
+              }}
+            >
+              Capture selected text (manual)
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() =>
+                void browser.tabs.create({
+                  url: browser.runtime.getURL("/capture.html") + "?manual=1",
+                })
+              }
+            >
+              Review manual captures
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() =>
+                void browser.tabs.create({
+                  url: `${__REENTRY_APP_ORIGIN__}/checkpoints`,
+                })
+              }
+            >
+              Manual checkpoints
+            </Button>
+          </CollapsibleContent>
+        </Collapsible>
         <Collapsible>
           <CollapsibleTrigger asChild>
             <Button variant="ghost">Privacy and connection details</Button>

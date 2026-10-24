@@ -397,9 +397,16 @@ export default function ScholarshipPortal() {
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button variant="outline" onClick={selectRequirements}>
-                      Select requirements for capture
-                    </Button>
+                    <Collapsible>
+                      <CollapsibleTrigger asChild>
+                        <Button variant="ghost">Manual tools</Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="pt-3">
+                        <Button variant="outline" onClick={selectRequirements}>
+                          Select requirements for capture
+                        </Button>
+                      </CollapsibleContent>
+                    </Collapsible>
                   </CardFooter>
                 </Card>
                 <Card>
@@ -713,8 +720,9 @@ export default function ScholarshipPortal() {
                   using the same browser profile and address.
                 </p>
                 <CardDescription>
-                  Need a place to pause? Save your draft, then capture the award
-                  requirements with ReEntry.
+                  Need a place to pause? Save your draft. With ReEntry
+                  observation and task understanding enabled, your progress is
+                  tracked automatically.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -745,9 +753,10 @@ export default function ScholarshipPortal() {
           </CollapsibleTrigger>
           <CollapsibleContent className="flex flex-col gap-4 p-4">
             <p>
-              Capture the requirements, save a checkpoint in ReEntry, then
-              change the source in a terminal and reload this page. The
-              application draft is retained.
+              Enable ReEntry observation and task understanding, then work on
+              this fictional application. Change the source and reload to see
+              updated requirements; your saved draft is retained. Manual capture
+              remains available under Manual tools.
             </p>
             <p>
               <code>pnpm sandbox:switch v2</code> changes one referee to two.{" "}

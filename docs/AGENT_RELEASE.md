@@ -1,5 +1,7 @@
 # Automatic-agent evaluation and demonstration
 
+This records the published v0.2.0 / agent-3.4 snapshot. Current main adds [automatic entry points and assignments](AGENT_ASSIGNMENTS.md), with separate agent-3.7 evidence in [TEST_RESULTS.md](TEST_RESULTS.md). The historical 25-step release results below are not a new 3.7 evaluation.
+
 Phase 6 technical record, October 24, 2026 (IST). ReEntry is a local single-user Chrome extension plus web app. It observes enabled pages and proposes tasks/progress; it does not click, submit forms or purchase. This record supplements the historical manual release in [RELEASE.md](RELEASE.md). Native acceptance, Learn reviews and contest submissions are separate gates.
 
 ## Reproduce the automatic journey
@@ -8,7 +10,7 @@ Phase 6 technical record, October 24, 2026 (IST). ReEntry is a local single-user
 2. Run `./start.sh`. Load `extension/.output/chrome-mv3` unpacked in Chrome and open http://127.0.0.1:3000/observe. Pair the extension, choose a site, then separately agree to automatic model processing. Reload the extension and refresh app tabs after rebuilding.
 3. Run `pnpm sandbox:sites` for Northstar and use its printed address. Save a fictional draft, put the task aside, switch with `pnpm sandbox:switch v2` and return to the application. Add the second referee, review and submit the fictional form. The saved draft and changed requirements should inform the next action. The external site owns the form state.
 4. For shopping, run `pnpm sandbox:commerce` and use its published demo credentials. Product research is tentative; cart activity establishes purchase intent. Validation failure and final review stay unfinished. A fresh matching sample-shop receipt can finish the task. No real order or payment occurs.
-5. Use **Why this task?** for source quotes, **Task options** for correction/history/finish, and **AI and reminder settings** for processing and opt-in reminders. Automatic history is read-only. The original manual checkpoint editor/restore flow stays under **Saved checkpoints**.
+5. Use **Why this task?** for source quotes, **Task options** for correction/history/finish, and **AI and reminder settings** for processing and opt-in reminders. Automatic history is read-only. The original manual checkpoint editor/restore flow now stays under **Manual tools → Manual checkpoints**. See the [entry-point and assignment update](AGENT_ASSIGNMENTS.md).
 
 ## Evaluation protocol
 

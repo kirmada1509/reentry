@@ -20,13 +20,25 @@ for (const endpoint of ["live", "ready"]) {
   const body = await response.json();
   assert.equal(body.status, endpoint === "live" ? "ok" : "ready");
 }
+const home = await fetch(base, {
+  redirect: "manual",
+  signal: AbortSignal.timeout(20000),
+});
+assert.equal(home.status, 307);
+assert.equal(new URL(home.headers.get("location"), base).pathname, "/observe");
 const page = await fetch(base, { signal: AbortSignal.timeout(20000) });
 assert.equal(page.status, 200);
-assert.match(await page.text(), /Find your way back/);
+assert.equal(new URL(page.url).pathname, "/observe");
+assert.match(await page.text(), /Welcome back/);
+const manual = await fetch(base + "/checkpoints", {
+  signal: AbortSignal.timeout(20000),
+});
+assert.equal(manual.status, 200);
+assert.match(await manual.text(), /Find your way back/);
 const missing = await fetch(base + "/missing-reentry-smoke", {
   signal: AbortSignal.timeout(10000),
 });
 assert.equal(missing.status, 404);
 console.log(
-  "HTTP smoke passed: ReEntry page, liveness, readiness, correlation IDs, and missing route.",
+  "HTTP smoke passed: automatic home redirect, companion, manual checkpoints, health, correlation IDs and missing route.",
 );

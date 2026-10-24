@@ -75,7 +75,7 @@ test("@resilience edits, recovers a draft after refresh, restores and deletes wi
       exact: true,
     }),
   ).toContainText("unavailable");
-  await page.goto(appUrl);
+  await page.goto(`${appUrl}/checkpoints`);
   await expect(
     page.getByRole("heading", { name: "Your saved tasks (0)" }),
   ).toBeVisible();
@@ -334,7 +334,9 @@ test("@resilience unavailable app leaves a confirmed capture for explicit retry"
 }) => {
   const { context, worker } = extension;
   const { preview } = await captureSelection(context);
-  await context.route(`${appUrl}/?capture=*`, (route) => route.abort());
+  await context.route(`${appUrl}/checkpoints?capture=*`, (route) =>
+    route.abort(),
+  );
   const opening = context.waitForEvent("page");
   await preview
     .getByRole("button", {
@@ -354,7 +356,7 @@ test("@resilience unavailable app leaves a confirmed capture for explicit retry"
     )
     .toEqual([expect.objectContaining({ status: "confirmed" })]);
   await failed.close();
-  await context.unroute(`${appUrl}/?capture=*`);
+  await context.unroute(`${appUrl}/checkpoints?capture=*`);
   const retry = context.waitForEvent("page");
   await preview
     .getByRole("button", { name: "Open ReEntry again", exact: true })
@@ -378,7 +380,7 @@ test("@resilience delete-all can clear pending captures before the first checkpo
   const { context, worker } = extension;
   await captureSelection(context);
   const app = await context.newPage();
-  await app.goto(appUrl);
+  await app.goto(`${appUrl}/checkpoints`);
   await expect(
     app.getByRole("heading", { name: "Your saved tasks (0)" }),
   ).toBeVisible();

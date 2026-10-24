@@ -28,7 +28,7 @@ Phase 3 adds a fictional final review, validation failures and browser-local sub
 
 1. Choose **Start application draft**. A fictional applicant profile is provided. Enter a short personal statement and choose **Attach sample transcript**. This changes a local demo flag; it does not read or upload a real PDF.
 2. Choose **Save application draft**. Wait for the saved message. The preparation checklist reflects the current fields; changes remain unsaved until this action succeeds.
-3. Choose **View award requirements**, then **Select requirements for capture**, or select the requirement paragraph yourself. Invoke the real ReEntry extension and confirm the capture.
+3. For the optional manual workflow, choose **View award requirements**, expand **Manual tools**, then **Select requirements for capture**, or select the requirement paragraph yourself. Invoke the real ReEntry extension and confirm the capture.
 4. In ReEntry, save a goal such as “Finish the Northstar application,” progress such as “Sample transcript attached; personal statement drafted,” and the portal's **application.html** address as the work link. The exact work link appears under the portal's **Demo setup and reset** disclosure. ReEntry does not inspect the application fields.
 5. Close the application tab to represent an interruption. In another terminal run:
 

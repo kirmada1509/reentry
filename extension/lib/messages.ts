@@ -18,6 +18,7 @@ interface Protocol {
     expectedRevision: number;
   }): AgentHistory;
   agentTaskChange(data: AgentAction): AgentView;
+  startManualCapture(data: { tabId: number }): void;
   pending(): PendingCapture[];
   confirm(data: { id: string }): void;
   discard(data: { id: string }): void;

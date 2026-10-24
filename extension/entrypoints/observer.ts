@@ -1,3 +1,4 @@
+import { pageIdentity } from "../../src/features/observation/page-identity";
 import { defineUnlistedScript } from "wxt/utils/define-unlisted-script";
 import { browser } from "wxt/browser";
 import { sendMessage } from "../lib/messages";
@@ -100,7 +101,7 @@ export default defineUnlistedScript(() => {
       const currentUrl = location.href;
       const page = {
         ...(await readObservedPage()),
-        pageKey: await digest(location.pathname),
+        pageKey: await digest(pageIdentity(new URL(location.href))),
         fields: fields(),
       };
       // Navigation in the middle of extraction must not attach stale evidence.

@@ -198,3 +198,11 @@ This checklist tracks actual project work. It is not the formal Learn `devpost/c
 When tests exist, save real outcomes in `docs/TEST_RESULTS.md`: phase, commit, commands, automated/manual results, evidence links, and limitations. Keep the next action in [WORK.md](WORK.md). Capture/source/recovery/resilience/accessibility cases, static/MSW sandboxes, production browser acceptance and explicit live-model evaluation are runnable. Never tick a box because a file merely exists or a mock produced the desired answer.
 
 Native Chrome/VoiceOver, real 200% text/400% browser zoom, personal attestations and final submission remain pending. Automated checks do not substitute for them.
+
+## October 24 — Automatic entry points and assignments
+
+- [x] Make the app root and toolbar open the automatic companion; preserve manual data under explicit Manual tools.
+- [x] Infer pending assignments, track draft versus submission, and preserve safe per-assignment return identity.
+- [x] Add host completion/identity/restart tests and an actual-extension assignment journey with a deterministic model.
+- [x] Pass full regression, final affected journeys, commerce, checks and real-provider development evaluations; retain earlier failures and record factual results.
+- [x] Restore the default local web/extension build and pass HTTP smoke for the automatic home and preserved manual library.

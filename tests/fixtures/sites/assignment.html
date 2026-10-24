@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Fictional campus · Lab Assignment 1</title>
+  </head>
+  <body>
+    <header><p>Fictional campus · ReEntry test equipment</p></header>
+    <main id="region-main">
+      <h1>Lab Assignment 1</h1>
+      <p>Fictional data science course. No real coursework is submitted.</p>
+      <p>
+        Submit a folder containing a self-created dataset with 100 data points
+        and 5 dimensions. Refer to the assignment email for further
+        instructions.
+      </p>
+      <p>Due: Sunday, 25 October 2026, 11:59 PM (fictional deadline).</p>
+      <h2>Submission status</h2>
+      <table>
+        <tbody>
+          <tr>
+            <th scope="row">Submission status</th>
+            <td id="status">No submissions have been made yet</td>
+          </tr>
+          <tr>
+            <th scope="row">Grading status</th>
+            <td>Not graded</td>
+          </tr>
+        </tbody>
+      </table>
+      <button id="save">Save fictional draft</button>
+      <button id="submit" disabled>Submit fictional assignment</button>
+    </main>
+    <script>
+      const status = document.querySelector("#status");
+      document.querySelector("#save").onclick = () => {
+        status.textContent = "Draft (not submitted)";
+        document.querySelector("#submit").disabled = false;
+      };
+      document.querySelector("#submit").onclick = () => {
+        status.textContent = "Submitted for grading";
+        document.querySelector("#submit").disabled = true;
+        document.querySelector("#save").disabled = true;
+      };
+    </script>
+  </body>
+</html>

@@ -1,4 +1,5 @@
 import "server-only";
+import { pageIdentity } from "../observation/page-identity";
 import { createHash } from "node:crypto";
 import type Database from "better-sqlite3";
 import { AppError } from "@/lib/http/errors";
@@ -7,6 +8,7 @@ import type { ObservationEvent } from "../observation/protocol";
 import type { AgentTask } from "./schema";
 import {
   defaultReminderPolicy,
+  workLink,
   localTime,
   reminderPolicySchema,
 } from "./recovery-schema";
@@ -171,7 +173,7 @@ export class RecoveryStore {
             returnedAt: r.returned_at
               ? new Date(r.returned_at).toISOString()
               : null,
-            url: r.url,
+            url: r.url ? workLink(r.url) : null,
             muted: Boolean(r.muted),
             snoozedUntil:
               r.snoozed_until && r.snoozed_until > this.now()
@@ -243,7 +245,9 @@ export class RecoveryStore {
         const url = new URL(input.current.url);
         if (!scopeAllows(session.scope, url.origin, ""))
           throw new AppError("SITE_DENIED", "This site is not enabled.", 403);
-        const key = createHash("sha256").update(url.pathname).digest("hex");
+        const key = createHash("sha256")
+          .update(pageIdentity(url))
+          .digest("hex");
         if (key !== input.current.pageKey)
           throw new AppError("PAGE_MISMATCH", "Refresh the current page.", 400);
         const captured = Date.parse(input.observedAt);

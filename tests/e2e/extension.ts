@@ -129,7 +129,7 @@ export async function captureSelection(
   return { page, preview, text };
 }
 
-export async function invokeCapture(context: BrowserContext, page: Page) {
+export async function invokeToolbar(context: BrowserContext, page: Page) {
   const browserSession = await context.browser()!.newBrowserCDPSession();
   // Identify this fixture tab even when several checks share one stable URL.
   // Restore its real title before the actual extension action captures it.
@@ -166,9 +166,28 @@ export async function invokeCapture(context: BrowserContext, page: Page) {
     }),
   ]);
   await preview.waitForURL(
-    `chrome-extension://${DEFAULT_EXTENSION_ID}/capture.html?*`,
+    /chrome-extension:\/\/[^/]+\/(?:capture|companion)\.html\?/,
   );
   await browserSession.detach();
+  return preview;
+}
+
+export async function invokeCapture(context: BrowserContext, page: Page) {
+  const companion = await invokeToolbar(context, page);
+  if (new URL(companion.url()).pathname === "/capture.html") return companion;
+  await companion
+    .getByRole("button", { name: "Manual tools", exact: true })
+    .click();
+  const opened = context.waitForEvent("page");
+  await companion
+    .getByRole("button", {
+      name: "Capture selected text (manual)",
+      exact: true,
+    })
+    .click();
+  const preview = await opened;
+  await preview.waitForURL(/capture\.html\?manual=1/);
+  await companion.close();
   return preview;
 }
 
@@ -178,7 +197,7 @@ export async function confirmPreview(context: BrowserContext, preview: Page) {
     .getByRole("button", { name: "Confirm capture and open ReEntry" })
     .click();
   const app = await created;
-  await app.waitForURL(`${appUrl}/?capture=*`);
+  await app.waitForURL(`${appUrl}/checkpoints?capture=*`);
   await expect(
     app.getByRole("heading", { name: "Save a checkpoint", exact: true }),
   ).toBeVisible();

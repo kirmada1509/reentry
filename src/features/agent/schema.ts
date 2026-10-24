@@ -9,7 +9,7 @@ export const evidenceSchema = z.strictObject({
 export const taskDescriptionSchema = z.strictObject({
   goal: z.string().trim().min(3).max(160),
   finishCondition: z.string().trim().min(3).max(240),
-  intent: z.enum(["research", "purchase", "application"]),
+  intent: z.enum(["research", "purchase", "application", "assignment", "work"]),
 });
 export const checkpointKindSchema = z.enum([
   "research",
@@ -52,6 +52,10 @@ export const taskSchema = taskDescriptionSchema.extend({
   updatedAt: z.iso.datetime(),
   progress: z.array(progressSchema).max(12).default([]),
   subject: z.string().trim().min(3).max(100).optional(),
+  resourceKey: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/)
+    .optional(),
   completedBy: z.enum(["observation", "user"]).optional(),
 });
 export type AgentTask = z.infer<typeof taskSchema>;

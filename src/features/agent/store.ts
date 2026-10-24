@@ -24,6 +24,7 @@ import {
   normalizeSubject,
   blockingFailure,
   finalReview,
+  assignmentStatus,
 } from "./progress";
 
 import { RecoveryStore } from "./recovery-store";
@@ -175,10 +176,24 @@ export class TaskStore {
           .run();
   }
   enqueue(event: ObservationEvent, requestId: string = randomUUID()) {
-    if (affirmativeReceipt(event.page.content))
+    if (
+      affirmativeReceipt(event.page.content) ||
+      assignmentStatus(event.page.content) === "submitted"
+    )
       this.db
         .prepare("INSERT OR IGNORE INTO agent_seen_receipts VALUES(?,?)")
         .run(this.receiptDigest(event), Date.parse(event.observedAt));
+    // First-seen submitted assignments are not unfinished work. Do not ask the
+    // model to invent an obligation or completion target where none exists.
+    if (
+      assignmentStatus(event.page.content) === "submitted" &&
+      !this.tasks().some(
+        (t) =>
+          t.origin === event.page.origin &&
+          t.resourceKey === event.page.pageKey,
+      )
+    )
+      return;
     if (
       !this.allowed(event) ||
       this.db
@@ -300,7 +315,11 @@ export class TaskStore {
             current: event.eventId,
             version: this.settings().version,
             tasks: this.tasks()
-              .filter((t) => t.origin === event.page.origin)
+              .filter(
+                (t) =>
+                  t.origin === event.page.origin &&
+                  (!t.resourceKey || t.resourceKey === event.page.pageKey),
+              )
               .slice(-8),
             history: [] as string[],
             toolResults: [] as DecisionContext["toolResults"],
@@ -420,11 +439,29 @@ export class TaskStore {
       if (decision.tool !== "upsert_task" && decision.tool !== "complete_task")
         throw new Error("Not an effect.");
       const old = context.tasks.find((t) => t.id === decision.taskId);
+      if (old?.resourceKey && old.resourceKey !== context.current.page.pageKey)
+        throw new Error("Assignment identity does not match this page.");
+      if (decision.taskId && !old) throw new Error("Unknown task target.");
+      if (
+        !old &&
+        decision.tool === "upsert_task" &&
+        decision.intent === "assignment" &&
+        this.tasks().some(
+          (t) =>
+            t.resourceKey === context.current.page.pageKey &&
+            t.origin === context.current.page.origin,
+        )
+      )
+        throw new Error("Use the existing assignment task.");
       if (old?.dismissed) {
         this.finish(id, "stale");
         return "stale";
       }
-      if (!old && affirmativeReceipt(context.current.page.content)) {
+      if (
+        !old &&
+        (affirmativeReceipt(context.current.page.content) ||
+          assignmentStatus(context.current.page.content) === "submitted")
+      ) {
         this.finish(id, "ignored");
         return "ignored";
       }
@@ -506,15 +543,20 @@ export class TaskStore {
             Boolean(seen && seen.first_seen < Date.parse(event.observedAt)),
           ) ||
           !decision.evidence.some(
-            (e) => e.eventId === event.eventId && affirmativeReceipt(e.quote),
+            (e) =>
+              e.eventId === event.eventId &&
+              affirmativeReceipt(e.quote, old.intent === "assignment"),
           )
         )
           throw new Error("Completion evidence is not fresh and task-matched.");
         const progress = [...old.progress];
         if (anchor && !progress.some((p) => p.eventId === anchor.eventId))
           progress.push({
-            kind: "review_ready",
-            summary: "Final review recovered from recent page evidence.",
+            kind: old.intent === "assignment" ? "editing" : "review_ready",
+            summary:
+              old.intent === "assignment"
+                ? "Pending submission recovered from recent page evidence."
+                : "Final review recovered from recent page evidence.",
             eventId: anchor.eventId,
             observedAt: anchor.observedAt,
             streamId: anchor.streamId,
@@ -602,7 +644,11 @@ export class TaskStore {
           finishCondition: old?.corrected
             ? old.finishCondition
             : decision.finishCondition,
-          intent: old?.corrected ? old.intent : decision.intent,
+          intent:
+            old?.corrected || old?.resourceKey ? old.intent : decision.intent,
+          resourceKey:
+            old?.resourceKey ??
+            (decision.intent === "assignment" ? event.page.pageKey : undefined),
           corrected: old?.corrected ?? false,
           stage:
             checkpoint?.kind === "cancelled" ? "cancelled" : decision.stage,

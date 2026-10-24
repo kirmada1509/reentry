@@ -133,11 +133,16 @@ export default function ObservePage() {
             : "Browser connected · site access enabled";
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 p-6 wrap-anywhere">
-      <nav className="flex flex-wrap gap-2" aria-label="ReEntry">
-        <Button variant="ghost" asChild>
-          <Link href="/">Saved checkpoints</Link>
-        </Button>
-      </nav>
+      <Collapsible>
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost">Manual tools</Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="pt-3">
+          <Button variant="outline" asChild>
+            <Link href="/checkpoints">Manual checkpoints</Link>
+          </Button>
+        </CollapsibleContent>
+      </Collapsible>
       <header className="flex flex-col gap-2">
         {cloneElement(TypographyH1(), {}, "Welcome back.")}
         {cloneElement(

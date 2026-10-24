@@ -36,7 +36,7 @@ export default defineConfig({
     optional_permissions: ["notifications", "idle"],
     optional_host_permissions: ["http://*/*", "https://*/*"],
     side_panel: { default_path: "companion.html" },
-    action: { default_title: "Capture selection with ReEntry" },
+    action: { default_title: "Open ReEntry companion" },
     commands: {
       "open-companion": {
         suggested_key: { default: "Ctrl+Shift+U", mac: "Command+Shift+U" },
@@ -44,7 +44,7 @@ export default defineConfig({
       },
       _execute_action: {
         suggested_key: { default: "Ctrl+Shift+Y", mac: "Command+Shift+Y" },
-        description: "Capture selected instruction text",
+        description: "Open ReEntry companion",
       },
     },
     externally_connectable: {

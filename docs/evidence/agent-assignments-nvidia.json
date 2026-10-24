@@ -1,0 +1,82 @@
+{
+  "synthetic": true,
+  "createdAt": "2026-10-24T17:00:47.441Z",
+  "description": "Development trials, not a blind hold-out. No private campus page was read. Raw reports stay ignored locally; every trial is retained. The trial-2 assignment scorer initially counted a failed first-seen receipt as passing because no task was added; verifiedPassed corrects that denominator without rewriting its raw report. The revised runner requires an accepted/ignored outcome or an explicitly planned host-ignore. Current agent-3.7 results are the final assignment and progress trials; the full earlier 25-step release cohort has not been rerun for 3.7.",
+  "trials": [
+    {
+      "report": ".runtime/assignment-evaluation-1.json",
+      "sha256": "fa0130144933e01ca1ee93ff0eecea3f9c892d7ec1b56be067c53115fe954dc9",
+      "promptVersion": "agent-3.5",
+      "provider": "nvidia",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "steps": 5,
+      "rawScorerPassed": 5,
+      "verifiedPassed": 5,
+      "acceptedJobs": 4,
+      "ignoredJobs": 1,
+      "hostIgnored": 0,
+      "failedJobs": 0,
+      "modelResponses": 5
+    },
+    {
+      "report": ".runtime/assignment-evaluation-2.json",
+      "sha256": "40c0a23f0fb729ecd32be7e7f6f730a69a97dfc96e429c9d124d60e4526faeb0",
+      "promptVersion": "agent-3.6",
+      "provider": "nvidia",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "steps": 5,
+      "rawScorerPassed": 5,
+      "verifiedPassed": 4,
+      "acceptedJobs": 4,
+      "ignoredJobs": 0,
+      "hostIgnored": 0,
+      "failedJobs": 1,
+      "modelResponses": 5
+    },
+    {
+      "report": ".runtime/assignment-evaluation-3.json",
+      "sha256": "e277c859b960867515bddc119905ab479a2877ad36c7e13dad111af1272a1e0f",
+      "promptVersion": "agent-3.7",
+      "provider": "nvidia",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "steps": 5,
+      "rawScorerPassed": 5,
+      "verifiedPassed": 5,
+      "acceptedJobs": 4,
+      "ignoredJobs": 0,
+      "hostIgnored": 1,
+      "failedJobs": 0,
+      "modelResponses": 4
+    },
+    {
+      "report": ".runtime/assignment-progress-regression-1.json",
+      "sha256": "cf7b59b35f6f5a1fde986a63f8e3eaafeeaf7998ff9f0f1b60bd6b82b7652f12",
+      "promptVersion": "agent-3.6",
+      "provider": "nvidia",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "steps": 9,
+      "rawScorerPassed": 4,
+      "verifiedPassed": 4,
+      "acceptedJobs": 7,
+      "ignoredJobs": 1,
+      "hostIgnored": 0,
+      "failedJobs": 1,
+      "modelResponses": 9
+    },
+    {
+      "report": ".runtime/assignment-progress-regression-2.json",
+      "sha256": "6f0f579d1afcc11d198445b5c978739515b5d66540aab0bba438d8783546cd3f",
+      "promptVersion": "agent-3.7",
+      "provider": "nvidia",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b",
+      "steps": 9,
+      "rawScorerPassed": 9,
+      "verifiedPassed": 9,
+      "acceptedJobs": 8,
+      "ignoredJobs": 1,
+      "hostIgnored": 0,
+      "failedJobs": 0,
+      "modelResponses": 9
+    }
+  ]
+}

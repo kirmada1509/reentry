@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw/http";
 import { sourceSpans } from "../../src/features/agent/prompt";
 import type { DecisionContext } from "../../src/features/agent/prompt";
 import { delay } from "msw";
+import { assignmentStatus } from "../../src/features/agent/progress";
 export const MOCK_MODEL = "reentry-test";
 export const MOCK_DIGEST = "synthetic-model-digest-not-a-real-model";
 export const modelHandlers = [
@@ -23,6 +24,58 @@ export const modelHandlers = [
       if (c.page.content.includes("fake-unavailable"))
         return new HttpResponse(null, { status: 503 });
       if (c.page.content.includes("fake-delay")) await delay(1500);
+      if (c.page.title === "Fictional campus · Lab Assignment 1") {
+        // Deterministic test transport, never used as production interpretation.
+        const status = assignmentStatus(c.page.content);
+        const task = agentContext.tasks[0];
+        const anchor = agentContext.completionAnchors?.find(
+          (a) => a.taskId === task?.id,
+        );
+        const receipt = sourceSpans(agentContext).find(
+          (s) =>
+            s.eventId === c.eventId &&
+            s.quote.includes("Submitted for grading"),
+        );
+        const decision =
+          status === "submitted"
+            ? task && anchor && receipt
+              ? {
+                  tool: "complete_task",
+                  taskId: task.id,
+                  anchorEventId: anchor.eventId,
+                  receiptSubject: "Lab Assignment 1",
+                  evidenceRefs: [receipt.id],
+                }
+              : { tool: "ignore" }
+            : {
+                tool: "upsert_task",
+                taskId: task?.id ?? null,
+                goal: "Submit Lab Assignment 1",
+                subject: "Lab Assignment 1",
+                intent: "assignment",
+                stage: "ongoing",
+                finishCondition:
+                  "The same assignment shows Submitted for grading",
+                nextAction:
+                  status === "draft"
+                    ? "Review the saved draft and submit the assignment"
+                    : "Review the referenced assignment email, then prepare the dataset",
+                checkpoint: {
+                  kind: status === "draft" ? "draft_saved" : "editing",
+                  summary:
+                    status === "draft"
+                      ? "Draft saved; not submitted"
+                      : "No submission has been made",
+                },
+                evidenceRefs: ["current:0"],
+              };
+        return HttpResponse.json({
+          model: body.model,
+          done: true,
+          done_reason: "stop",
+          message: { role: "assistant", content: JSON.stringify(decision) },
+        });
+      }
       let decision: unknown = { tool: "inspect_history" };
       if (agentContext.toolResults.length) {
         const application = /application|scholarship/i.test(

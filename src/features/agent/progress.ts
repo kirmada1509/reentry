@@ -29,11 +29,44 @@ export const finalReview = (event: ObservationEvent, subject: string) =>
 // Conservative English success gate in addition to the model's interpretation.
 // Page evidence remains untrusted: this is observed success, not a server receipt
 // signature or proof that payment/application processing actually succeeded.
-export function affirmativeReceipt(text: string) {
+export function assignmentStatus(
+  text: string,
+): "pending" | "draft" | "submitted" | null {
+  // Page Controller serializes table cells on adjacent lines with DOM tags.
+  // A standalone success phrase in the instructions is not a submission status.
+  const plain = text
+    .replace(/\[\d+\]/g, "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/\s+/g, " ");
+  const values = [
+    ...plain.matchAll(
+      /\bSubmission status\s*[:|]?\s*(No submissions have been made yet|Draft \(not submitted\)|Submitted for grading)(?=\s|$|[.|])/gi,
+    ),
+  ].map((m) =>
+    /^No /i.test(m[1]!)
+      ? "pending"
+      : /^Draft/i.test(m[1]!)
+        ? "draft"
+        : "submitted",
+  );
+  return values.length === 1 ? values[0]! : null;
+}
+export function assignmentAnchor(task: AgentTask, event: ObservationEvent) {
   return (
-    /thank you for your order|your order (?:has been |was )?(?:confirmed|placed|dispatched)|order confirmed|application (?:has been |was )?(?:successfully )?(?:submitted|received)|submission (?:confirmed|successful)/i.test(
-      text,
-    ) &&
+    task.intent === "assignment" &&
+    Boolean(task.subject) &&
+    task.resourceKey === event.page.pageKey &&
+    hasSubject(event.page.content, task.subject!) &&
+    ["pending", "draft"].includes(assignmentStatus(event.page.content) ?? "")
+  );
+}
+export function affirmativeReceipt(text: string, assignment = false) {
+  return (
+    (assignment
+      ? /\bsubmitted for grading\b/i.test(text)
+      : /thank you for your order|your order (?:has been |was )?(?:confirmed|placed|dispatched)|order confirmed|application (?:has been |was )?(?:successfully )?(?:submitted|received)|submission (?:confirmed|successful)/i.test(
+          text,
+        )) &&
     !/\b(?:no application submitted|no order confirmation|not yet submitted|not received|failed|failure|declined|cancelled|canceled|not submitted|not confirmed|unverified|example receipt|historical receipt|previous order)\b/i.test(
       text,
     )
@@ -56,13 +89,15 @@ export function completionAllowed(
   if (
     !anchor ||
     !task.subject ||
-    (!checkpoint && !finalReview(anchor, task.subject)) ||
+    (task.intent === "assignment"
+      ? !assignmentAnchor(task, anchor)
+      : !checkpoint && !finalReview(anchor, task.subject)) ||
     blockingFailure(anchor.page.content) ||
     (checkpoint?.kind === "submit_attempt" &&
       anchor.reason !== "submit-attempt") ||
     task.corrected ||
     task.dismissed ||
-    task.intent === "research" ||
+    ["research", "work"].includes(task.intent) ||
     ["completed", "cancelled"].includes(task.stage) ||
     !current.streamId ||
     current.streamId !== anchor.streamId ||
@@ -74,7 +109,11 @@ export function completionAllowed(
     Date.parse(current.observedAt) - Date.parse(anchor.observedAt) >
       1_800_000 ||
     seenBefore ||
-    !affirmativeReceipt(current.page.content) ||
+    (task.intent === "assignment"
+      ? assignmentStatus(current.page.content) !== "submitted" ||
+        task.resourceKey !== current.page.pageKey ||
+        !hasSubject(current.page.content, task.subject)
+      : !affirmativeReceipt(current.page.content)) ||
     !hasSubject(anchor.page.content, task.subject)
   )
     return false;

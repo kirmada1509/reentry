@@ -50,7 +50,7 @@ test("@a11y empty library, extension preview, capture form, editor, history and 
   extension,
 }, info) => {
   const app = await extension.context.newPage();
-  await app.goto(appUrl);
+  await app.goto(`${appUrl}/checkpoints`);
   await expect(app.locator("body")).toHaveCSS("font-family", /Geist/);
   await accessible(app);
   const { preview } = await captureSelection(extension.context);

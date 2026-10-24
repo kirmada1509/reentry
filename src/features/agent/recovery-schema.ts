@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { pageIdentity } from "../observation/page-identity";
 
 // Work links never enter model context. Keep only a browser-validated origin/path.
 export function workLink(value: string): string | null {
@@ -6,7 +7,7 @@ export function workLink(value: string): string | null {
     const url = new URL(value);
     if (!/^https?:$/.test(url.protocol) || url.username || url.password)
       return null;
-    return `${url.origin}${url.pathname}`;
+    return `${url.origin}${pageIdentity(url)}`;
   } catch {
     return null;
   }

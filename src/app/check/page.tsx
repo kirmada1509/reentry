@@ -230,7 +230,7 @@ export default function CheckPage() {
           meaning of a requirement.
         </p>
         <Button asChild variant="outline">
-          <Link href="/">Return to saved tasks</Link>
+          <Link href="/checkpoints">Return to saved tasks</Link>
         </Button>
       </header>
       <p role="status" aria-live="polite">

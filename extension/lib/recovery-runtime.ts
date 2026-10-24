@@ -1,3 +1,4 @@
+import { pageIdentity } from "../../src/features/observation/page-identity";
 import { z } from "zod";
 import { browser } from "wxt/browser";
 import type { AgentState } from "./observation-state";
@@ -60,7 +61,7 @@ export function startRecoveryRuntime(options: {
       new Uint8Array(
         await crypto.subtle.digest(
           "SHA-256",
-          new TextEncoder().encode(new URL(url).pathname),
+          new TextEncoder().encode(pageIdentity(new URL(url))),
         ),
       ),
     )

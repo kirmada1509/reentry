@@ -141,6 +141,7 @@ test("@portal accessible application, draft failures, requirement change and exp
     "Supply one referee.",
   );
   await accessible(page);
+  await page.getByRole("button", { name: "Manual tools", exact: true }).click();
   await page
     .getByRole("button", {
       name: "Select requirements for capture",

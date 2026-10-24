@@ -107,7 +107,7 @@ test("@capture missing selection and declined preview create no task", async ({
     ),
   ).toEqual([]);
   const app = await context.newPage();
-  await app.goto(appUrl);
+  await app.goto(`${appUrl}/checkpoints`);
   await expect(
     app.getByRole("heading", { name: "Your saved tasks (0)" }),
   ).toBeVisible();

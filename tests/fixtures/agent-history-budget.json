@@ -1,0 +1,179 @@
+{
+  "synthetic": true,
+  "note": "Captured fictional Northstar receipt and history. Adding assignment guidance exceeded the unchanged 32 KB input limit in this existing journey; compact guidance preserves its citations and completion anchor.",
+  "context": {
+    "current": {
+      "version": 1,
+      "eventId": "b04adb3e-dc28-4632-a272-762d897a8f79",
+      "sessionId": "b4abb82c-4eb3-42a1-9895-3a4e1c01e1a5",
+      "deviceId": "21655574-2b24-4efe-a3d8-c5308f8f2fa0",
+      "streamId": "c13ec74f-f7f9-45db-af15-16c32c52204c",
+      "observedAt": "2026-10-24T16:39:09.373Z",
+      "reason": "page-change",
+      "page": {
+        "origin": "http://127.0.0.1:58306",
+        "title": "Your application \u00b7 Fictional Northstar demo",
+        "content": "Northstar Foundation\nOpportunity programme \u00b7 Applicant portal\nFictional demo\n2026 / 27\nA demonstration you can safely explore\nFictional award, applicant and requirements. Nothing is submitted and no real documents are uploaded. Use sample information only.\nEducation opens the next door.\nYour Northstar Opportunity Award application\nMake a little progress, save your draft, and come back when you\u2019re ready.\nStudy grant\n\u20b950,000\nOne academic year \u00b7 fictional award\nApplication closes\n31 October 2026\n17:00 IST \u00b7 demonstration deadline\nYour draft\n4 of 4 sections ready\nSaved in this browser\n[0]<button >View award requirements />\nNo account needed for this demo.\nApplication guidance has been updated\nTwo referees are now required. Existing drafts are retained; please review the current requirements before continuing.\nApplication successfully submitted\nNorthstar Opportunity Award \u00b7 Fictional submission receipt\nYour Northstar Opportunity Award application has been received.\nReceipt reference:\n360becad-e7c7-4de5-a8d5-f3971ac6096f\nSubmitted:\n2026-10-24T16:39:08.664Z\nThis is a browser-local simulation. No application, document or message was sent to an organisation.\nYour preparation checklist\nReflects the fields in this draft.\nApplicant details\nReady\nPersonal statement\nReady\nAcademic transcript\nReady\nTwo referees\nReady\nApplication progress belongs to this portal. ReEntry records observed progress when you enable its automatic companion.\nTake it one step at a time\nYour draft stays in this browser after you save it. Return using the same browser profile and address.\nNeed a place to pause? Save your draft, then capture the award requirements with ReEntry.\nFictional application submitted. The receipt is saved in this browser.\nNorthstar is a fictional portal built for the ReEntry demonstration. This site runs separately from ReEntry.\n[1]<button type=button aria-expanded=false>Demo setup and reset />",
+        "pageKey": "1c93d658a71306a124dd879bf3ee2c2fb78542686b3a0b8226746de6b69631e2",
+        "fields": []
+      }
+    },
+    "tasks": [
+      {
+        "goal": "Work on the scholarship application",
+        "finishCondition": "A matching application submission receipt is visible",
+        "intent": "application",
+        "id": "8a20fa6d-f79d-4949-a42a-12847fe0125f",
+        "revision": 4,
+        "origin": "http://127.0.0.1:58306",
+        "stage": "ongoing",
+        "nextAction": "Review the remaining application sections",
+        "evidence": [
+          {
+            "eventId": "1b9e1f5c-f6d8-4447-9fc3-61c5cefd1c4c",
+            "quote": "Your application \u00b7 Fictional Northstar demo"
+          }
+        ],
+        "corrected": false,
+        "dismissed": false,
+        "updatedAt": "2026-10-24T16:39:08.412Z",
+        "progress": [
+          {
+            "kind": "draft_saved",
+            "summary": "Application draft saved; transcript progress retained",
+            "eventId": "5642c835-e0dc-473f-ab0d-bfce8838d3f1",
+            "observedAt": "2026-10-24T16:38:40.517Z",
+            "streamId": "c13ec74f-f7f9-45db-af15-16c32c52204c",
+            "evidence": [
+              {
+                "eventId": "5642c835-e0dc-473f-ab0d-bfce8838d3f1",
+                "quote": "Your application \u00b7 Fictional Northstar demo"
+              }
+            ]
+          },
+          {
+            "kind": "requirements_changed",
+            "summary": "Two referees now required; preserve transcript progress",
+            "eventId": "f0547f0e-f6fe-4b99-af66-291822019683",
+            "observedAt": "2026-10-24T16:38:42.767Z",
+            "streamId": "c13ec74f-f7f9-45db-af15-16c32c52204c",
+            "evidence": [
+              {
+                "eventId": "f0547f0e-f6fe-4b99-af66-291822019683",
+                "quote": "Your application \u00b7 Fictional Northstar demo"
+              }
+            ]
+          },
+          {
+            "kind": "blocked",
+            "summary": "Validation needs attention; application not submitted",
+            "eventId": "7ebd68cc-5393-4f67-a072-7b3dd85fb05b",
+            "observedAt": "2026-10-24T16:38:51.773Z",
+            "streamId": "c13ec74f-f7f9-45db-af15-16c32c52204c",
+            "evidence": [
+              {
+                "eventId": "7ebd68cc-5393-4f67-a072-7b3dd85fb05b",
+                "quote": "Your application \u00b7 Fictional Northstar demo"
+              }
+            ]
+          },
+          {
+            "kind": "review_ready",
+            "summary": "Application ready for final review",
+            "eventId": "1b9e1f5c-f6d8-4447-9fc3-61c5cefd1c4c",
+            "observedAt": "2026-10-24T16:39:01.009Z",
+            "streamId": "c13ec74f-f7f9-45db-af15-16c32c52204c",
+            "evidence": [
+              {
+                "eventId": "1b9e1f5c-f6d8-4447-9fc3-61c5cefd1c4c",
+                "quote": "Your application \u00b7 Fictional Northstar demo"
+              }
+            ]
+          }
+        ],
+        "subject": "Northstar Opportunity Award"
+      }
+    ],
+    "history": [
+      {
+        "version": 1,
+        "eventId": "1b9e1f5c-f6d8-4447-9fc3-61c5cefd1c4c",
+        "sessionId": "b4abb82c-4eb3-42a1-9895-3a4e1c01e1a5",
+        "deviceId": "21655574-2b24-4efe-a3d8-c5308f8f2fa0",
+        "streamId": "c13ec74f-f7f9-45db-af15-16c32c52204c",
+        "observedAt": "2026-10-24T16:39:01.009Z",
+        "reason": "submit-attempt",
+        "page": {
+          "origin": "http://127.0.0.1:58306",
+          "title": "Your application \u00b7 Fictional Northstar demo",
+          "content": "Draft saved in this browser. You can close this page and return later.\nApplication review\nNorthstar Opportunity Award final review. Submission creates a fictional receipt in this browser only.\nApplicant details\nReady\nPersonal statement\nReady\nAcademic transcript\nReady\nTwo referees\nReady\n[0]<button type=button>Back to draft />\n[1]<button type=button>Submit fictional application />\n[2]<button type=button>Close />",
+          "pageKey": "1c93d658a71306a124dd879bf3ee2c2fb78542686b3a0b8226746de6b69631e2",
+          "fields": []
+        }
+      },
+      {
+        "version": 1,
+        "eventId": "7ebd68cc-5393-4f67-a072-7b3dd85fb05b",
+        "sessionId": "b4abb82c-4eb3-42a1-9895-3a4e1c01e1a5",
+        "deviceId": "21655574-2b24-4efe-a3d8-c5308f8f2fa0",
+        "streamId": "c13ec74f-f7f9-45db-af15-16c32c52204c",
+        "observedAt": "2026-10-24T16:38:51.773Z",
+        "reason": "page-change",
+        "page": {
+          "origin": "http://127.0.0.1:58306",
+          "title": "Your application \u00b7 Fictional Northstar demo",
+          "content": "Application review\nNorthstar Opportunity Award final review. Submission creates a fictional receipt in this browser only.\nApplicant details\nReady\nPersonal statement\nReady\nAcademic transcript\nReady\nTwo referees\nStill to do\nValidation error: Two referees. Application not submitted.\n[0]<button type=button>Back to draft />\n[1]<button type=button>Submit fictional application />\n[2]<button type=button>Close />",
+          "pageKey": "1c93d658a71306a124dd879bf3ee2c2fb78542686b3a0b8226746de6b69631e2",
+          "fields": []
+        }
+      },
+      {
+        "version": 1,
+        "eventId": "f0547f0e-f6fe-4b99-af66-291822019683",
+        "sessionId": "b4abb82c-4eb3-42a1-9895-3a4e1c01e1a5",
+        "deviceId": "21655574-2b24-4efe-a3d8-c5308f8f2fa0",
+        "streamId": "c13ec74f-f7f9-45db-af15-16c32c52204c",
+        "observedAt": "2026-10-24T16:38:42.767Z",
+        "reason": "navigation",
+        "page": {
+          "origin": "http://127.0.0.1:58306",
+          "title": "Your application \u00b7 Fictional Northstar demo",
+          "content": "Northstar Foundation\nOpportunity programme \u00b7 Applicant portal\nFictional demo\n2026 / 27\nA demonstration you can safely explore\nFictional award, applicant and requirements. Nothing is submitted and no real documents are uploaded. Use sample information only.\nEducation opens the next door.\nYour Northstar Opportunity Award application\nMake a little progress, save your draft, and come back when you\u2019re ready.\nStudy grant\n\u20b950,000\nOne academic year \u00b7 fictional award\nApplication closes\n31 October 2026\n17:00 IST \u00b7 demonstration deadline\nYour draft\n3 of 4 sections ready\nSaved in this browser\n[0]<button >View award requirements />\nNo account needed for this demo.\nApplication guidance has been updated\nTwo referees are now required. Existing drafts are retained; please review the current requirements before continuing.\n1. Applicant details\nA fictional profile is provided to get you started.\n[1]<label >Full name />\n[2]<input  />\n[3]<label >Email address />\n[4]<input type=email />\n[5]<label >School or college />\n[6]<input  />\n2. Personal statement\nWhat would you like to study, and why does it matter to you?\n[7]<label >Your statement />\n7\nwords \u00b7 drafts can be incomplete\n3. Supporting document\nSample attachment only; no file leaves your computer.\nSample-transcript.pdf\nDemo attachment added \u00b7 save the draft to keep it\n[8]<button type=button>Remove sample transcript />\n4. Referees\nCurrent guidance requires two referees.\nNo invitations are sent.\n[9]<label >First referee />\n[10]<input  />\n[11]<label >Second referee />\n[12]<input  />\n[13]<button type=submit>Save application draft />\n[14]<button type=button aria-expanded=false>Review application />\nYour preparation checklist\nReflects the fields in this draft.\nApplicant details\nReady\nPersonal statement\nReady\nAcademic transcript\nReady\nTwo referees\nTo do\nApplication progress belongs to this portal. ReEntry records observed progress when you enable its automatic companion.\nTake it one step at a time\nYour draft stays in this browser after you save it. Return using the same browser profile and address.\nNeed a place to pause? Save your draft, then capture the award requirements with ReEntry.\nNorthstar is a fictional portal built for the ReEntry demonstration. This site runs separately from ReEntry.\n[15]<button type=button aria-expanded=false>Demo setup and reset />",
+          "pageKey": "1c93d658a71306a124dd879bf3ee2c2fb78542686b3a0b8226746de6b69631e2",
+          "fields": [
+            {
+              "label": "Full name",
+              "present": true
+            },
+            {
+              "label": "School or college",
+              "present": true
+            },
+            {
+              "label": "Your statement",
+              "present": true
+            },
+            {
+              "label": "First referee",
+              "present": true
+            },
+            {
+              "label": "Second referee",
+              "present": false
+            }
+          ]
+        }
+      }
+    ],
+    "toolResults": [
+      {
+        "tool": "inspect_history",
+        "result": [
+          "1b9e1f5c-f6d8-4447-9fc3-61c5cefd1c4c",
+          "7ebd68cc-5393-4f67-a072-7b3dd85fb05b",
+          "f0547f0e-f6fe-4b99-af66-291822019683"
+        ]
+      }
+    ]
+  }
+}

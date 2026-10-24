@@ -2,6 +2,8 @@
 
 Implemented October 23, 2026 (IST). This phase connects the real observation stream to the configured model through LangGraph. Shopping research, buying intent and application work can create a task with a proposed finish condition. These are inspectable AI interpretations. Phase 3 now adds [evidenced progress and observed completion](AGENT_PROGRESS.md); [interruption recovery and local reminders](AGENT_REMINDERS.md) are now implemented separately.
 
+Current update: the root/toolbar open automatic tracking, and assignments plus other explicit unfinished work are supported. [Assignment setup, identity and completion boundaries](AGENT_ASSIGNMENTS.md).
+
 ## Try it
 
 1. Start with `./start.sh`, reload ReEntry in Chrome extensions, and open http://127.0.0.1:3000/observe. Follow [browser pairing and site access](AGENT_OBSERVATION.md) if not connected.

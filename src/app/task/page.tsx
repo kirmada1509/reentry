@@ -259,7 +259,7 @@ export default function TaskPage() {
         </p>
         <nav>
           <Button asChild variant="outline">
-            <Link href="/">Return to saved tasks</Link>
+            <Link href="/checkpoints">Return to saved tasks</Link>
           </Button>
         </nav>
       </header>

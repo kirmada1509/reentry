@@ -1,5 +1,9 @@
 # Active work and handoff
 
+## Completed update: automatic entry points and assignments
+
+October 24: implement normal root/toolbar companion entry, isolate manual tools without deleting existing data, and add Moodle-style assignment recognition/identity/progress. Prompt agent-3.7 also supports explicit other work with user-confirmed completion. See [behavior and demo](AGENT_ASSIGNMENTS.md). Verified: 194 tests/26 files and all project guards; full production browser 67 passes/three skips, final affected acceptance 4/4 and portal/application 5/5, commerce two passes/two skips. Actual NVIDIA agent-3.7 development trials pass 9/9 progress and 5/5 assignment outcomes (four model decisions plus one host-ignore). Earlier input-size, classification and invalid-receipt failures remain recorded in TEST_RESULTS and the trial ledger. The frozen 25-step agent-3.4 corpus was not replayed for 3.7. Default-origin extension/web builds and production restart passed; HTTP smoke checks the new home redirect, automatic screen, manual library, health and request correlation. The managed app is running at http://127.0.0.1:3000. Reload the unpacked extension and refresh source/app tabs before using this update. Publication audit passed; no private campus page or real coursework was used for testing.
+
 ## Current automatic-agent release
 
 Phase 6 technical implementation and verification are recorded; the preview is a controlled submission candidate with explicit model/manual limitations. [AGENT_RELEASE.md](AGENT_RELEASE.md) is the current protocol, evidence and acceptance record. The immutable evaluation corpus was committed before first inference. Actual model testing prompted bounded citation compatibility and one summary-only repair within the existing three-call budget. No dependency or additional provider was added.
@@ -14,7 +18,7 @@ Hosted implementation CI passed on `2233791`: https://github.com/kirmada1509/ree
 
 ## Product and local use
 
-Use `./start.sh` / `pnpm local:start` for production without live reload; `./stop.sh` / `pnpm local:stop` stops only owned processes. Start refuses active servers/occupied ports before rebuilding. The automatic home is http://127.0.0.1:3000/observe; load `extension/.output/chrome-mv3` unpacked, pair, enable a chosen site and separately agree to model processing. Reload the extension and refresh existing tabs after rebuilding, preserving extension ID/origin/profile. The original capture/checkpoint editor/history/restore remains under Saved checkpoints.
+Use `./start.sh` / `pnpm local:start` for production without live reload; `./stop.sh` / `pnpm local:stop` stops only owned processes. Start refuses active servers/occupied ports before rebuilding. The automatic home is http://127.0.0.1:3000/observe; load `extension/.output/chrome-mv3` unpacked, pair, enable a chosen site and separately agree to model processing. Reload the extension and refresh existing tabs after rebuilding, preserving extension ID/origin/profile. The original capture/checkpoint editor/history/restore remains under Manual tools → Manual checkpoints at `/checkpoints`.
 
 `pnpm sandbox:sites` prints the fictional Northstar portal URL; `pnpm sandbox:switch v1|v2|cosmetic` changes instructions before recapture/observation. `pnpm sandbox:commerce` reuses the attributed pinned Sauce Labs sample shop. No real payment, account, upload or application submission is implemented. External pages own their form state.
 

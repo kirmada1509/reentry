@@ -12,14 +12,16 @@ pnpm extension:build
 pnpm dev
 ```
 
-Open **http://127.0.0.1:3000** in Chrome. In `chrome://extensions`, enable Developer mode, click **Load unpacked**, and select `extension/.output/chrome-mv3` inside the repository. Reload the extension after rebuilding it.
+This is the optional manual workflow. The automatic home now opens at `/observe`; see [the current setup](AGENT_ASSIGNMENTS.md).
+
+Open **http://127.0.0.1:3000/checkpoints** in Chrome. In `chrome://extensions`, enable Developer mode, click **Load unpacked**, and select `extension/.output/chrome-mv3` inside the repository. Reload the extension after rebuilding it.
 
 The manifest contains a public development key to keep the unpacked extension id stable: `nabinfdlobegbkgehppcipkhbddjbdka`. This is a public identifier, not an API credential or private signing key. The app expects that id by default. No account, cloud key, or model installation is needed.
 
 ## The working journey
 
 1. Open a page containing instructions. For the current local presentation, run `pnpm sandbox:sites` in another terminal and open its printed Northstar portal address (normally http://127.0.0.1:4176/instructions.html). It includes a fictional application draft; see [the sandbox walkthrough](SANDBOX.md). The command selects another free port if needed; use the printed address consistently.
-2. Select the text. Invoke **Capture selection with ReEntry** through the toolbar, or **Command+Shift+Y** on Mac / **Ctrl+Shift+Y** elsewhere. Check `chrome://extensions/shortcuts` if another extension uses that shortcut. ReEntry captures before opening its review tab, preserving the selection when focus moves.
+2. Select the text. Open ReEntry through the toolbar, or **Command+Shift+Y** on Mac / **Ctrl+Shift+Y** elsewhere, then expand **Manual tools** and choose **Capture selected text (manual)**. Check `chrome://extensions/shortcuts` if another extension uses that shortcut. ReEntry captures before opening its review tab, preserving the selection when focus moves.
 3. Review the exact text, source URL and capture time. Choose **Discard capture** to decline, or **Confirm capture and open ReEntry**. Opening a preview alone does not create a task.
 4. Enter a goal, complete work URL, completed progress (or “Nothing yet”), and one next action. Confirm that the progress is your own record. Add up to five supporting links if useful. ReEntry has not inspected private form values.
 5. Choose **Save confirmed checkpoint**. Wait for the saved message. Refresh and choose **Open saved checkpoint**. Your goal, progress, next action and instructions should still be there.

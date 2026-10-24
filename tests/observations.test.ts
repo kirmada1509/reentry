@@ -83,7 +83,9 @@ describe("local observation authority", () => {
         .prepare("SELECT COUNT(*) AS n FROM observation_receipts")
         .get(),
     ).toEqual({ n: 1002 });
-  });
+    // This exercises durable disk retention, not a latency target. Concurrent
+    // SQLite suites can exceed Vitest's five-second default on a busy machine.
+  }, 15000);
   it("pairs once, expires challenges and invalidates previous devices on replacement", () => {
     const s = setup();
     const c = s.store.challenge();

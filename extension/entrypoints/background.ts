@@ -51,7 +51,7 @@ export default defineBackground(() => {
         result: item,
       };
     });
-    const url = new URL(capture.check ? "/check" : "/", appOrigin);
+    const url = new URL(capture.check ? "/check" : "/checkpoints", appOrigin);
     url.searchParams.set("capture", id);
     if (capture.check) {
       url.searchParams.set("task", capture.check.taskId);
@@ -243,137 +243,164 @@ export default defineBackground(() => {
       .catch(() => undefined);
   });
 
+  onMessage("startManualCapture", async ({ data, sender }) => {
+    if (
+      sender.id !== browser.runtime.id ||
+      !sender.url ||
+      new URL(sender.url).pathname !== "/companion.html" ||
+      !Number.isSafeInteger(data.tabId) ||
+      data.tabId < 0
+    )
+      throw new Error("Companion and a source tab required.");
+    await captureSelection(await browser.tabs.get(data.tabId));
+  });
+
   browser.action.onClicked.addListener((tab) => {
+    // Source checks are an explicitly started manual operation. Normal clicks
+    // open the automatic companion and never require selected text.
     void (async () => {
-      let error: CheckFailure = "capture-failed";
-      let check: CheckContext | undefined;
-      try {
-        if (tab.id !== undefined) {
-          const session = await checkForTab(tab.id);
-          check = session?.context;
-          if (session?.state === "captured") {
-            const existing = await updatePending((items) => ({
-              items,
-              result: items.find(
-                (item) =>
-                  item.check?.id === session.context.id &&
-                  item.check.taskId === session.context.taskId,
-              ),
-            }));
-            if (existing) {
-              await browser.tabs.create({
-                url: `${previewUrl}?id=${existing.capture.id}`,
-              });
-              return;
-            }
-          }
-        }
-        if (tab.id === undefined || !httpUrlSchema.safeParse(tab.url).success) {
-          error = "unsupported";
-          throw new Error("Unsupported page.");
-        }
-        const results = await browser.scripting.executeScript({
-          target: { tabId: tab.id },
-          func: () => {
-            const active = document.activeElement;
-            if (
-              active instanceof HTMLInputElement ||
-              active instanceof HTMLTextAreaElement ||
-              (active instanceof HTMLElement && active.isContentEditable)
-            )
-              return { blocked: true };
-            const selection = window.getSelection();
-            const editable = (node: Node | null) =>
-              (node instanceof Element ? node : node?.parentElement)?.closest(
-                'input, textarea, [contenteditable]:not([contenteditable="false"]), [role="textbox"]',
-              );
-            if (
-              editable(selection?.anchorNode ?? null) ||
-              editable(selection?.focusNode ?? null)
-            )
-              return { blocked: true };
-            const range = selection?.rangeCount
-              ? selection.getRangeAt(0)
-              : undefined;
-            const node = range?.commonAncestorContainer;
-            const element =
-              node instanceof Element ? node : node?.parentElement;
-            const anchor = element?.closest("[id]");
-            const region = element?.closest("section,article,main");
-            const heading = region?.querySelector("h1,h2,h3");
-            const headingText = heading?.textContent?.trim().slice(0, 250);
-            const section =
-              anchor?.id && anchor.id.length <= 250
-                ? {
-                    key: `id:${anchor.tagName.toLowerCase()}:${anchor.id}`,
-                    label: (
-                      anchor.getAttribute("aria-label") ||
-                      headingText ||
-                      anchor.id
-                    ).slice(0, 300),
-                  }
-                : heading && headingText
-                  ? {
-                      key: `heading:${heading.tagName.toLowerCase()}:${headingText}`,
-                      label: headingText,
-                    }
-                  : undefined;
-            return {
-              section,
-              text: selection?.toString() ?? "",
-              title: document.title || "Untitled page",
-              url: location.href,
-            };
-          },
-        });
-        const result = results[0]?.result;
-        if (!result || result.blocked) {
-          error = "unsupported";
-          throw new Error("Select ordinary page instructions.");
-        }
-        if (!result.text?.trim()) {
-          error = "no-selection";
-          throw new Error("Select text first.");
-        }
-        const parsed = captureSchema.safeParse({
-          id: crypto.randomUUID(),
-          title: result.title,
-          text: result.text,
-          url: result.url,
-          ...(result.section ? { section: result.section } : {}),
-          capturedAt: new Date().toISOString(),
-          mode: "selection",
-          extractorVersion: 1,
-        });
-        if (!parsed.success) {
-          error = "too-large";
-          throw new Error("Selection exceeds capture limits.");
-        }
-        error = "storage-failed";
-        await updatePending((items) => {
-          if (items.length >= PENDING_LIMIT)
-            throw new Error("Pending capture capacity reached.");
-          return {
-            items: [
-              ...items,
-              {
-                capture: parsed.data,
-                status: "draft",
-                ...(check ? { check } : {}),
-              },
-            ],
-            result: undefined,
-          };
-        });
-        if (check) await markCheck(check.id, "captured");
-        await browser.tabs.create({
-          url: `${previewUrl}?id=${parsed.data.id}`,
-        });
-      } catch {
-        if (check)
-          await markCheck(check.id, "failed", error).catch(() => undefined);
-        await browser.tabs.create({ url: `${previewUrl}?error=${error}` });
+      if (tab.id !== undefined && (await checkForTab(tab.id))) {
+        await captureSelection(tab);
+        return;
       }
+      const url = new URL(browser.runtime.getURL("/companion.html"));
+      if (tab.id !== undefined) url.searchParams.set("tab", String(tab.id));
+      if (tab.url && httpUrlSchema.safeParse(tab.url).success)
+        url.searchParams.set("site", new URL(tab.url).origin);
+      await browser.tabs.create({ url: url.href });
     })();
   });
+
+  async function captureSelection(tab: { id?: number; url?: string }) {
+    let error: CheckFailure = "capture-failed";
+    let check: CheckContext | undefined;
+    try {
+      if (tab.id !== undefined) {
+        const session = await checkForTab(tab.id);
+        check = session?.context;
+        if (session?.state === "captured") {
+          const existing = await updatePending((items) => ({
+            items,
+            result: items.find(
+              (item) =>
+                item.check?.id === session.context.id &&
+                item.check.taskId === session.context.taskId,
+            ),
+          }));
+          if (existing) {
+            await browser.tabs.create({
+              url: `${previewUrl}?manual=1&id=${existing.capture.id}`,
+            });
+            return;
+          }
+        }
+      }
+      if (tab.id === undefined || !httpUrlSchema.safeParse(tab.url).success) {
+        error = "unsupported";
+        throw new Error("Unsupported page.");
+      }
+      const results = await browser.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => {
+          const active = document.activeElement;
+          if (
+            active instanceof HTMLInputElement ||
+            active instanceof HTMLTextAreaElement ||
+            (active instanceof HTMLElement && active.isContentEditable)
+          )
+            return { blocked: true };
+          const selection = window.getSelection();
+          const editable = (node: Node | null) =>
+            (node instanceof Element ? node : node?.parentElement)?.closest(
+              'input, textarea, [contenteditable]:not([contenteditable="false"]), [role="textbox"]',
+            );
+          if (
+            editable(selection?.anchorNode ?? null) ||
+            editable(selection?.focusNode ?? null)
+          )
+            return { blocked: true };
+          const range = selection?.rangeCount
+            ? selection.getRangeAt(0)
+            : undefined;
+          const node = range?.commonAncestorContainer;
+          const element = node instanceof Element ? node : node?.parentElement;
+          const anchor = element?.closest("[id]");
+          const region = element?.closest("section,article,main");
+          const heading = region?.querySelector("h1,h2,h3");
+          const headingText = heading?.textContent?.trim().slice(0, 250);
+          const section =
+            anchor?.id && anchor.id.length <= 250
+              ? {
+                  key: `id:${anchor.tagName.toLowerCase()}:${anchor.id}`,
+                  label: (
+                    anchor.getAttribute("aria-label") ||
+                    headingText ||
+                    anchor.id
+                  ).slice(0, 300),
+                }
+              : heading && headingText
+                ? {
+                    key: `heading:${heading.tagName.toLowerCase()}:${headingText}`,
+                    label: headingText,
+                  }
+                : undefined;
+          return {
+            section,
+            text: selection?.toString() ?? "",
+            title: document.title || "Untitled page",
+            url: location.href,
+          };
+        },
+      });
+      const result = results[0]?.result;
+      if (!result || result.blocked) {
+        error = "unsupported";
+        throw new Error("Select ordinary page instructions.");
+      }
+      if (!result.text?.trim()) {
+        error = "no-selection";
+        throw new Error("Select text first.");
+      }
+      const parsed = captureSchema.safeParse({
+        id: crypto.randomUUID(),
+        title: result.title,
+        text: result.text,
+        url: result.url,
+        ...(result.section ? { section: result.section } : {}),
+        capturedAt: new Date().toISOString(),
+        mode: "selection",
+        extractorVersion: 1,
+      });
+      if (!parsed.success) {
+        error = "too-large";
+        throw new Error("Selection exceeds capture limits.");
+      }
+      error = "storage-failed";
+      await updatePending((items) => {
+        if (items.length >= PENDING_LIMIT)
+          throw new Error("Pending capture capacity reached.");
+        return {
+          items: [
+            ...items,
+            {
+              capture: parsed.data,
+              status: "draft",
+              ...(check ? { check } : {}),
+            },
+          ],
+          result: undefined,
+        };
+      });
+      if (check) await markCheck(check.id, "captured");
+      await browser.tabs.create({
+        url: `${previewUrl}?manual=1&id=${parsed.data.id}`,
+      });
+    } catch {
+      if (check)
+        await markCheck(check.id, "failed", error).catch(() => undefined);
+      await browser.tabs.create({
+        url: `${previewUrl}?manual=1&error=${error}`,
+      });
+    }
+  }
 });

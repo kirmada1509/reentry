@@ -9,4 +9,8 @@ document.documentElement.style.setProperty(
   "ui-sans-serif, system-ui, sans-serif",
 );
 
-createRoot(document.getElementById("root")!).render(<CapturePage />);
+if (new URL(location.href).searchParams.get("manual") !== "1") {
+  location.replace("companion.html");
+} else {
+  createRoot(document.getElementById("root")!).render(<CapturePage />);
+}

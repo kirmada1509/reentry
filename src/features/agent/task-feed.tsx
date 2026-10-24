@@ -150,6 +150,8 @@ function TaskCorrection({
             <SelectContent data-task-owner={task.id}>
               <SelectItem value="research">Research or compare</SelectItem>
               <SelectItem value="purchase">Buy something</SelectItem>
+              <SelectItem value="assignment">Submit an assignment</SelectItem>
+              <SelectItem value="work">Other unfinished work</SelectItem>
               <SelectItem value="application">
                 Work on an application
               </SelectItem>
@@ -368,8 +370,9 @@ function ReminderSettings({
         <DialogHeader>
           <DialogTitle>A gentle way back</DialogTitle>
           <DialogDescription>
-            Optional local reminders for unfinished purchases and applications.
-            Possible research tasks are never treated as obligations.
+            Optional local return reminders for unfinished work. These are not
+            deadline reminders. Possible research tasks are never treated as
+            obligations.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-3">
@@ -675,10 +678,11 @@ export function TaskFeed({
                 <p>
                   Research is a possibility, not an obligation. Progress is an
                   AI interpretation. Fresh matching confirmations can finish
-                  uncorrected purchase/application tasks after a final review in
-                  the same tab. Corrected goals require your review. Task
-                  summaries and short evidence excerpts stay locally until
-                  cleared. Changing the site session requires agreement again.
+                  uncorrected purchases/applications after a final review, or
+                  assignments after an observed pending submission in the same
+                  tab. Corrected goals require your review. Task summaries and
+                  short evidence excerpts stay locally until cleared. Changing
+                  the site session requires agreement again.
                 </p>
                 <p>
                   {data.callsRemaining} model calls remain in the current hourly
@@ -718,8 +722,9 @@ export function TaskFeed({
         <Alert>
           <AlertTitle>Nothing to carry yet</AlertTitle>
           <AlertDescription>
-            Browse an application or compare a product on an enabled site. Tasks
-            appear here without a checkpoint form.
+            Open an assignment, application or other unfinished work, or compare
+            a product on an enabled site. Tasks appear here without a checkpoint
+            form.
           </AlertDescription>
         </Alert>
       )}

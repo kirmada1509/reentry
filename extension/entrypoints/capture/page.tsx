@@ -237,7 +237,9 @@ export default function CapturePage() {
         <Button
           variant="outline"
           onClick={() =>
-            void browser.tabs.create({ url: __REENTRY_APP_ORIGIN__ })
+            void browser.tabs.create({
+              url: `${__REENTRY_APP_ORIGIN__}/checkpoints`,
+            })
           }
         >
           Open ReEntry library

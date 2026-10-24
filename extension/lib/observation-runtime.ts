@@ -1,3 +1,4 @@
+import { pageIdentity } from "../../src/features/observation/page-identity";
 import { browser } from "wxt/browser";
 import { z } from "zod";
 import { onMessage } from "./messages";
@@ -480,7 +481,7 @@ export function startObservationRuntime(appOrigin: string) {
       new Uint8Array(
         await crypto.subtle.digest(
           "SHA-256",
-          new TextEncoder().encode(new URL(tab.url).pathname),
+          new TextEncoder().encode(pageIdentity(new URL(tab.url))),
         ),
       ),
     )

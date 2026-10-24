@@ -1,4 +1,6 @@
 import nextEnv from "@next/env";
+import { setTimeout as pause } from "node:timers/promises";
+import { AGENT_PROMPT_VERSION } from "../src/features/agent/prompt";
 import {
   existsSync,
   mkdirSync,
@@ -17,6 +19,9 @@ import { getEnvironment } from "../src/lib/env";
 
 nextEnv.loadEnvConfig(process.cwd());
 const output = process.argv[2] ?? ".runtime/agent-progress-evaluation.json";
+const pacingMs = Number(process.argv[3] ?? "10000");
+if (!Number.isInteger(pacingMs) || pacingMs < 0 || pacingMs > 60000)
+  throw new Error("Evaluation pacing must be 0–60000 milliseconds.");
 if (existsSync(output))
   throw new Error("Choose a fresh output path to preserve previous trials.");
 mkdirSync(path.dirname(path.resolve(output)), { recursive: true });
@@ -67,6 +72,7 @@ async function run(
   check: () => boolean,
   stream = streamId,
 ) {
+  if (results.length) await pause(pacingMs);
   now += 9000;
   const event = {
     version: 1 as const,
@@ -178,6 +184,8 @@ try {
     JSON.stringify(
       {
         version: "agent-v3-progress",
+        promptVersion: AGENT_PROMPT_VERSION,
+        pacingMs,
         synthetic: true,
         createdAt: new Date().toISOString(),
         provider: processing.provider,
