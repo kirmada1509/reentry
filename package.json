@@ -61,7 +61,7 @@
     "@langchain/core": "1.1.48",
     "@langchain/langgraph": "1.5.2",
     "@langchain/langgraph-checkpoint-sqlite": "1.1.0",
-    "@next/env": "16.4.2",
+    "@next/env": "16.4.3",
     "@opentelemetry/api": "1.9.1",
     "@page-agent/page-controller": "1.12.4",
     "@tabler/icons-react": "3.49.0",
